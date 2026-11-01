@@ -70,6 +70,21 @@ xattr -dr com.apple.quarantine /Applications/Glance.app
 - Face Lab（隐藏调试台：设置→关于→连点图标 5 次）的部分诊断文案也一并翻了（如"平面 / 立体诊断"）
 - 少数由代码拼接的动态文案（例如 `Text(变量)`、状态枚举的字符串）需单独处理，本分支已随源码一并翻译
 
+## 没有开发者账号（免费账号）怎么办
+
+免费 Apple ID 的描述文件只有 **7 天**，一周重签一次不现实；官方 App 之所以装上就不用管，是靠作者的 Developer ID + 公证（带时间戳，证书过期签名依然有效）。改代码后原签名必然失效，只能用 ad-hoc 临时签名——**ad-hoc 永不过期，但没有 `keychain-access-groups` 权限**。
+
+Glance 的会话密钥原本用 `kSecAttrAccessControl(.userPresence)` 存在 data protection 钥匙串里，这类条目在没有 `com.apple.application-identifier` 权限的签名下会直接返回 `errSecMissingEntitlement (-34018)`（界面显示「keychain error 没有所需的授权」）。
+
+本分支加了一个降级：`KeychainManager.hasApplicationIdentifierEntitlement` 检测当前签名有没有该权限，
+
+- 有（真证书 + 描述文件）：行为与上游一致，密钥被 Touch ID 硬件门控
+- 没有（ad-hoc）：密钥改存普通条目，改由 `POCController.authenticateIfKeychainGateUnavailable()` 在解锁会话前用 `LAContext` 弹一次 Touch ID / 登录密码
+
+**安全差异（必须知道）**：降级后密钥本身不再被 Secure Enclave 的访问控制保护，只靠钥匙串 ACL（绑定到该二进制）和 App 内的 LAContext 提示。对一个会替你输入 Mac 登录密码的工具来说，这是实打实的削弱——介意的话就用付费账号走正规签名。
+
+另外 `KeychainManager.service` 改成了 `com.imanity.glance`，与官方版彻底隔离（上游写死 `com.jonathan.glance`，两版共存时会抢同一个钥匙串槽，出现「会话密钥已丢失」）。
+
 ## 上游发版后怎么重做汉化
 
 `tools/localize-zh.py` 是本次汉化用的替换脚本（`MULTI` 多词整串 + `SINGLE` 单词按 UI 上下文），

@@ -34,7 +34,16 @@ enum KeychainError: LocalizedError {
 }
 
 enum KeychainManager {
-    nonisolated static let service = "com.jonathan.glance"
+    nonisolated static let service = "com.imanity.glance"
+
+    /// 本机签名是否带 `com.apple.application-identifier`（真实描述文件才有的受限权限）。
+    /// ad-hoc / 无描述文件签名没有它，带 `kSecAttrAccessControl` 的条目会以 errSecMissingEntitlement(-34018) 失败，
+    /// 此时改走普通条目，并由 `POCController` 在解锁前用 LAContext 弹 Touch ID 作为替代门控。
+    nonisolated static let hasApplicationIdentifierEntitlement: Bool = {
+        guard let task = SecTaskCreateFromSelf(nil) else { return false }
+        let value = SecTaskCopyValueForEntitlement(task, "com.apple.application-identifier" as CFString, nil)
+        return value != nil
+    }()
 
     /// Attributes-only existence check — never prompts, even for access-controlled items.
     nonisolated static func exists(account: String) -> Bool {
