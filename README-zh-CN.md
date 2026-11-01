@@ -70,6 +70,17 @@ xattr -dr com.apple.quarantine /Applications/Glance.app
 - Face Lab（隐藏调试台：设置→关于→连点图标 5 次）的部分诊断文案也一并翻了（如"平面 / 立体诊断"）
 - 少数由代码拼接的动态文案（例如 `Text(变量)`、状态枚举的字符串）需单独处理，本分支已随源码一并翻译
 
+## 上游发版后怎么重做汉化
+
+`tools/localize-zh.py` 是本次汉化用的替换脚本（`MULTI` 多词整串 + `SINGLE` 单词按 UI 上下文），
+上游改动不大的话直接重跑即可，再 `git diff` 检查新增英文：
+
+```bash
+python3 tools/localize-zh.py
+git diff --stat          # 看还有哪些新文案没覆盖
+xcodebuild ...           # 编译器会抓出替换引起的语法错误
+```
+
 ## 许可
 
 上游为 MIT，本分支沿用。原作者不接受 PR，仅供个人使用与参考。
