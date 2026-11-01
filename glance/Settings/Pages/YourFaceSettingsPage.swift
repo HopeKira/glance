@@ -34,7 +34,7 @@ struct YourFaceSettingsPage: View {
     private var stateKind: PageStateKind {
         if store.isLocked { return .locked }
         // Ahead of `.notEnrolled` — a failed decrypt looks like an empty
-        // store, and offering "Set up Face Unlock" there would destroy the data.
+        // store, and offering "设置面容解锁" there would destroy the data.
         if store.loadFailure != nil { return .unreadable }
         return store.identities.isEmpty ? .notEnrolled : .enrolled
     }
@@ -76,7 +76,7 @@ struct YourFaceSettingsPage: View {
             store.reloadIfUnlocked()
         }
         .confirmationDialog(
-            "Delete this enrolled face?",
+            "删除这张已录入的面容？",
             isPresented: Binding(
                 get: { identityPendingDeletion != nil },
                 set: { if !$0 { identityPendingDeletion = nil } }
@@ -84,8 +84,8 @@ struct YourFaceSettingsPage: View {
             titleVisibility: .visible,
             presenting: identityPendingDeletion
         ) { identity in
-            Button("Delete", role: .destructive) { delete(identity) }
-            Button("Cancel", role: .cancel) { identityPendingDeletion = nil }
+            Button("删除", role: .destructive) { delete(identity) }
+            Button("取消", role: .cancel) { identityPendingDeletion = nil }
         } message: { identity in
             Text("\"\(identity.name)\" will stop being recognized until you enroll them again.")
         }
@@ -96,8 +96,8 @@ struct YourFaceSettingsPage: View {
     private var lockedState: some View {
         SettingsEmptyStateView(
             icon: "lock.fill",
-            message: "Session locked",
-            buttonTitle: isUnlocking ? "Authenticating…" : "Unlock session",
+            message: "会话已锁定",
+            buttonTitle: isUnlocking ? "正在验证…" : "解锁会话",
             isButtonEnabled: !isUnlocking,
             caption: sessionError,
             action: unlock
@@ -115,14 +115,14 @@ struct YourFaceSettingsPage: View {
                 .font(.system(size: SettingsMetrics.emptyStateIconSize, weight: .regular))
                 .foregroundStyle(SettingsMetrics.qualityFairColor)
 
-            Text("Enrolled faces couldn't be read")
+            Text("无法读取已录入的面容")
                 .font(SettingsMetrics.rowFont)
                 .foregroundStyle(SettingsMetrics.textSecondary)
 
-            SettingsCaption(text: store.loadFailure ?? "The stored data couldn't be decrypted with this session key.")
+            SettingsCaption(text: store.loadFailure ?? "无法用当前会话密钥解密已保存的数据。")
                 .multilineTextAlignment(.center)
 
-            SettingsCaption(text: "Nothing has been deleted, and Glance will not overwrite it — enrolling is blocked until this resolves. Quit and reopen Glance to retry. If it keeps failing, the session key no longer matches this data: remove the stored password on the Password tab to clear both, then set up again.")
+            SettingsCaption(text: "没有删除任何内容，Glance 也不会覆盖它——在问题解决前无法进行录入。请退出并重新打开 Glance 重试。如果一直失败，说明会话密钥已与这份数据不匹配：在“密码”标签页删除已保存的密码即可同时清除两者，然后重新设置。")
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity, minHeight: SettingsMetrics.emptyStateMinHeight)
@@ -133,8 +133,8 @@ struct YourFaceSettingsPage: View {
     private var notEnrolledState: some View {
         SettingsEmptyStateView(
             icon: "faceid",
-            message: "Face enrollment",
-            buttonTitle: "Set up Face Unlock",
+            message: "面容录入",
+            buttonTitle: "设置面容解锁",
             isButtonEnabled: !enrollmentFlowIsRunning,
             action: { OnboardingController.startEnrollmentOnly() }
         )
@@ -162,7 +162,7 @@ struct YourFaceSettingsPage: View {
             }
 
             if !store.identities.isEmpty && store.activeIdentities.isEmpty {
-                SettingsCaption(text: "No identities are enabled — face unlock won't recognize anyone until you switch one back on.")
+                SettingsCaption(text: "没有启用任何身份——在重新开启至少一个身份之前，面容解锁不会识别任何人。")
             }
 
             if let writeError {
@@ -171,13 +171,13 @@ struct YourFaceSettingsPage: View {
         }
     }
 
-    /// Mirrors the Password page's "Password encrypted" row — both refer to
+    /// Mirrors the Password page's "密码已加密" row — both refer to
     /// the same session key.
     private var faceEncryptedCard: some View {
         SettingsGroup {
             VStack(alignment: .leading, spacing: 6) {
                 HStack(spacing: 8) {
-                    Text("Face encrypted")
+                    Text("面容已加密")
                         .font(SettingsMetrics.rowFont)
                         .foregroundStyle(SettingsMetrics.textPrimary)
                     Spacer(minLength: 8)
@@ -186,7 +186,7 @@ struct YourFaceSettingsPage: View {
                         .foregroundStyle(SettingsMetrics.textSecondary)
                 }
 
-                Text("Enroll separate identities to use Glance with multiple people, accessories (ex. glasses), facial expressions, or new lighting environments. This improves recognition quality.")
+                Text("可录入多个身份，以便多人共用 Glance，或应对眼镜等配饰、不同表情与光照环境。这能提升识别质量。")
                     .font(.system(size: 12))
                     .foregroundStyle(SettingsMetrics.textTertiary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -199,7 +199,7 @@ struct YourFaceSettingsPage: View {
 
     private var identitiesHeader: some View {
         HStack(spacing: 0) {
-            SettingsSectionTitle(text: "Identities")
+            SettingsSectionTitle(text: "身份")
 
             Button {
                 OnboardingController.startAddIdentity()
@@ -213,7 +213,7 @@ struct YourFaceSettingsPage: View {
             .buttonStyle(.plain)
             .disabled(enrollmentFlowIsRunning)
             .opacity(enrollmentFlowIsRunning ? 0.4 : 1)
-            .help("Enroll another face")
+            .help("录入另一张面容")
             .padding(.trailing, SettingsMetrics.sectionTitleHorizontalInset)
             .padding(.top, SettingsMetrics.sectionTitleVerticalPadding)
         }
@@ -253,7 +253,7 @@ struct YourFaceSettingsPage: View {
         Task {
             do {
                 try await Task.detached(priority: .userInitiated) {
-                    try SecureCredentialManager.unlockSession(reason: "Authenticate to view your enrolled face")
+                    try SecureCredentialManager.unlockSession(reason: "验证身份以查看已录入的面容")
                 }.value
                 store.reloadIfUnlocked()
             } catch {
@@ -296,8 +296,8 @@ private struct IdentityCard: View {
     /// An enrollment saved before per-sample quality existed reports "not
     /// recorded" rather than a misleading 100%.
     private var qualityCaption: String {
-        if identity.samples.isEmpty { return "No samples captured" }
-        if ratedCount == 0 { return "Capture quality • not recorded" }
+        if identity.samples.isEmpty { return "未采集到样本" }
+        if ratedCount == 0 { return "采集质量 • 未记录" }
         return "Capture quality • \(qualityPercentage)%"
     }
 
@@ -320,7 +320,7 @@ private struct IdentityCard: View {
                         QualityTickStrip(samples: identity.samples)
                         .padding(.leading, 2)
                         Spacer(minLength: 12)
-                        PillActionButton(title: "Recapture", action: recapture)
+                        PillActionButton(title: "重新采集", action: recapture)
                             .disabled(!canStartFlow)
                             .opacity(canStartFlow ? 1 : 0.4)
                         PillIconButton(systemImage: "trash", action: delete)
@@ -332,7 +332,7 @@ private struct IdentityCard: View {
                 .opacity(isEnabled ? 1 : 0.45)
 
                 if isStale {
-                    Text("Captured with a different recognition model — recapture before this face can unlock your Mac.")
+                    Text("该面容由其他识别模型采集——需重新采集后此面容才能解锁你的 Mac。")
                         .font(.system(size: 11))
                         .foregroundStyle(SettingsMetrics.qualityFairColor)
                         .fixedSize(horizontal: false, vertical: true)

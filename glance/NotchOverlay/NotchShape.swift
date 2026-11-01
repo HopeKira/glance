@@ -182,19 +182,19 @@ private enum ContinuousCorner {
         .padding(20)
 }
 
-#Preview("Notch — closed") {
+#Preview("刘海——收起") {
     NotchShape(topRadius: 8, bottomRadius: 12)
         .frame(width: 200, height: 32)
         .padding(20)
 }
 
-#Preview("Pill — collapsed") {
+#Preview("胶囊——收起") {
     NotchShape(topRadius: 16, bottomRadius: 16, style: .pill)
         .frame(width: NotchGeometry.pillClosedSize.width, height: NotchGeometry.pillClosedSize.height)
         .padding(20)
 }
 
-#Preview("Pill — expanded") {
+#Preview("胶囊——展开") {
     NotchShape(
         topRadius: NotchGeometry.pillOpenCornerRadius,
         bottomRadius: NotchGeometry.pillOpenCornerRadius,

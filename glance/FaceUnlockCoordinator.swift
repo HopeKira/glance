@@ -61,7 +61,7 @@ final class FaceUnlockCoordinator {
     /// When off, no notch/pill presence at all — every overlay call in this file is conditioned on this rather than just skipping the video.
     private var showsUI: Bool { GlanceSettings.shared.showUnlockAnimation }
 
-    /// Reads the space key on the lock screen for the "On space" trigger; only runs while locked + opted in.
+    /// Reads the space key on the lock screen for the "按空格时" trigger; only runs while locked + opted in.
     private let spaceKeyMonitor = SpaceKeyMonitor()
 
     init(pocController: POCController) {
@@ -110,15 +110,15 @@ final class FaceUnlockCoordinator {
 
         guard isEnabled, !hasArmedForCurrentLock else { return }
         guard let signal = requiredTrigger(for: lockMonitor.lastEvent) else { return }
-        // A pinned display that isn't connected bails entirely rather than showing up elsewhere; "Main display" (nil) always resolves.
+        // A pinned display that isn't connected bails entirely rather than showing up elsewhere; "主显示器" (nil) always resolves.
         guard NotchGeometry.preferredScreen() != nil else { return }
 
         guard SecureCredentialManager.isSessionUnlocked else {
-            statusMessage = "Face unlock is on, but the session is locked — authenticate once from Password settings first."
+            statusMessage = "面容解锁已开启，但会话处于锁定状态——请先在“密码”设置中验证一次身份。"
             return
         }
         guard SecureCredentialManager.hasStoredPassword() else {
-            statusMessage = "Face unlock is on, but no password is stored yet."
+            statusMessage = "面容解锁已开启，但还没有保存密码。"
             return
         }
 
@@ -189,7 +189,7 @@ final class FaceUnlockCoordinator {
               SecureCredentialManager.hasStoredPassword()
         else { return }
 
-        // Already looking — swallows auto-repeat/double-presses and lets "On wake"/"On lock" override "On space" with no special-casing.
+        // Already looking — swallows auto-repeat/double-presses and lets "唤醒时"/"锁屏时" override "按空格时" with no special-casing.
         guard NotchOverlayController.shared.phase != .scanning else { return }
 
         guard showsUI else {
@@ -251,7 +251,7 @@ final class FaceUnlockCoordinator {
         if showsUI {
             NotchOverlayController.shared.beginScanning()
         }
-        statusMessage = "Looking for your face…"
+        statusMessage = "正在寻找你的面容…"
 
         let outcome = await observeScanWindow(
             deadline: Date().addingTimeInterval(scanWindowDuration),
@@ -270,28 +270,28 @@ final class FaceUnlockCoordinator {
                 NotchOverlayController.shared.finish(success: true)
             }
         case .consistentlyWrongFace:
-            statusMessage = "Face not recognized."
+            statusMessage = "面容未识别。"
             if showsUI {
                 NotchOverlayController.shared.finish(success: false)
-                statusMessage = "Face not recognized — hover the notch to try again."
+                statusMessage = "面容未识别——悬停刘海可再试一次。"
                 scheduleAutoRetryIfEnabled(after: NotchOverlayController.shared.failureHoldDuration)
             } else {
                 scheduleAutoRetryIfEnabled(after: headlessRetryDelay)
             }
         case .spoofSuspected:
-            statusMessage = "Couldn't confirm a live face."
+            statusMessage = "无法确认是真人。"
             if showsUI {
                 NotchOverlayController.shared.finish(success: false)
-                statusMessage = "Couldn't confirm a live face — hover the notch to try again."
+                statusMessage = "无法确认是真人——悬停刘海可再试一次。"
                 scheduleAutoRetryIfEnabled(after: NotchOverlayController.shared.failureHoldDuration)
             } else {
                 scheduleAutoRetryIfEnabled(after: headlessRetryDelay)
             }
         case .noResolution:
-            statusMessage = "No face detected."
+            statusMessage = "未检测到人脸。"
             if showsUI {
                 // No explicit collapse call: NotchOverlayController's own scanning timeout fires on the same mark and collapses itself.
-                statusMessage = "No face detected — hover the notch to try again."
+                statusMessage = "未检测到人脸——悬停刘海可再试一次。"
                 scheduleAutoRetryIfEnabled(after: NotchOverlayController.shared.collapseAnimationDuration)
             } else {
                 scheduleAutoRetryIfEnabled(after: headlessRetryDelay)
@@ -407,10 +407,10 @@ final class FaceUnlockCoordinator {
             }
 
             if let readyMatch, livenessConfirmed {
-                statusMessage = "Recognized — unlocking…"
+                statusMessage = "识别成功——正在解锁…"
                 let livenessNote = livenessEnabled
-                    ? (confirmingCue.map { "live via \($0.title)" } ?? "liveness clear")
-                    : "liveness off"
+                    ? (confirmingCue.map { "live via \($0.title)" } ?? "活体通过")
+                    : "活体关闭"
                 lastOutcome = "Matched \(readyMatch.identity.name) at \(String(format: "%.3f", readyMatch.centroidSimilarity)), \(livenessNote)."
                 await pocController.injectStoredPassword(requireAuthoritativeLock: true)
                 return .matched

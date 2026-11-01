@@ -20,13 +20,13 @@ struct IntroStepView: View {
                 Text("Glance")
                     .font(GlanceTheme.Font.title)
                     .foregroundStyle(GlanceTheme.textPrimary)
-                Text("Face Unlock for Mac")
+                Text("Mac 面容解锁")
                     .font(GlanceTheme.Font.button)
                     .foregroundStyle(GlanceTheme.textSecondary)
 
                 Spacer(minLength: 12)
 
-                PillButton(title: "Next") {
+                PillButton(title: "下一步") {
                     controller.advance()
                 }
             }
@@ -59,7 +59,7 @@ struct PermissionsStepView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Permissions")
+            Text("权限")
                 .font(GlanceTheme.Font.title)
                 .foregroundStyle(GlanceTheme.textPrimary)
                 .padding(.leading, 4)
@@ -68,23 +68,23 @@ struct PermissionsStepView: View {
 
             PermissionRow(
                 title: "Accessibility",
-                detail: "Allow Glance to unlock your Mac",
+                detail: "允许 Glance 解锁你的 Mac",
                 granted: controller.accessibilityGranted
             ) { controller.grantAccessibility() }
 
             PermissionRow(
-                title: "Camera",
-                detail: "Allow Glance to recognize your face",
+                title: "摄像头",
+                detail: "允许 Glance 识别你的面容",
                 granted: controller.cameraPermission == .granted
             ) { controller.grantCamera() }
 
             // Spacer(minLength: 0)
 
             HStack(spacing: 10) {
-                PillButton(title: "Back", style: .secondary) {
+                PillButton(title: "返回", style: .secondary) {
                     controller.back()
                 }
-                PillButton(title: "Next", isEnabled: controller.bothPermissionsGranted) {
+                PillButton(title: "下一步", isEnabled: controller.bothPermissionsGranted) {
                     controller.advance()
                 }
             }
@@ -108,13 +108,13 @@ struct SecurityNoticeStepView: View {
                 .padding(.top, 25)
                 .padding(.leading, 4)
 
-            Text("Glance is not as secure as Apple's FaceID or TouchID.")
+            Text("Glance 的安全性不如 Apple 的 Face ID 或 Touch ID。")
                 .font(GlanceTheme.Font.title)
                 .foregroundStyle(GlanceTheme.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.leading, 4)
 
-            Text("It uses your Mac's standard webcam and is designed for convenience, not high-security authentication.")
+            Text("它使用 Mac 自带的摄像头，为便利而设计，不用于高安全级别的身份验证。")
                 .font(GlanceTheme.Font.passwordCaption)
                 .foregroundStyle(GlanceTheme.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -124,15 +124,15 @@ struct SecurityNoticeStepView: View {
             HStack(spacing: 10) {
                 if controller.isPostUpdateNotice {
                     // Declining isn't a real option here — see `declinePostUpdateNotice()`.
-                    PillButton(title: "No thanks", style: .secondary) {
+                    PillButton(title: "不用了", style: .secondary) {
                         controller.declinePostUpdateNotice()
                     }
                 } else {
-                    PillButton(title: "Back", style: .secondary) {
+                    PillButton(title: "返回", style: .secondary) {
                         controller.back()
                     }
                 }
-                PillButton(title: "I understand", isDefault: true) {
+                PillButton(title: "我已了解", isDefault: true) {
                     controller.advance()
                 }
             }
@@ -152,12 +152,12 @@ struct PreSetupStepView: View {
         VStack(spacing: 2) {
             HStack(alignment: .top, spacing: 2) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Set up Face\nRecognition")
+                    Text("设置面容\n识别")
                         .font(GlanceTheme.Font.title)
                         .foregroundStyle(GlanceTheme.textPrimary)
                         .fixedSize(horizontal: false, vertical: true)
 
-                    Text("Follow the directions\nshown on the screen")
+                    Text("按屏幕提示\n跟着做")
                         .font(GlanceTheme.Font.button)
                         .foregroundStyle(GlanceTheme.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -171,10 +171,10 @@ struct PreSetupStepView: View {
             Spacer(minLength: 4)
 
             HStack(spacing: 10) {
-                PillButton(title: "Back", style: .secondary) {
+                PillButton(title: "返回", style: .secondary) {
                     controller.back()
                 }
-                PillButton(title: "Next") {
+                PillButton(title: "下一步") {
                     controller.advance()
                 }
             }
@@ -198,13 +198,13 @@ struct SelectCameraStepView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Select camera")
+            Text("选择摄像头")
                 .font(GlanceTheme.Font.title)
                 .foregroundStyle(GlanceTheme.textPrimary)
                 .padding(.leading, 4)
                 .padding(.top, 14)
 
-            Text("Used for Face enrollment and for unlocking your Mac")
+            Text("用于录入面容和解锁你的 Mac")
                 .font(GlanceTheme.Font.passwordCaption)
                 .foregroundStyle(GlanceTheme.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -222,10 +222,10 @@ struct SelectCameraStepView: View {
             Spacer(minLength: 4)
 
             HStack(spacing: 10) {
-                PillButton(title: "Back", style: .secondary) {
+                PillButton(title: "返回", style: .secondary) {
                     controller.back()
                 }
-                PillButton(title: "Next") {
+                PillButton(title: "下一步") {
                     controller.advance()
                 }
             }
@@ -352,7 +352,7 @@ private struct EnrollmentCloseButton: View {
         }
         .buttonStyle(.plain)
         .onHover { isHovering = $0 }
-        .accessibilityLabel("Close")
+        .accessibilityLabel("关闭")
     }
 }
 
@@ -380,12 +380,12 @@ struct NameStepView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Name this face")
+            Text("为此面容命名")
                 .font(GlanceTheme.Font.title)
                 .foregroundStyle(GlanceTheme.textPrimary)
                 .padding(.leading, 4)
 
-            Text("Used to tell enrolled faces apart when more than one person is set up on this Mac.")
+            Text("当这台 Mac 上有多个用户时，用来区分不同的已录入面容。")
                 .font(GlanceTheme.Font.passwordCaption)
                 .foregroundStyle(GlanceTheme.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -393,7 +393,7 @@ struct NameStepView: View {
 
             Spacer(minLength: 2)
 
-            PillTextField(placeholder: "Enter a name...", text: $controller.pendingName, autofocus: true) {
+            PillTextField(placeholder: "输入名称…", text: $controller.pendingName, autofocus: true) {
                 controller.confirmName()
             }
 
@@ -405,7 +405,7 @@ struct NameStepView: View {
             }
 
             HStack(spacing: 10) {
-                PillButton(title: "Back", style: .secondary) {
+                PillButton(title: "返回", style: .secondary) {
                     controller.back()
                 }
                 PillButton(title: controller.nameStepPrimaryTitle, isEnabled: !trimmedName.isEmpty, isDefault: true) {
@@ -428,12 +428,12 @@ struct PasswordStepView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Enter your password")
+            Text("输入你的密码")
                 .font(GlanceTheme.Font.title)
                 .foregroundStyle(GlanceTheme.textPrimary)
                 .padding(.leading, 4)
 
-            Text("Your password is required to unlock your Mac. It is encrypted and securely stored on your device. Glance works entirely offline, so your password never leaves your Mac.")
+            Text("解锁 Mac 需要你的登录密码。密码会加密保存在本机。Glance 完全离线运行，密码不会离开你的 Mac。")
                 .font(GlanceTheme.Font.passwordCaption)
                 .foregroundStyle(GlanceTheme.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -441,7 +441,7 @@ struct PasswordStepView: View {
 
             Spacer(minLength: 2)
 
-            PillSecureField(placeholder: "Enter password...", text: $password, autofocus: true) {
+            PillSecureField(placeholder: "输入密码…", text: $password, autofocus: true) {
                 guard !password.isEmpty, !controller.isSavingPassword else { return }
                 Task { _ = await controller.finish(password: password) }
             }
@@ -455,11 +455,11 @@ struct PasswordStepView: View {
             // Spacer(minLength: 0)
 
             HStack(spacing: 10) {
-                PillButton(title: "Back", style: .secondary) {
+                PillButton(title: "返回", style: .secondary) {
                     controller.back()
                 }
                 PillButton(
-                    title: controller.isSavingPassword ? "Saving…" : "Confirm",
+                    title: controller.isSavingPassword ? "正在保存…" : "Confirm",
                     isEnabled: !password.isEmpty && !controller.isSavingPassword,
                     isDefault: true
                 ) {
@@ -478,7 +478,7 @@ struct PasswordStepView: View {
 struct CompleteStepView: View {
     var body: some View {
         HStack(spacing: 12) {
-            Text("You're all set")
+            Text("设置完成")
                 .font(GlanceTheme.Font.title)
                 .foregroundStyle(GlanceTheme.textPrimary)
             Spacer(minLength: 4)

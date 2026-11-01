@@ -38,10 +38,10 @@ enum LivenessCue: String, CaseIterable, Hashable, Identifiable {
     nonisolated var title: String {
         switch self {
         case .glossGlare: return "Gloss/glare"
-        case .deviceDetected: return "Device detected"
-        case .flatVs3D: return "Flat vs 3D"
+        case .deviceDetected: return "检测到设备"
+        case .flatVs3D: return "平面 / 立体"
         case .depthPose: return "Depth/pose"
-        case .blink: return "Blink"
+        case .blink: return "眨眼"
         }
     }
 
@@ -55,11 +55,11 @@ enum LivenessCue: String, CaseIterable, Hashable, Identifiable {
     /// One-line explanation of what firing actually means, for Face Lab.
     nonisolated var explanation: String {
         switch self {
-        case .glossGlare: return "Large flat specular highlight — glass/screen glare rather than skin's small scattered shine."
-        case .deviceDetected: return "A device-shaped rectangle overlaps the face — a phone or tablet held up."
-        case .flatVs3D: return "Held-out nose points miss the plane fit — the face has real depth."
-        case .depthPose: return "Nose offset tracks head yaw — the nose sits off the eye plane, so this isn't flat."
-        case .blink: return "Eye aspect ratio dipped and recovered — a photo cannot blink."
+        case .glossGlare: return "大面积平坦高光——更像玻璃或屏幕反光，而不是皮肤的小范围散射高光。"
+        case .deviceDetected: return "面部出现设备大小的矩形——像是举着手机或平板。"
+        case .flatVs3D: return "留出的鼻部点与拟合平面不符——这张脸有真实深度。"
+        case .depthPose: return "鼻部偏移随头部偏转变化——鼻子不在眼睛平面上，因此这不是平面。"
+        case .blink: return "眼睛宽高比下降后恢复——照片无法眨眼。"
         }
     }
 }
@@ -78,15 +78,15 @@ enum LivenessMode: String, CaseIterable, Identifiable, Sendable {
 
     var title: String {
         switch self {
-        case .light: return "Light"
-        case .heavy: return "Heavy"
+        case .light: return "轻度"
+        case .heavy: return "严格"
         }
     }
 
     var summary: String {
         switch self {
-        case .light: return "Only rejects obvious spoofs."
-        case .heavy: return "Also requires proof of a real face."
+        case .light: return "只拒绝明显的伪造。"
+        case .heavy: return "同时要求证明是真人。"
         }
     }
 }
@@ -160,9 +160,9 @@ enum LivenessDecision: Equatable {
     var denialReason: String? {
         guard case .denied(let cue) = self else { return nil }
         switch cue {
-        case .glossGlare: return "Screen glare detected — this looks like a photo on a display."
-        case .deviceDetected: return "A device-shaped rectangle was detected around the face — this looks like a photo or screen."
-        default: return "Liveness check failed."
+        case .glossGlare: return "检测到屏幕反光——这看起来像显示设备上的照片。"
+        case .deviceDetected: return "面部周围检测到设备大小的矩形——这看起来像照片或屏幕。"
+        default: return "活体检测未通过。"
         }
     }
 }

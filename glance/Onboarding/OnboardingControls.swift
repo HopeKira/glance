@@ -76,7 +76,7 @@ struct PermissionRow: View {
             Spacer(minLength: 4)
 
             Button(action: grant) {
-                Text(granted ? "Granted" : "Grant")
+                Text(granted ? "已授权" : "授权")
                     .font(GlanceTheme.Font.grantLabel)
                     .foregroundStyle(GlanceTheme.textPrimary)
                     .frame(width: OnboardingMetrics.grantButtonSize.width, height: OnboardingMetrics.grantButtonSize.height)
@@ -95,7 +95,7 @@ struct PermissionRow: View {
     }
 }
 
-/// The camera picker on the "Select camera" step: a full-width capsule row (same chrome
+/// The camera picker on the "选择摄像头" step: a full-width capsule row (same chrome
 /// as `PermissionRow`) holding a compact native pull-down, left-aligned — the same
 /// `Menu`/`.menuStyle(.borderlessButton)` construction as `CameraSettingsPage.cameraPicker`
 /// and `GeneralSettingsPage.displayPicker`. Stretching that construction to fill the whole
@@ -109,7 +109,7 @@ struct CameraSelectionPill: View {
     var body: some View {
         HStack {
             Menu {
-                Button("System default") { onSelect(nil) }
+                Button("系统默认") { onSelect(nil) }
                 ForEach(devices) { device in
                     Button(device.name) { onSelect(device.id) }
                 }

@@ -59,8 +59,8 @@ final class CameraManager: NSObject {
         guard permission == .granted else {
             errorMessage = "Camera access not granted (status: \(describe(status))). " +
                 (status == .restricted
-                    ? "macOS reports this as *restricted* — not a simple user denial. This usually means Screen Time content restrictions or an MDM/profile policy is blocking camera access for this app; toggling it in System Settings > Privacy & Security > Camera won't help until that restriction is lifted."
-                    : "Enable it in System Settings > Privacy & Security > Camera. If glance isn't listed there, quit the app, run `tccutil reset Camera com.jonathan.glance` in Terminal, then relaunch so macOS asks again.")
+                    ? "macOS 将其报告为*受限*——不是普通的用户拒绝。这通常是“屏幕使用时间”的内容限制或 MDM/描述文件策略在阻止此应用访问摄像头；在限制解除前，去“系统设置”>“隐私与安全性”>“摄像头”里打开也没用。"
+                    : "请在“系统设置”>“隐私与安全性”>“摄像头”中开启。如果列表里没有 Glance，请退出应用，在“终端”中执行 `tccutil reset Camera com.jonathan.glance`，然后重新打开应用，让 macOS 再次询问。")
             return
         }
 
@@ -121,7 +121,7 @@ final class CameraManager: NSObject {
     /// Called on every `start()` so a camera preference change in Settings takes effect without an app restart.
     private func reconcileDeviceIfNeeded() {
         guard let device = CameraDeviceCatalog.resolvedDevice() else {
-            errorMessage = "No camera device found."
+            errorMessage = "未找到摄像头设备。"
             return
         }
         guard device.uniqueID != currentInput?.device.uniqueID else { return }
@@ -136,7 +136,7 @@ final class CameraManager: NSObject {
             selectHighestResolutionFormat(for: device)
         } else {
             currentInput = nil
-            errorMessage = "No camera device found."
+            errorMessage = "未找到摄像头设备。"
         }
         session.commitConfiguration()
     }

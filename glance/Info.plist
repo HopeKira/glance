@@ -10,5 +10,15 @@
 	<false/>
 	<key>SUEnableInstallerLauncherService</key>
 	<false/>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>zh-Hans</string>
+	<key>CFBundleIconFile</key>
+	<string>GlanceIcon</string>
+	<key>CFBundleIconName</key>
+	<string>GlanceIcon</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>zh-Hans</string>
+	</array>
 </dict>
 </plist>

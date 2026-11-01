@@ -18,17 +18,17 @@ struct FaceLabView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 HStack {
-                    Text("Face Lab — On-Device Face Recognition (Debug)")
+                    Text("面容实验室——端侧面容识别（调试）")
                         .font(.headline)
                     Spacer()
-                    Button("Preview ✓") {
+                    Button("预览 ✓") {
                         NotchOverlayController.shared.present()
                         Task {
                             try? await Task.sleep(for: .seconds(1.5))
                             NotchOverlayController.shared.finish(success: true)
                         }
                     }
-                    Button("Preview ✗") {
+                    Button("预览 ✗") {
                         NotchOverlayController.shared.present(onRetry: {
                             Task {
                                 try? await Task.sleep(for: .seconds(1.5))
@@ -40,7 +40,7 @@ struct FaceLabView: View {
                             NotchOverlayController.shared.finish(success: false)
                         }
                     }
-                    Button("Start Onboarding") {
+                    Button("开始引导") {
                         controller.startFullOnboarding()
                     }
                     .disabled(enrollmentFlowIsRunning)
@@ -100,10 +100,10 @@ struct FaceLabView: View {
             if controller.store.isLocked {
                 HStack {
                     Circle().fill(.red).frame(width: 8, height: 8)
-                    Text("Session locked — enrolled faces are encrypted and can't be read or saved yet.")
+                    Text("会话已锁定——已录入的面容处于加密状态，暂时无法读取或保存。")
                         .font(.caption)
                     Spacer()
-                    Button("Unlock") {
+                    Button("解锁") {
                         Task { await controller.unlockSession() }
                     }
                 }
@@ -117,15 +117,15 @@ struct FaceLabView: View {
     // MARK: - Preview
 
     private var previewSection: some View {
-        GroupBox("Camera Preview") {
+        GroupBox("摄像头预览") {
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
                     Circle()
                         .fill(controller.camera.isRunning ? .green : .gray)
                         .frame(width: 10, height: 10)
-                    Text(controller.camera.isRunning ? "Running" : "Stopped")
+                    Text(controller.camera.isRunning ? "运行中" : "已停止")
                     Spacer()
-                    Button(controller.camera.isRunning ? "Stop" : "Start") {
+                    Button(controller.camera.isRunning ? "停止" : "开始") {
                         if controller.camera.isRunning {
                             controller.stop()
                         } else {
@@ -152,14 +152,14 @@ struct FaceLabView: View {
     // MARK: - Detection + alignment + embedding
 
     private var detectionSection: some View {
-        GroupBox("Detection") {
+        GroupBox("检测") {
             HStack(alignment: .top, spacing: 16) {
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Faces detected: \(controller.detectedFaces.count)")
                     if let quality = controller.currentResult?.quality {
                         Text("Capture quality: \(String(format: "%.0f%%", quality * 100))")
                     } else {
-                        Text("Capture quality: —")
+                        Text("采集质量：—")
                             .foregroundStyle(.secondary)
                     }
                     if let result = controller.currentResult {
@@ -179,9 +179,9 @@ struct FaceLabView: View {
                 Spacer()
 
                 VStack(spacing: 4) {
-                    Text("Aligned input").font(.caption).foregroundStyle(.secondary)
+                    Text("对齐输入").font(.caption).foregroundStyle(.secondary)
                     if let aligned = controller.currentResult?.alignedImage {
-                        Image(aligned, scale: 1, orientation: .up, label: Text("Aligned face"))
+                        Image(aligned, scale: 1, orientation: .up, label: Text("对齐后的人脸"))
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 96, height: 96)
@@ -190,7 +190,7 @@ struct FaceLabView: View {
                         RoundedRectangle(cornerRadius: 6)
                             .fill(Color.gray.opacity(0.15))
                             .frame(width: 96, height: 96)
-                            .overlay(Text("No face").font(.caption2).foregroundStyle(.secondary))
+                            .overlay(Text("无面部").font(.caption2).foregroundStyle(.secondary))
                     }
                 }
             }
@@ -202,11 +202,11 @@ struct FaceLabView: View {
 
     /// All five cues, split by role (deny vs. confirm) rather than which checker they live in.
     private var livenessSection: some View {
-        GroupBox("Liveness") {
+        GroupBox("活体") {
             VStack(alignment: .leading, spacing: 12) {
                 decisionStrip
 
-                Picker("Mode", selection: $controller.livenessMode) {
+                Picker("模式", selection: $controller.livenessMode) {
                     ForEach(LivenessMode.allCases) { mode in
                         Text(mode.title).tag(mode)
                     }
@@ -215,22 +215,22 @@ struct FaceLabView: View {
                 .frame(width: 220)
 
                 Text(controller.livenessMode == .light
-                     ? "Light: only the deny cues run. Anything not actively rejected is treated as live."
-                     : "Heavy: a deny cue fails the scan; at least one confirm cue must fire before it can pass.")
+                     ? "轻度：只运行“否决”线索，未被主动否决的都视为真人。"
+                     : "严格：任一“否决”线索触发即判定失败；至少要有一条“确认”线索触发才可能通过。")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
 
                 Divider()
 
                 cueGroup(
-                    title: "Deny — evidence of a spoof",
-                    caption: "Either one firing fails face unlock outright, and overrides any confirmation.",
+                    title: "否决——伪造迹象",
+                    caption: "任一条触发都会直接判定失败，并覆盖任何确认结果。",
                     cues: LivenessCue.allCases.filter { $0.role == .deny }
                 )
 
                 cueGroup(
-                    title: "Confirm — evidence of a real face",
-                    caption: "Any one firing passes liveness. None firing is not a failure — the scan just keeps looking.",
+                    title: "确认——真人迹象",
+                    caption: "任一条触发即通过活体检测；都没触发也不算失败——扫描会继续寻找。",
                     cues: LivenessCue.allCases.filter { $0.role == .confirm }
                 )
 
@@ -238,8 +238,8 @@ struct FaceLabView: View {
                 geometryDiagnosticsBlock
 
                 HStack {
-                    Button("Reset cues") { controller.resetLiveness() }
-                    Text("Cue firing latches for the whole scan — reset to re-test.")
+                    Button("重置线索") { controller.resetLiveness() }
+                    Text("线索一旦触发会锁定至本次扫描结束——重置后可重新测试。")
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                 }
@@ -253,9 +253,9 @@ struct FaceLabView: View {
         let (color, label): (Color, String) = {
             switch decision {
             case .pending:
-                return (.secondary, "Pending — nothing decided yet")
+                return (.secondary, "待定——尚未判定")
             case .confirmed(let cue):
-                return (.green, cue.map { "Live — confirmed by \($0.title)" } ?? "Live — auto-confirmed (Light mode)")
+                return (.green, cue.map { "Live — confirmed by \($0.title)" } ?? "真人——已自动确认（轻度模式）")
             case .denied(let cue):
                 return (.red, "Spoof — denied by \(cue.title)")
             }
@@ -345,10 +345,10 @@ struct FaceLabView: View {
                 if let glare = frame.glare {
                     Text("Specular: \(String(format: "%.4f", glare.specularFraction))  Cluster: \(String(format: "%.2f", glare.specularClusterRatio))  Crop: \(Int(glare.cropPixelWidth))px")
                 } else {
-                    Text("Specular: — (no native-resolution crop this frame)")
+                    Text("高光：—（本帧无原生分辨率裁剪）")
                 }
             } else {
-                Text("No liveness frame yet.")
+                Text("尚无活体帧。")
             }
         }
         .font(.caption2.monospacedDigit())
@@ -359,7 +359,7 @@ struct FaceLabView: View {
     private var geometryDiagnosticsBlock: some View {
         let geo = controller.currentGeometry
         return VStack(alignment: .leading, spacing: 6) {
-            Text("Flat vs 3D diagnostics")
+            Text("平面 / 立体诊断")
                 .font(.caption.weight(.semibold))
             Text("Landmarks: \(geo.validLandmarkCount)   Pairs: \(geo.pairsAnalyzed)   Rejected: \(geo.rejectedPairCount)")
             Text("Fit residual: \(ratioString(geo.medianFitResidual))  Probe residual: \(ratioString(geo.medianProbeResidual))  Excess: \(ratioString(geo.excessRatio))")
@@ -370,7 +370,7 @@ struct FaceLabView: View {
                 }.joined(separator: "  "))
             }
             if geo.planarConfidence == 0 {
-                Text("Abstaining — not enough head rotation to tell a plane from a still 3D face.")
+                Text("暂不判定——头部转动不足，无法区分平面与静态 3D 人脸。")
                     .foregroundStyle(.secondary)
             }
         }
@@ -392,19 +392,19 @@ struct FaceLabView: View {
     // MARK: - Enrollment
 
     private var enrollSection: some View {
-        GroupBox("Enroll") {
+        GroupBox("录入") {
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
-                    TextField("Name", text: $controller.enrollName)
+                    TextField("名称", text: $controller.enrollName)
                         .textFieldStyle(.roundedBorder)
-                    Button("Capture Sample") {
+                    Button("采集样本") {
                         controller.captureSample()
                     }
                     .disabled(controller.currentResult == nil || controller.store.isLocked)
                 }
 
                 if controller.store.identities.isEmpty {
-                    Text(controller.store.isLocked ? "Unlock the session to view enrolled identities." : "No identities enrolled yet.")
+                    Text(controller.store.isLocked ? "解锁会话后才能查看已录入的身份。" : "还没有已录入的身份。")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 } else {
@@ -437,14 +437,14 @@ struct FaceLabView: View {
     // MARK: - Multi-identity enrollment
 
     private var identitiesSection: some View {
-        GroupBox("Identities") {
+        GroupBox("身份") {
             VStack(alignment: .leading, spacing: 10) {
                 HStack {
                     Text("\(controller.store.identities.count) enrolled")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                     Spacer()
-                    Button("Add Identity") {
+                    Button("添加身份") {
                         controller.startAddIdentity()
                     }
                     .disabled(controller.store.isLocked || enrollmentFlowIsRunning)
@@ -452,8 +452,8 @@ struct FaceLabView: View {
 
                 if controller.store.identities.isEmpty {
                     Text(controller.store.isLocked
-                         ? "Unlock the session to view enrolled identities."
-                         : "No identities enrolled yet — run the guided nine-pose capture with Add Identity.")
+                         ? "解锁会话后才能查看已录入的身份。"
+                         : "还没有已录入的身份——使用“添加身份”进行九姿势引导采集。")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 } else {
@@ -476,10 +476,10 @@ struct FaceLabView: View {
     // MARK: - Recognition
 
     private var recognizeSection: some View {
-        GroupBox("Recognize") {
+        GroupBox("识别") {
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
-                    Button("Identify") {
+                    Button("识别") {
                         controller.recognize()
                     }
                     .disabled(controller.currentResult == nil || controller.store.identities.isEmpty)
@@ -496,13 +496,13 @@ struct FaceLabView: View {
                     HStack {
                         Circle().fill(.green).frame(width: 10, height: 10)
                         Text("Best match: \(best.name) — centroid \(String(format: "%.3f", best.centroidSimilarity)), max \(String(format: "%.3f", best.maxSampleSimilarity))")
-                        Text("MATCH").font(.caption.bold()).foregroundStyle(.green)
+                        Text("匹配").font(.caption.bold()).foregroundStyle(.green)
                     }
                 } else if let first = controller.recognitionResults.first {
                     HStack {
                         Circle().fill(.red).frame(width: 10, height: 10)
                         Text("Closest: \(first.name) — centroid \(String(format: "%.3f", first.centroidSimilarity)), max \(String(format: "%.3f", first.maxSampleSimilarity))")
-                        Text("NO MATCH").font(.caption.bold()).foregroundStyle(.red)
+                        Text("不匹配").font(.caption.bold()).foregroundStyle(.red)
                     }
                 }
 
@@ -531,22 +531,22 @@ struct FaceLabView: View {
     // MARK: - Threshold calibration
 
     private var calibrationSection: some View {
-        GroupBox("Threshold Calibration") {
+        GroupBox("阈值校准") {
             VStack(alignment: .leading, spacing: 8) {
-                Text("Run Identify, then tag whether that was really you or someone else — do this across lighting, angle, and expression, and again with a different person, to see where the two score distributions actually fall.")
+                Text("运行“识别”，然后标记这次是本人还是他人——请在多种光照、角度与表情下重复，并换一个人再试，以看清两组分数分布的真实位置。")
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
                 HStack {
-                    Button("Mark Genuine (this is me)") {
+                    Button("标记为本人（这是我）") {
                         controller.recordCalibrationSample(isGenuine: true)
                     }
-                    Button("Mark Impostor (not me)") {
+                    Button("标记为他人（不是我）") {
                         controller.recordCalibrationSample(isGenuine: false)
                     }
                     .disabled(controller.recognitionResults.isEmpty)
                     Spacer()
-                    Button("Clear", role: .destructive) {
+                    Button("清除", role: .destructive) {
                         controller.clearCalibrationSamples()
                     }
                     .disabled(controller.calibrationSamples.isEmpty)
@@ -573,17 +573,17 @@ struct FaceLabView: View {
                         HStack {
                             Text("Suggested threshold: \(String(format: "%.3f", suggested))")
                                 .font(.caption)
-                            Button("Use it") {
+                            Button("使用") {
                                 controller.threshold = Double(suggested)
                             }
                             if controller.calibrationDistributionsOverlap {
-                                Text("Distributions overlap — no single cutoff perfectly separates these samples yet.")
+                                Text("两个分布有重叠——目前还没有哪个阈值能完美区分这些样本。")
                                     .font(.caption)
                                     .foregroundStyle(.orange)
                             }
                         }
                     } else {
-                        Text("Record at least one genuine and one impostor sample to get a suggestion.")
+                        Text("至少记录一个“本人”和一个“他人”样本，才能给出建议。")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
@@ -596,7 +596,7 @@ struct FaceLabView: View {
     // MARK: - Debug log
 
     private var logSection: some View {
-        GroupBox("Log") {
+        GroupBox("日志") {
             ScrollView {
                 VStack(alignment: .leading, spacing: 2) {
                     ForEach(Array(controller.logLines.enumerated()), id: \.offset) { _, line in
@@ -660,7 +660,7 @@ private struct IdentityRow: View {
                             .foregroundStyle(.orange)
                     }
                     Spacer()
-                    Button("Recapture", action: recapture)
+                    Button("重新采集", action: recapture)
                         .disabled(!canStartFlow)
                     Button(role: .destructive, action: delete) {
                         Image(systemName: "trash")

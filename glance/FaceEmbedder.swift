@@ -30,15 +30,15 @@ enum FaceEmbedderError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .noObservation:
-            return "Vision did not produce a feature print for this image."
+            return "Vision 未能为此图像生成特征打印。"
         case .unsupportedElementType:
-            return "Feature print used an unexpected element type."
+            return "特征打印返回了意外的元素类型。"
         }
     }
 }
 
 struct VisionFeaturePrintEmbedder: FaceEmbedder {
-    nonisolated let name = "Vision Feature Print"
+    nonisolated let name = "Vision 特征打印"
     nonisolated let modelIdentifier = "vision-feature-print-v1"
     // Nominal hint only — `modelIdentifier` is the real discriminator `SecureFaceStore` relies on.
     nonisolated let embeddingDimension = 2048

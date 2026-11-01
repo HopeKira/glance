@@ -43,7 +43,7 @@ final class POCController {
         sessionError = nil
         do {
             try await Task.detached(priority: .userInitiated) {
-                try SecureCredentialManager.unlockSession(reason: "Authenticate to set up or use glance")
+                try SecureCredentialManager.unlockSession(reason: "验证身份以设置或使用 Glance")
             }.value
             isSessionUnlocked = true
         } catch {
@@ -63,7 +63,7 @@ final class POCController {
     /// be unlocked (Touch ID happens in `unlockSession()`, not here).
     func savePassword() async {
         guard !passwordInput.isEmpty else {
-            statusMessage = "Enter a password first."
+            statusMessage = "请先输入密码。"
             return
         }
         let plaintext = passwordInput
@@ -77,7 +77,7 @@ final class POCController {
                 defer { bytes.resetBytes(in: 0..<bytes.count) }
                 try SecureCredentialManager.savePassword(bytes)
             }.value
-            statusMessage = "Password saved and encrypted."
+            statusMessage = "密码已保存并加密。"
             hasStoredPassword = true
         } catch {
             statusMessage = "Save failed: \(error.localizedDescription)"
@@ -92,22 +92,22 @@ final class POCController {
     /// confirms the screen is actually locked.
     func injectStoredPassword(requireAuthoritativeLock: Bool = false) async {
         guard KeystrokeInjector.isAccessibilityTrusted() else {
-            statusMessage = "Accessibility not granted — open System Settings and enable glance."
+            statusMessage = "未获得“辅助功能”权限——请打开“系统设置”并启用 Glance。"
             return
         }
         guard SecureCredentialManager.isSessionUnlocked else {
-            statusMessage = "Session locked — authenticate with Touch ID first."
+            statusMessage = "会话已锁定——请先用触控 ID 验证。"
             return
         }
 
         if requireAuthoritativeLock {
             guard LockMonitor.isScreenActuallyLocked() else {
-                statusMessage = "Skipped: CGSession reports screen is not actually locked."
+                statusMessage = "已跳过：CGSession 报告屏幕并未真正锁定。"
                 return
             }
         }
 
-        statusMessage = "Injecting…"
+        statusMessage = "正在输入…"
         do {
             try await Task.detached(priority: .userInitiated) {
                 var bytes = try SecureCredentialManager.readPassword()

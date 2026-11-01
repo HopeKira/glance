@@ -59,7 +59,7 @@ final class UpdaterController {
         controller.startUpdater()
     }
 
-    /// User-initiated "Check for Updates" — shows Sparkle's standard progress UI.
+    /// User-initiated "检查更新" — shows Sparkle's standard progress UI.
     func checkForUpdates() {
         controller.checkForUpdates(nil)
     }

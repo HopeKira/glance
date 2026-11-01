@@ -19,13 +19,13 @@ enum KeychainError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .itemNotFound:
-            return "Keychain item not found."
+            return "未找到钥匙串项目。"
         case .unexpectedData:
-            return "Keychain item had an unexpected format."
+            return "钥匙串项目格式异常。"
         case .accessControlFailed(let msg):
             return "Couldn't create Keychain access control: \(msg)"
         case .authenticationFailed:
-            return "Authentication was cancelled or failed."
+            return "验证被取消或失败。"
         case .osStatus(let status):
             let message = SecCopyErrorMessageString(status, nil) as String? ?? "OSStatus \(status)"
             return "Keychain error: \(message)"

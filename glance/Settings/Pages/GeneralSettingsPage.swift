@@ -63,8 +63,8 @@ struct GeneralSettingsPage: View {
     private var lockedState: some View {
         SettingsEmptyStateView(
             icon: "lock.fill",
-            message: "Session locked",
-            buttonTitle: isUnlocking ? "Authenticating…" : "Unlock session",
+            message: "会话已锁定",
+            buttonTitle: isUnlocking ? "正在验证…" : "解锁会话",
             isButtonEnabled: !isUnlocking,
             caption: sessionError,
             action: unlock
@@ -76,7 +76,7 @@ struct GeneralSettingsPage: View {
     private var unlockedState: some View {
         VStack(alignment: .leading, spacing: SettingsMetrics.rowSpacing) {
             SettingsGroup {
-                SettingsRowContent(title: "Launch at login") {
+                SettingsRowContent(title: "登录时启动") {
                     GlanceToggle(isOn: Binding(
                         get: { launchAtLoginEnabled },
                         set: { newValue in
@@ -92,11 +92,11 @@ struct GeneralSettingsPage: View {
                     ))
                 }
                 SettingsGroupDivider()
-                SettingsRowContent(title: "Show in menu bar") {
+                SettingsRowContent(title: "在菜单栏中显示") {
                     GlanceToggle(isOn: $settings.showsInMenuBar)
                 }
                 SettingsGroupDivider()
-                SettingsRowContent(title: "Enable Face Unlock") {
+                SettingsRowContent(title: "启用面容解锁") {
                     GlanceToggle(isOn: $coordinator.isEnabled)
                 }
                 SettingsGroupDivider()
@@ -111,7 +111,7 @@ struct GeneralSettingsPage: View {
                 inputMonitoring = SpaceKeyMonitor.inputMonitoringAccess
             }
             .onChange(of: settings.unlockTriggers) { oldValue, newValue in
-                // Only prompt on the transition into selecting "On space".
+                // Only prompt on the transition into selecting "按空格时".
                 SpaceKeyMonitor.log.info("unlockTriggers changed: old=\(String(describing: oldValue), privacy: .public) new=\(String(describing: newValue), privacy: .public) state=\(String(describing: inputMonitoring), privacy: .public)")
                 if newValue.contains(.onSpace), !oldValue.contains(.onSpace), inputMonitoring != .granted {
                     SpaceKeyMonitor.requestInputMonitoringAccess()
@@ -132,22 +132,22 @@ struct GeneralSettingsPage: View {
             }
 
             VStack(alignment: .leading, spacing: 8) {
-                SettingsSectionTitle(text: "Behaviour")
+                SettingsSectionTitle(text: "行为")
                 SettingsGroup {
-                    SettingsRowContent(title: "Retry on notch hover") {
+                    SettingsRowContent(title: "悬停刘海时重试") {
                         GlanceToggle(isOn: $settings.retryOnHover)
                     }
                     SettingsGroupDivider()
-                    SettingsRowContent(title: "Auto retry once after failure") {
+                    SettingsRowContent(title: "失败后自动重试一次") {
                         GlanceToggle(isOn: $settings.autoRetryOnce)
                     }
                     SettingsGroupDivider()
-                    SettingsRowContent(title: "Haptic feedback") {
+                    SettingsRowContent(title: "触感反馈") {
                         GlanceToggle(isOn: $settings.hapticFeedbackEnabled)
                     }
                     SettingsGroupDivider()
                     SettingsSteppedSliderRowContent(
-                        title: "Face detection duration",
+                        title: "面容检测时长",
                         valueLabel: "\(settings.faceDetectionSeconds)s",
                         index: Binding(
                             get: { Double(settings.faceDetectionSeconds - GlanceSettings.faceDetectionRange.lowerBound) },
@@ -159,9 +159,9 @@ struct GeneralSettingsPage: View {
             }
 
             VStack(alignment: .leading, spacing: 8) {
-                SettingsSectionTitle(text: "Animation")
+                SettingsSectionTitle(text: "动画")
                 SettingsGroup {
-                    SettingsRowContent(title: "Show animation") {
+                    SettingsRowContent(title: "显示动画") {
                         GlanceToggle(isOn: $settings.showUnlockAnimation)
                     }
                     SettingsGroupDivider()
@@ -184,11 +184,11 @@ struct GeneralSettingsPage: View {
         }
     }
 
-    /// Shown while "On space" is selected but Input Monitoring isn't granted.
+    /// Shown while "按空格时" is selected but Input Monitoring isn't granted.
     private func inputMonitoringNotice() -> some View {
         VStack(alignment: .leading, spacing: 6) {
-            SettingsCaption(text: "“On space” reads the keyboard directly to see the space key on the lock screen, which needs Accessibility — the same permission glance uses to type your password. Switch glance on under Privacy & Security → Accessibility, then quit and reopen glance.")
-            Button("Open Accessibility settings") {
+            SettingsCaption(text: "“按空格时”会直接读取键盘，以识别锁屏界面上的空格键，这需要“辅助功能”权限——与 Glance 输入密码所用的权限相同。请在“隐私与安全性”→“辅助功能”中打开 Glance，然后退出并重新打开 Glance。")
+            Button("打开“辅助功能”设置") {
                 // Covers the rare install with no Accessibility grant at all.
                 SpaceKeyMonitor.requestInputMonitoringAccess()
                 openSystemSettings(pane: "Privacy_Accessibility")
@@ -208,9 +208,9 @@ struct GeneralSettingsPage: View {
     }
 
     private func displayPicker() -> some View {
-        SettingsRowContent(title: "Display on") {
+        SettingsRowContent(title: "显示在") {
             SettingsMenuPickerPill(label: displayLabel) {
-                Button("Main display") {
+                Button("主显示器") {
                     settings.preferredDisplayID = nil
                     settings.preferredDisplayName = nil
                 }
@@ -238,13 +238,13 @@ struct GeneralSettingsPage: View {
     }
 
     private var displayLabel: String {
-        guard let targetID = settings.preferredDisplayID else { return "Main display" }
+        guard let targetID = settings.preferredDisplayID else { return "主显示器" }
         if let connected = screens.first(where: { $0.stableDisplayID == targetID }) {
             return connected.localizedName
         }
         // Picked, but not currently connected — say so rather than showing
         // a bare ID or falling back to another display's name.
-        guard let name = settings.preferredDisplayName else { return "Selected display (disconnected)" }
+        guard let name = settings.preferredDisplayName else { return "所选显示器（已断开）" }
         return "\(name) (disconnected)"
     }
 }

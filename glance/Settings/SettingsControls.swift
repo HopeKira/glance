@@ -35,7 +35,7 @@ struct SettingsInfoButton: View {
                 .foregroundStyle(SettingsMetrics.textTertiary)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("More information")
+        .accessibilityLabel("更多信息")
         .popover(isPresented: $isPresented, arrowEdge: .bottom) {
             Text(text)
                 .font(.system(size: 12))
@@ -112,7 +112,7 @@ struct SettingsRowContent<Trailing: View>: View {
 
 /// A trailing `Menu` rendered as a pill that hugs its label — the capsule
 /// grows and shrinks with the current selection's text rather than sitting
-/// at a fixed width. Shared by General's "Display on" row and Camera's
+/// at a fixed width. Shared by General's "显示在" row and Camera's
 /// per-slot device pickers, so every dropdown in Settings looks the same.
 struct SettingsMenuPickerPill<MenuContent: View>: View {
     let label: String
@@ -682,7 +682,7 @@ struct SettingsOptionTile<Preview: View>: View {
 }
 
 /// Unlock animation picker — connects, inside one `SettingsGroup`, to the
-/// "Show animation" toggle above it (see `GeneralSettingsPage`).
+/// "显示动画" toggle above it (see `GeneralSettingsPage`).
 struct UnlockAnimationPicker: View {
     @Binding var selection: UnlockAnimationStyle
     var isEnabled: Bool = true
@@ -692,8 +692,8 @@ struct UnlockAnimationPicker: View {
 
     var body: some View {
         SettingsLabeledOptionRow(
-            title: "Style",
-            subtitle: "The animation that appears when unlocking your Mac"
+            title: "样式",
+            subtitle: "解锁 Mac 时播放的动画"
         ) {
             ForEach(UnlockAnimationStyle.selectableCases) { style in
                 SettingsOptionTile(
@@ -779,8 +779,8 @@ struct LivenessModePicker: View {
 
     var body: some View {
         SettingsLabeledOptionRow(
-            title: "Strength",
-            subtitle: "Light includes basic protection. Heavy requires you to blink or slightly move your head."
+            title: "强度",
+            subtitle: "轻度包含基础防护；严格模式要求你眨眼或轻微转头。"
         ) {
             ForEach(LivenessMode.allCases) { mode in
                 SettingsOptionTile(
@@ -811,7 +811,7 @@ struct LivenessModePicker: View {
 }
 
 /// Multi-select picker for what arms Face Unlock — connects, inside one
-/// `SettingsGroup`, to the "Enable Face Unlock" toggle above it. Tiles
+/// `SettingsGroup`, to the "启用面容解锁" toggle above it. Tiles
 /// toggle rather than replace, but the last remaining selection is sticky:
 /// with nothing selected the notch would never appear.
 struct UnlockTriggerPicker: View {
@@ -819,7 +819,7 @@ struct UnlockTriggerPicker: View {
     var isEnabled: Bool = true
 
     var body: some View {
-        SettingsLabeledOptionRow(title: "Triggers", subtitle: "Select multiple") {
+        SettingsLabeledOptionRow(title: "触发方式", subtitle: "可多选") {
             ForEach(UnlockTrigger.allCases) { trigger in
                 let isSelected = selection.contains(trigger)
                 SettingsOptionTile(

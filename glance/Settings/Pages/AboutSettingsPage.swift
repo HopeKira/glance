@@ -48,8 +48,8 @@ struct AboutSettingsPage: View {
 
         SettingsGroup {
             SettingsActionRowContent(
-                title: "Check for Updates",
-                buttonTitle: "Check",
+                title: "检查更新",
+                buttonTitle: "检查",
                 isEnabled: updater.canCheckForUpdates
             ) {
                 updater.checkForUpdates()
@@ -57,15 +57,15 @@ struct AboutSettingsPage: View {
 
             SettingsGroupDivider()
 
-            SettingsRowContent(title: "Automatically check for updates") {
+            SettingsRowContent(title: "自动检查更新") {
                 GlanceToggle(isOn: $updater.automaticallyChecksForUpdates)
             }
 
             SettingsGroupDivider()
 
             SettingsActionRowContent(
-                title: "Send Feedback",
-                buttonTitle: "Send"
+                title: "发送反馈",
+                buttonTitle: "发送"
             ) {
                 if let url = URL(string: "https://tryglance.app/feedback") {
                     NSWorkspace.shared.open(url)

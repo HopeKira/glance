@@ -23,7 +23,7 @@ enum ArcFaceEmbedderError: LocalizedError {
         case .modelLoadFailed(let detail):
             return "Failed to load the ArcFace Core ML model: \(detail)"
         case .pixelBufferCreationFailed:
-            return "Couldn't prepare the aligned face image for Core ML."
+            return "无法准备用于 Core ML 的对齐人脸图像。"
         case .unexpectedInputSize(let got, let expected):
             return "ArcFaceEmbedder expects a \(expected)x\(expected) aligned image, got \(got.0)x\(got.1). Run the face through FaceAligner first."
         case .unexpectedOutput(let detail):

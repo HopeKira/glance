@@ -70,7 +70,7 @@ final class FaceLabController {
         livenessAnalyzer.reset()
         currentLiveness = .empty
         currentGeometry = .empty
-        log("Liveness cues reset.")
+        log("活体线索已重置。")
     }
 
     var enrollName: String = ""
@@ -105,7 +105,7 @@ final class FaceLabController {
         if let error = camera.errorMessage {
             log(error)
         } else {
-            log("Camera started.")
+            log("摄像头已启动。")
         }
     }
 
@@ -117,7 +117,7 @@ final class FaceLabController {
         currentLiveness = .empty
         currentGeometry = .empty
         lastLivenessFrame = nil
-        log("Camera stopped.")
+        log("摄像头已停止。")
     }
 
     /// Mirrors `POCController.unlockSession()` so Face Lab can unlock the session without leaving this page.
@@ -125,10 +125,10 @@ final class FaceLabController {
         sessionError = nil
         do {
             try await Task.detached(priority: .userInitiated) {
-                try SecureCredentialManager.unlockSession(reason: "Authenticate to use Face Lab")
+                try SecureCredentialManager.unlockSession(reason: "验证身份以使用面容实验室")
             }.value
             store.reloadIfUnlocked()
-            log("Session unlocked.")
+            log("会话已解锁。")
         } catch {
             sessionError = error.localizedDescription
         }
@@ -178,12 +178,12 @@ final class FaceLabController {
 
     func captureSample() {
         guard let result = currentResult else {
-            log("No face detected — can't capture a sample.")
+            log("未检测到人脸——无法采集样本。")
             return
         }
         let trimmedName = enrollName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedName.isEmpty else {
-            log("Enter a name before capturing a sample.")
+            log("请先输入名称再采集样本。")
             return
         }
         do {
@@ -220,13 +220,13 @@ final class FaceLabController {
     /// two live sessions with different configurations.
     func startFullOnboarding() {
         camera.stop()
-        log("Starting the full onboarding flow.")
+        log("开始完整引导流程。")
         OnboardingController.startFlow()
     }
 
     func startAddIdentity() {
         camera.stop()
-        log("Starting guided enrollment for a new identity.")
+        log("开始为新身份进行引导式录入。")
         OnboardingController.startAddIdentity()
     }
 
@@ -245,13 +245,13 @@ final class FaceLabController {
 
     func recognize() {
         guard let result = currentResult else {
-            log("No face detected — can't recognize.")
+            log("未检测到人脸——无法识别。")
             recognitionResults = []
             bestMatch = nil
             return
         }
         guard !store.identities.isEmpty else {
-            log("No enrolled identities yet — capture a sample first.")
+            log("还没有已录入的身份——请先采集样本。")
             recognitionResults = []
             bestMatch = nil
             return
@@ -274,7 +274,7 @@ final class FaceLabController {
         }
 
         if let best = scored.first {
-            let verdict = (bestMatch != nil) ? "MATCH" : "no match"
+            let verdict = (bestMatch != nil) ? "MATCH" : "不匹配"
             let staleNote = best.identity.isStale(comparedTo: embedder) ? " [STALE — re-enroll under current model]" : ""
             log("Recognize: best = \(best.identity.name) centroid=\(String(format: "%.3f", best.centroidSimilarity)) max=\(String(format: "%.3f", best.maxSampleSimilarity)) -> \(verdict)\(staleNote)")
         }
@@ -289,7 +289,7 @@ final class FaceLabController {
     /// threshold slider actually gates on).
     func recordCalibrationSample(isGenuine: Bool) {
         guard let top = recognitionResults.first else {
-            log("Nothing to record — run Identify first.")
+            log("没有可记录的内容——请先运行“识别”。")
             return
         }
         calibrationSamples.append(CalibrationSample(centroidSimilarity: top.centroidSimilarity, isGenuine: isGenuine))

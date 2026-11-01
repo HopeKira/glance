@@ -98,15 +98,15 @@ enum EnrollmentPose: Int, CaseIterable {
 
     var instruction: String {
         switch self {
-        case .center: return "Look straight at the camera"
-        case .left: return "Turn your head slightly left"
-        case .topLeft: return "Turn your head to the top left"
-        case .top: return "Turn your head slightly up"
-        case .topRight: return "Turn your head to the top right"
-        case .right: return "Turn your head slightly right"
-        case .bottomRight: return "Turn your head to the bottom right"
-        case .bottom: return "Turn your head slightly down"
-        case .bottomLeft: return "Turn your head to the bottom left"
+        case .center: return "正对摄像头"
+        case .left: return "头稍微向左转"
+        case .topLeft: return "头向左上方转"
+        case .top: return "头稍微向上抬"
+        case .topRight: return "头向右上方转"
+        case .right: return "头稍微向右转"
+        case .bottomRight: return "头向右下方转"
+        case .bottom: return "头稍微向下低"
+        case .bottomLeft: return "头向左下方转"
         }
     }
 
@@ -168,7 +168,7 @@ final class OnboardingController {
         }
     }
 
-    /// Fires exactly once, after the "You're all set" screen dismisses — either the true
+    /// Fires exactly once, after the "设置完成" screen dismisses — either the true
     /// first-run flow (so `AppDelegate` can open Settings only once onboarding UI is gone)
     /// or the standalone post-update notice (so it can resume startup). `nil` otherwise.
     var onFirstRunComplete: (() -> Void)?
@@ -188,7 +188,7 @@ final class OnboardingController {
     let isPostUpdateNotice: Bool
 
     /// True only for the genuine first-run flow (also true when replayed via Face Lab's
-    /// "Start Onboarding" debug button). Gates whether `step`'s `didSet` persists a resume point.
+    /// "开始引导" debug button). Gates whether `step`'s `didSet` persists a resume point.
     private var isFirstRunFlow: Bool { !isEnrollmentOnly && !isPasswordOnly && !isPostUpdateNotice }
 
     /// Whether the intro's one-time light sweep already played this session. Lives here
@@ -223,7 +223,7 @@ final class OnboardingController {
     /// pick the scroll direction for the blur transition.
     private(set) var navDirection: NavDirection = .forward
 
-    /// Entry point used by Face Lab's "Start Onboarding" button, and by `AppDelegate` at
+    /// Entry point used by Face Lab's "开始引导" button, and by `AppDelegate` at
     /// first launch and whenever the user tries to reach Settings before onboarding is done.
     ///
     /// - Parameter resumingAt: where a previously-quit first-run flow left off, or `nil`
@@ -243,14 +243,14 @@ final class OnboardingController {
         NotchOverlayController.shared.presentOnboarding(controller)
     }
 
-    /// Entry point used by Settings' "Set up Face Unlock" / "Redo Face Enrollment" — presents
+    /// Entry point used by Settings' "设置面容解锁" / "Redo Face Enrollment" — presents
     /// the guided pose-capture plus naming step and saves directly once done.
     ///
     /// The Your Face page is still single-identity, so this keeps targeting
     /// `identities.first`: "redo" replaces it in place, or enrolls someone new.
     static func startEnrollmentOnly() {
         Task { @MainActor in
-            guard await unlockForEnrollment(reason: "Authenticate to re-enroll your face") else { return }
+            guard await unlockForEnrollment(reason: "验证身份以重新录入你的面容") else { return }
             let store = FaceEnrollmentStore.shared
             store.reloadIfUnlocked()
             let existing = store.identities.first
@@ -261,11 +261,11 @@ final class OnboardingController {
         }
     }
 
-    /// Entry point used by Face Lab's "Add Identity" — always enrolls a *new* person
+    /// Entry point used by Face Lab's "添加身份" — always enrolls a *new* person
     /// alongside whoever is already enrolled; name starts empty rather than `defaultName`.
     static func startAddIdentity() {
         Task { @MainActor in
-            guard await unlockForEnrollment(reason: "Authenticate to enroll another face") else { return }
+            guard await unlockForEnrollment(reason: "验证身份以录入另一张面容") else { return }
             FaceEnrollmentStore.shared.reloadIfUnlocked()
             present(target: .newIdentity, prefillName: "")
         }
@@ -275,7 +275,7 @@ final class OnboardingController {
     /// samples wholesale, keeping its id and enrollment date.
     static func startRecapture(of identity: FaceIdentity) {
         Task { @MainActor in
-            guard await unlockForEnrollment(reason: "Authenticate to re-enroll this face") else { return }
+            guard await unlockForEnrollment(reason: "验证身份以重新录入这张面容") else { return }
             FaceEnrollmentStore.shared.reloadIfUnlocked()
             present(target: .replacing(identity.id), prefillName: identity.name)
         }
@@ -301,7 +301,7 @@ final class OnboardingController {
         NotchOverlayController.shared.presentOnboarding(controller)
     }
 
-    /// Entry point used by Settings' "Change password" — presents only the password step,
+    /// Entry point used by Settings' "更改密码" — presents only the password step,
     /// reusing the same field, validation and save path as first-run setup.
     ///
     /// No Touch ID prompt here: the only caller already has a live session, and
@@ -394,14 +394,14 @@ final class OnboardingController {
 
         var instruction: String {
             switch self {
-            case .left: return "Too far left"
-            case .topLeft: return "Too far toward the top left"
-            case .up: return "Too far up"
-            case .topRight: return "Too far toward the top right"
-            case .right: return "Too far right"
-            case .bottomRight: return "Too far toward the bottom right"
-            case .down: return "Too far down"
-            case .bottomLeft: return "Too far toward the bottom left"
+            case .left: return "太靠左"
+            case .topLeft: return "太靠左上"
+            case .up: return "太靠上"
+            case .topRight: return "太靠右上"
+            case .right: return "太靠右"
+            case .bottomRight: return "太靠右下"
+            case .down: return "太靠下"
+            case .bottomLeft: return "太靠左下"
             }
         }
     }
@@ -452,9 +452,9 @@ final class OnboardingController {
     /// Copy shown under the camera: pose guidance, a closer-up prompt, or the
     /// completion line.
     var enrollmentInstruction: String {
-        if enrollmentComplete { return "Face captured" }
+        if enrollmentComplete { return "已采集面容" }
         if let excessiveTurn { return excessiveTurn.instruction }
-        if isTooFar { return "Bring your face closer" }
+        if isTooFar { return "脸再靠近一点" }
         return currentPose?.instruction ?? ""
     }
 
@@ -574,7 +574,7 @@ final class OnboardingController {
         }
     }
 
-    /// "No thanks" on the post-update notice. Declining isn't a real option — the app
+    /// "不用了" on the post-update notice. Declining isn't a real option — the app
     /// requires acknowledgment before it'll run — so this quits rather than dismissing back
     /// into use.
     func declinePostUpdateNotice() {
@@ -735,7 +735,7 @@ final class OnboardingController {
            let device = cameraDevices.first(where: { $0.id == id }) {
             return device.name
         }
-        guard let name = resolveDefaultCameraDevice()?.localizedName else { return "System default" }
+        guard let name = resolveDefaultCameraDevice()?.localizedName else { return "系统默认" }
         return "\(name) (Default)"
     }
 
@@ -1002,7 +1002,7 @@ final class OnboardingController {
     func confirmName() {
         let trimmed = pendingName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else {
-            nameError = "Enter a name."
+            nameError = "请输入名称。"
             return
         }
         // Skipped silently in the full setup flow, where the store is still locked and
@@ -1024,7 +1024,7 @@ final class OnboardingController {
             try commitEnrollment(name: trimmed)
         } catch {
             // Realistically a session that lapsed between the entry point's Touch ID
-            // prompt and now. Stay on this step rather than showing "You're all set"
+            // prompt and now. Stay on this step rather than showing "设置完成"
             // over a save that didn't happen.
             nameError = error.localizedDescription
             return
@@ -1065,7 +1065,7 @@ final class OnboardingController {
         guard !isSavingPassword else { return false }
         let trimmed = password
         guard !trimmed.isEmpty else {
-            passwordError = "Enter a password."
+            passwordError = "请输入密码。"
             return false
         }
         isSavingPassword = true
@@ -1073,7 +1073,7 @@ final class OnboardingController {
 
         do {
             try await Task.detached(priority: .userInitiated) {
-                try SecureCredentialManager.unlockSession(reason: "Set up Glance")
+                try SecureCredentialManager.unlockSession(reason: "设置 Glance")
             }.value
 
             // Only now that the session key exists can samples be encrypted and saved.
@@ -1109,7 +1109,7 @@ final class OnboardingController {
         }
     }
 
-    /// The "You're all set" screen has no controls — it dismisses itself, then hands off
+    /// The "设置完成" screen has no controls — it dismisses itself, then hands off
     /// to `onFirstRunComplete` once the notch is gone, for first-run and the post-update
     /// notice alike.
     private func scheduleCompletionDismiss() {

@@ -9,7 +9,7 @@
 //
 //  Graceful degradation: if access isn't granted or `IOHIDManagerOpen` fails, `start()` no-ops rather than crashing.
 //
-//  Not a keylogger: only runs while locked + opted into "On space", and the callback checks only whether the key is the spacebar.
+//  Not a keylogger: only runs while locked + opted into "按空格时", and the callback checks only whether the key is the spacebar.
 //
 
 import Foundation
@@ -108,7 +108,7 @@ final class SpaceKeyMonitor {
             IOHIDManagerUnscheduleFromRunLoop(mgr, CFRunLoopGetMain(), CFRunLoopMode.commonModes.rawValue)
             return
         }
-        Self.log.info("listening for space on the lock screen")
+        Self.log.info("正在监听锁屏界面的空格键")
         manager = mgr
     }
 
