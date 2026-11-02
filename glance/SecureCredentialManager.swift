@@ -142,11 +142,7 @@ enum SecureCredentialManager {
         }
 
         let key = SymmetricKey(size: .bits256)
-        // 没有 application-identifier 权限（ad-hoc 签名）时不能建 userPresence 访问控制条目，
-        // 否则 SecItemAdd 直接 -34018。降级为普通条目，Touch ID 由 POCController.unlockSession() 前置弹出。
-        let access = KeychainManager.hasApplicationIdentifierEntitlement
-            ? try KeychainManager.makeUserPresenceAccessControl()
-            : nil
+        let access = try KeychainManager.makeUserPresenceAccessControl()
         try KeychainManager.save(
             account: sessionKeyAccount,
             data: key.withUnsafeBytes { Data($0) },

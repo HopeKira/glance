@@ -8,7 +8,6 @@
 
 import Foundation
 import Observation
-import LocalAuthentication
 
 @Observable
 @MainActor
@@ -43,7 +42,6 @@ final class POCController {
     func unlockSession() async {
         sessionError = nil
         do {
-            try await authenticateIfKeychainGateUnavailable()
             try await Task.detached(priority: .userInitiated) {
                 try SecureCredentialManager.unlockSession(reason: "验证身份以设置或使用 Glance")
             }.value
@@ -51,27 +49,6 @@ final class POCController {
         } catch {
             isSessionUnlocked = false
             sessionError = error.localizedDescription
-        }
-    }
-
-    /// 本机构建没有 `com.apple.application-identifier`（ad-hoc 签名）时，钥匙串条目无法带 userPresence 访问控制，
-    /// 系统不会弹 Touch ID。这里补一次显式的生物识别/密码验证，保证解锁会话仍然需要「人」的确认。
-    private func authenticateIfKeychainGateUnavailable() async throws {
-        guard !KeychainManager.hasApplicationIdentifierEntitlement else { return }
-        guard !SecureCredentialManager.isSessionUnlocked else { return }
-        let context = LAContext()
-        context.localizedReason = "验证身份以解锁 Glance 会话"
-        var error: NSError?
-        guard context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error) else {
-            throw KeychainError.authenticationFailed
-        }
-        do {
-            _ = try await context.evaluatePolicy(
-                .deviceOwnerAuthentication,
-                localizedReason: "验证身份以解锁 Glance 会话"
-            )
-        } catch {
-            throw KeychainError.authenticationFailed
         }
     }
 
