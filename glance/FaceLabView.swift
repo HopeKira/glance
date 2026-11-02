@@ -82,7 +82,7 @@ struct FaceLabView: View {
             Circle()
                 .fill(controller.pipeline.usingFallbackEmbedder ? .orange : .green)
                 .frame(width: 8, height: 8)
-            Text("Embedder: \(controller.pipeline.embedder.name)")
+            Text("嵌入模型：\(controller.pipeline.embedder.name)")
                 .font(.caption)
             if controller.pipeline.usingFallbackEmbedder {
                 Text("(ArcFace unavailable — see log)")
@@ -155,18 +155,18 @@ struct FaceLabView: View {
         GroupBox("检测") {
             HStack(alignment: .top, spacing: 16) {
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("Faces detected: \(controller.detectedFaces.count)")
+                    Text("检测到人脸：\(controller.detectedFaces.count)")
                     if let quality = controller.currentResult?.quality {
-                        Text("Capture quality: \(String(format: "%.0f%%", quality * 100))")
+                        Text("采集质量：\(String(format: "%.0f%%", quality * 100))")
                     } else {
                         Text("采集质量：—")
                             .foregroundStyle(.secondary)
                     }
                     if let result = controller.currentResult {
-                        Text("Alignment: \(result.alignmentTier.rawValue)")
+                        Text("对齐：\(result.alignmentTier.rawValue)")
                             .font(.caption)
                             .foregroundStyle(.secondary)
-                        Text("Embedding: \(result.embedding.count) numbers")
+                        Text("特征向量：\(result.embedding.count) numbers")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                         // Calibration aid for onboarding's pose gating (see OnboardingController's poseMatches).
@@ -341,9 +341,9 @@ struct FaceLabView: View {
         VStack(alignment: .leading, spacing: 2) {
             if let frame = controller.lastLivenessFrame {
                 Text("Left EAR: \(ratioString(frame.leftEyeAspectRatio))  Right EAR: \(ratioString(frame.rightEyeAspectRatio))  Nose offset: \(ratioString(frame.noseOffsetRatio))")
-                Text("Device overlap: \(percentString(frame.deviceOverlapFraction))")
+                Text("设备重叠：\(percentString(frame.deviceOverlapFraction))")
                 if let glare = frame.glare {
-                    Text("Specular: \(String(format: "%.4f", glare.specularFraction))  Cluster: \(String(format: "%.2f", glare.specularClusterRatio))  Crop: \(Int(glare.cropPixelWidth))px")
+                    Text("高光：\(String(format: "%.4f", glare.specularFraction))  Cluster: \(String(format: "%.2f", glare.specularClusterRatio))  Crop: \(Int(glare.cropPixelWidth))px")
                 } else {
                     Text("高光：—（本帧无原生分辨率裁剪）")
                 }
@@ -415,7 +415,7 @@ struct FaceLabView: View {
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                             if identity.isStale(comparedTo: controller.pipeline.embedder) {
-                                Text("stale")
+                                Text("已过期")
                                     .font(.caption2.bold())
                                     .foregroundStyle(.orange)
                             }
@@ -486,7 +486,7 @@ struct FaceLabView: View {
 
                     Spacer()
 
-                    Text("Threshold: \(String(format: "%.2f", controller.threshold))")
+                    Text("阈值：\(String(format: "%.2f", controller.threshold))")
                         .font(.caption)
                     Slider(value: $controller.threshold, in: -1...1)
                         .frame(width: 160)
@@ -495,13 +495,13 @@ struct FaceLabView: View {
                 if let best = controller.bestMatch {
                     HStack {
                         Circle().fill(.green).frame(width: 10, height: 10)
-                        Text("Best match: \(best.name) — centroid \(String(format: "%.3f", best.centroidSimilarity)), max \(String(format: "%.3f", best.maxSampleSimilarity))")
+                        Text("最佳匹配：\(best.name) — centroid \(String(format: "%.3f", best.centroidSimilarity)), max \(String(format: "%.3f", best.maxSampleSimilarity))")
                         Text("匹配").font(.caption.bold()).foregroundStyle(.green)
                     }
                 } else if let first = controller.recognitionResults.first {
                     HStack {
                         Circle().fill(.red).frame(width: 10, height: 10)
-                        Text("Closest: \(first.name) — centroid \(String(format: "%.3f", first.centroidSimilarity)), max \(String(format: "%.3f", first.maxSampleSimilarity))")
+                        Text("最接近：\(first.name) — centroid \(String(format: "%.3f", first.centroidSimilarity)), max \(String(format: "%.3f", first.maxSampleSimilarity))")
                         Text("不匹配").font(.caption.bold()).foregroundStyle(.red)
                     }
                 }
@@ -512,12 +512,12 @@ struct FaceLabView: View {
                         HStack {
                             Text(result.name)
                             if result.isStale {
-                                Text("stale").font(.caption2.bold()).foregroundStyle(.orange)
+                                Text("已过期").font(.caption2.bold()).foregroundStyle(.orange)
                             }
                             Spacer()
-                            Text("centroid \(String(format: "%.3f", result.centroidSimilarity))")
+                            Text("质心 \(String(format: "%.3f", result.centroidSimilarity))")
                                 .foregroundStyle(.secondary)
-                            Text("max \(String(format: "%.3f", result.maxSampleSimilarity))")
+                            Text("最大 \(String(format: "%.3f", result.maxSampleSimilarity))")
                                 .foregroundStyle(.secondary)
                         }
                         .font(.caption)
@@ -571,7 +571,7 @@ struct FaceLabView: View {
 
                     if let suggested = controller.suggestedThreshold {
                         HStack {
-                            Text("Suggested threshold: \(String(format: "%.3f", suggested))")
+                            Text("建议阈值：\(String(format: "%.3f", suggested))")
                                 .font(.caption)
                             Button("使用") {
                                 controller.threshold = Double(suggested)
@@ -655,7 +655,7 @@ private struct IdentityRow: View {
                 HStack(spacing: 6) {
                     Text(identity.name).bold()
                     if isStale {
-                        Text("stale")
+                        Text("已过期")
                             .font(.caption2.bold())
                             .foregroundStyle(.orange)
                     }

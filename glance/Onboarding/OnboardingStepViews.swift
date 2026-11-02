@@ -67,7 +67,7 @@ struct PermissionsStepView: View {
             // Spacer(minLength: 0)
 
             PermissionRow(
-                title: "Accessibility",
+                title: "辅助功能",
                 detail: "允许 Glance 解锁你的 Mac",
                 granted: controller.accessibilityGranted
             ) { controller.grantAccessibility() }
