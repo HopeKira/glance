@@ -10,6 +10,7 @@
 import Foundation
 import CoreGraphics
 import Observation
+import AppKit
 
 @Observable
 @MainActor
@@ -419,5 +420,110 @@ final class FaceUnlockCoordinator {
             try? await Task.sleep(nanoseconds: 20_000_000)
         }
         return .noResolution
+    }
+
+    // MARK: - 手动触发：刷脸后把已存密码打进当前焦点窗口
+
+    /// 快捷键/菜单栏入口。与锁屏自动解锁共用同一套识别与活体判定，但不要求屏幕锁定，
+    /// 识别通过后把密码输入到当前获得焦点的输入框（sudo 提示、对话框、网页登录等）。
+    private var manualTask: Task<Void, Never>?
+
+    var isManualScanRunning: Bool { manualTask != nil }
+
+    func triggerManualInjection() {
+        guard manualTask == nil else {
+            NSSound.beep()
+            return
+        }
+        manualTask = Task { [weak self] in
+            await self?.runManualInjection()
+            self?.manualTask = nil
+        }
+    }
+
+    private func runManualInjection() async {
+        statusMessage = "正在准备…"
+
+        // 会话密钥受钥匙串访问控制保护；没有 Touch ID 的机型上这里会退化成输入登录密码。
+        if !SecureCredentialManager.isSessionUnlocked {
+            await pocController.unlockSession()
+            guard SecureCredentialManager.isSessionUnlocked else {
+                statusMessage = "会话未解锁，已取消。"
+                return
+            }
+        }
+
+        await camera.start()
+        if let error = camera.errorMessage {
+            statusMessage = error
+            camera.stop()
+            return
+        }
+        if showsUI { NotchOverlayController.shared.beginScanning() }
+        statusMessage = "正在寻找你的面容…"
+
+        let matched = await manualScanWindow(deadline: Date().addingTimeInterval(scanWindowDuration))
+        camera.stop()
+        if showsUI { NotchOverlayController.shared.finish(success: matched) }
+
+        guard matched else {
+            statusMessage = "面容未识别。"
+            return
+        }
+        statusMessage = "识别成功——正在输入密码…"
+        await pocController.injectStoredPassword(requireAuthoritativeLock: false)
+    }
+
+    /// 与 `observeScanWindow` 同样的「识别 + 活体」双闸，只是去掉了锁屏前提，命中即返回。
+    private func manualScanWindow(deadline: Date) async -> Bool {
+        let livenessEnabled = GlanceSettings.shared.livenessChecksEnabled
+        let liveness = LivenessAnalyzer()
+        liveness.modeProvider = { GlanceSettings.shared.livenessMode }
+        var livenessConfirmed = !livenessEnabled
+        var lastFaceBoundingBox: CGRect?
+        var lastProcessedFrameID: UInt64?
+
+        while Date() < deadline, !Task.isCancelled {
+            guard let frame = camera.currentFrame, frame.id != lastProcessedFrameID else {
+                try? await Task.sleep(nanoseconds: 20_000_000)
+                continue
+            }
+            lastProcessedFrameID = frame.id
+
+            let pipeline = self.pipeline
+            let previousBoundingBox = lastFaceBoundingBox
+            let outcome = await Task.detached(priority: .userInitiated) { () -> (FaceRecognitionResult, LivenessFrame)? in
+                guard let result = try? pipeline.recognize(in: frame.image, preferNear: previousBoundingBox) else { return nil }
+                let faceCrop = CameraManager.renderCrop(from: frame, imageRect: result.face.boundingBox)
+                return (result, LivenessFeatureExtractor.extract(from: result, frame: frame.image, faceCrop: faceCrop))
+            }.value
+
+            guard let (result, livenessFrame) = outcome else {
+                lastFaceBoundingBox = nil
+                try? await Task.sleep(nanoseconds: 20_000_000)
+                continue
+            }
+            lastFaceBoundingBox = result.face.normalizedBoundingBox
+
+            if livenessEnabled {
+                switch liveness.observe(livenessFrame).decision {
+                case .denied:
+                    statusMessage = "无法确认是真人。"
+                    return false
+                case .confirmed:
+                    livenessConfirmed = true
+                case .pending:
+                    break
+                }
+            }
+
+            let scored = pipeline.score(result.embedding, against: FaceEnrollmentStore.shared.activeIdentities)
+            if pipeline.bestMatch(in: scored, threshold: matchThreshold) != nil, livenessConfirmed {
+                return true
+            }
+
+            try? await Task.sleep(nanoseconds: 20_000_000)
+        }
+        return false
     }
 }

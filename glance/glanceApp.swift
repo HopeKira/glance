@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Carbon.HIToolbox
 
 @main
 struct glanceApp: App {
@@ -83,6 +84,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         // SwiftUI can flip the app back to `.regular` while installing scenes even with `.suppressed`; re-assert accessory.
         NSApp.setActivationPolicy(.accessory)
 
+        registerManualHotKey()
+
         // `object: nil` deliberately — the Settings window may not exist yet (SwiftUI creates scene content lazily), and this
         // still matches it by identity in the handler below once it does close.
         NotificationCenter.default.addObserver(
@@ -138,6 +141,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         sessionItem.target = self
         menu.addItem(sessionItem)
         sessionMenuItem = sessionItem
+
+        // 手动刷脸输入密码：识别通过后把已存密码打到当前焦点窗口（sudo 提示、对话框、网页登录）。
+        let injectItem = NSMenuItem(
+            title: "刷脸输入密码",
+            action: #selector(manualFaceInject),
+            keyEquivalent: ""
+        )
+        injectItem.target = self
+        injectItem.image = NSImage(systemSymbolName: "faceid", accessibilityDescription: nil)
+        menu.addItem(injectItem)
+        menu.addItem(.separator())
 
         let settingsItem = NSMenuItem(title: "设置", action: #selector(openSettingsWindow), keyEquivalent: ",")
         settingsItem.target = self
@@ -301,5 +315,44 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         if let window = NSApp.windows.first(where: { $0.canBecomeMain }) {
             window.makeKeyAndOrderFront(nil)
         }
+    }
+
+    // MARK: - 手动刷脸输入密码
+
+    private var manualHotKeyRef: EventHotKeyRef?
+    private static let manualHotKeySignature: OSType = 0x474C4E43  // 'GLNC'
+
+    /// ⌃⌥⌘P。Carbon 热键不需要额外权限，也不会被 Secure Input 之外的东西吞掉。
+    private func registerManualHotKey() {
+        guard manualHotKeyRef == nil else { return }
+        var eventType = EventTypeSpec(
+            eventClass: OSType(kEventClassKeyboard),
+            eventKind: UInt32(kEventHotKeyPressed)
+        )
+        InstallEventHandler(
+            GetApplicationEventTarget(),
+            { _, _, userData in
+                guard let userData else { return noErr }
+                let delegate = Unmanaged<AppDelegate>.fromOpaque(userData).takeUnretainedValue()
+                DispatchQueue.main.async { delegate.manualFaceInject() }
+                return noErr
+            },
+            1, &eventType,
+            Unmanaged.passUnretained(self).toOpaque(),
+            nil
+        )
+        let hotKeyID = EventHotKeyID(signature: Self.manualHotKeySignature, id: 1)
+        RegisterEventHotKey(
+            UInt32(kVK_ANSI_P),
+            UInt32(controlKey | optionKey | cmdKey),
+            hotKeyID,
+            GetApplicationEventTarget(),
+            0,
+            &manualHotKeyRef
+        )
+    }
+
+    @objc private func manualFaceInject() {
+        environment.faceUnlockCoordinator.triggerManualInjection()
     }
 }
