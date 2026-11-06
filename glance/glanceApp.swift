@@ -157,6 +157,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         injectItem.target = self
         injectItem.image = NSImage(systemSymbolName: "faceid", accessibilityDescription: nil)
         menu.addItem(injectItem)
+
+        let testItem = NSMenuItem(
+            title: "测试刷脸输入",
+            action: #selector(manualFaceInjectTest),
+            keyEquivalent: ""
+        )
+        testItem.target = self
+        testItem.image = NSImage(systemSymbolName: "checkmark.seal", accessibilityDescription: nil)
+        menu.addItem(testItem)
         menu.addItem(.separator())
 
         let settingsItem = NSMenuItem(title: "设置", action: #selector(openSettingsWindow), keyEquivalent: ",")
@@ -360,5 +369,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     @objc private func manualFaceInject() {
         environment.faceUnlockCoordinator.triggerManualInjection()
+    }
+
+    @objc private func manualFaceInjectTest() {
+        environment.faceUnlockCoordinator.triggerManualInjection(testOnly: true)
     }
 }

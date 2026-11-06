@@ -448,18 +448,19 @@ final class FaceUnlockCoordinator {
 
     var isManualScanRunning: Bool { manualTask != nil }
 
-    func triggerManualInjection() {
+    /// `testOnly` 为真时注入占位文本而不是真实密码，用来验证整条链路。
+    func triggerManualInjection(testOnly: Bool = false) {
         guard manualTask == nil else {
             NSSound.beep()
             return
         }
         manualTask = Task { [weak self] in
-            await self?.runManualInjection()
+            await self?.runManualInjection(testOnly: testOnly)
             self?.manualTask = nil
         }
     }
 
-    private func runManualInjection() async {
+    private func runManualInjection(testOnly: Bool) async {
         statusMessage = "正在准备…"
 
         // 会话密钥受钥匙串访问控制保护；没有 Touch ID 的机型上这里会退化成输入登录密码。
@@ -488,8 +489,10 @@ final class FaceUnlockCoordinator {
             statusMessage = "面容未识别。"
             return
         }
-        statusMessage = "识别成功——正在输入密码…"
-        let injected = await pocController.injectStoredPassword(requireAuthoritativeLock: false)
+        statusMessage = testOnly ? "识别成功——正在写入测试文本…" : "识别成功——正在输入密码…"
+        let injected = testOnly
+            ? await pocController.injectSelfTestString()
+            : await pocController.injectStoredPassword(requireAuthoritativeLock: false)
         if !injected {
             statusMessage = "识别成功，但密码未输入：\(statusMessage)"
             GlanceLog.write("手动流程：识别通过但注入未成功")

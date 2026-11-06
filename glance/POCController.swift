@@ -90,6 +90,34 @@ final class POCController {
     /// buffer before returning. When `requireAuthoritativeLock` is true (the
     /// auto-trigger path), refuses to inject unless the CGSession dictionary
     /// confirms the screen is actually locked.
+    /// 自检：与真实注入走同一套权限/会话/键盘链路，只是把内容换成占位串，
+    /// 让用户可以在文本编辑器里安全确认「刷脸 → 自动输入」整条链路是否通。
+    @discardableResult
+    func injectSelfTestString() async -> Bool {
+        guard KeystrokeInjector.isAccessibilityTrusted() else {
+            statusMessage = "未获得“辅助功能”权限——请打开“系统设置”并启用 Glance。"
+            GlanceLog.write("自检失败：未获得辅助功能权限")
+            return false
+        }
+        guard SecureCredentialManager.isSessionUnlocked else {
+            statusMessage = "会话已锁定——请先在菜单栏完成一次验证。"
+            GlanceLog.write("自检失败：会话已锁定")
+            return false
+        }
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try KeystrokeInjector.typeAndReturn(Data("Glance 刷脸输入测试 OK".utf8))
+            }.value
+            statusMessage = "自检通过：已在当前窗口输入测试文本"
+            GlanceLog.write("自检成功：测试文本已输入")
+            return true
+        } catch {
+            statusMessage = "自检失败：\(error.localizedDescription)"
+            GlanceLog.write("自检失败：\(error.localizedDescription)")
+            return false
+        }
+    }
+
     @discardableResult
     func injectStoredPassword(requireAuthoritativeLock: Bool = false) async -> Bool {
         guard KeystrokeInjector.isAccessibilityTrusted() else {
