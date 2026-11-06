@@ -462,12 +462,14 @@ final class FaceUnlockCoordinator {
 
     private func runManualInjection(testOnly: Bool) async {
         statusMessage = "正在准备…"
+        GlanceLog.write("手动流程：开始 testOnly=\(testOnly) 会话=\(SecureCredentialManager.isSessionUnlocked)")
 
         // 会话密钥受钥匙串访问控制保护；没有 Touch ID 的机型上这里会退化成输入登录密码。
         if !SecureCredentialManager.isSessionUnlocked {
             await pocController.unlockSession()
             guard SecureCredentialManager.isSessionUnlocked else {
                 statusMessage = "会话未解锁，已取消。"
+                GlanceLog.write("手动流程：解锁会话失败，已取消")
                 return
             }
         }
@@ -475,13 +477,16 @@ final class FaceUnlockCoordinator {
         await camera.start()
         if let error = camera.errorMessage {
             statusMessage = error
+            GlanceLog.write("手动流程：摄像头启动失败 \(error)")
             camera.stop()
             return
         }
         if showsUI { NotchOverlayController.shared.beginScanning() }
         statusMessage = "正在寻找你的面容…"
 
+        GlanceLog.write("手动流程：摄像头=\(camera.activeDeviceDescription)，开始扫描")
         let matched = await manualScanWindow(deadline: Date().addingTimeInterval(scanWindowDuration))
+        GlanceLog.write("手动流程：扫描结束 matched=\(matched)")
         camera.stop()
         if showsUI { NotchOverlayController.shared.finish(success: matched) }
 
@@ -507,6 +512,17 @@ final class FaceUnlockCoordinator {
         var livenessConfirmed = !livenessEnabled
         var lastFaceBoundingBox: CGRect?
         var lastProcessedFrameID: UInt64?
+        var frameCount = 0
+        var rawFrames = 0
+        var faceCount = 0
+        var bestScore: Float = 0
+
+        // 相机刚启动时要 1~3 秒才出画面，先等第一帧再开始计时，避免窗口全耗在热身。
+        let warmupDeadline = Date().addingTimeInterval(3)
+        while camera.currentFrame == nil, Date() < warmupDeadline, !Task.isCancelled {
+            try? await Task.sleep(nanoseconds: 50_000_000)
+        }
+        GlanceLog.write("扫描：热身完成 rawFrame=\(camera.currentFrame != nil)")
 
         while Date() < deadline, !Task.isCancelled {
             guard let frame = camera.currentFrame, frame.id != lastProcessedFrameID else {
@@ -514,6 +530,7 @@ final class FaceUnlockCoordinator {
                 continue
             }
             lastProcessedFrameID = frame.id
+            rawFrames += 1
 
             let pipeline = self.pipeline
             let previousBoundingBox = lastFaceBoundingBox
@@ -529,6 +546,8 @@ final class FaceUnlockCoordinator {
                 continue
             }
             lastFaceBoundingBox = result.face.normalizedBoundingBox
+            frameCount += 1
+            faceCount += 1
 
             if livenessEnabled {
                 switch liveness.observe(livenessFrame).decision {
@@ -543,12 +562,17 @@ final class FaceUnlockCoordinator {
             }
 
             let scored = pipeline.score(result.embedding, against: FaceEnrollmentStore.shared.activeIdentities)
+            if let top = scored.max(by: { $0.centroidSimilarity < $1.centroidSimilarity }) {
+                bestScore = max(bestScore, top.centroidSimilarity)
+            }
             if pipeline.bestMatch(in: scored, threshold: matchThreshold) != nil, livenessConfirmed {
+                GlanceLog.write("扫描：命中 原始帧=\(rawFrames) 有脸帧=\(faceCount) 最高分=\(String(format: "%.3f", bestScore)) 阈值=\(String(format: "%.2f", matchThreshold)) 活体=\(livenessConfirmed)")
                 return true
             }
 
             try? await Task.sleep(nanoseconds: 20_000_000)
         }
+        GlanceLog.write("扫描：超时未命中 原始帧=\(rawFrames) 有脸帧=\(faceCount) 最高分=\(String(format: "%.3f", bestScore)) 阈值=\(String(format: "%.2f", matchThreshold))")
         return false
     }
 }

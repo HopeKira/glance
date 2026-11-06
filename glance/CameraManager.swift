@@ -98,6 +98,8 @@ final class CameraManager: NSObject {
 
     private var isConfigured = false
     private var currentInput: AVCaptureDeviceInput?
+    /// 当前生效的相机与分辨率，供诊断日志使用。
+    private(set) var activeDeviceDescription: String = "未选择"
 
     private func configureSessionIfNeeded() {
         guard !isConfigured else { return }
@@ -133,7 +135,7 @@ final class CameraManager: NSObject {
         if let input = try? AVCaptureDeviceInput(device: device), session.canAddInput(input) {
             session.addInput(input)
             currentInput = input
-            selectHighestResolutionFormat(for: device)
+            selectPreferredFormat(for: device)
         } else {
             currentInput = nil
             errorMessage = "未找到摄像头设备。"
@@ -141,21 +143,47 @@ final class CameraManager: NSObject {
         session.commitConfiguration()
     }
 
-    /// Highest resolution regardless of fps — Vision still works from the downscaled frame; this only affects
-    /// what `CameraFrame.source` (and therefore `renderCrop`) has to work with.
-    private func selectHighestResolutionFormat(for device: AVCaptureDevice) {
-        let best = device.formats.max { lhs, rhs in
-            let l = CMVideoFormatDescriptionGetDimensions(lhs.formatDescription)
-            let r = CMVideoFormatDescriptionGetDimensions(rhs.formatDescription)
-            return Int(l.width) * Int(l.height) < Int(r.width) * Int(r.height)
+    /// 选一个「设备真的能跑」的格式：优先长边 ≤1280、且支持 30fps 的最高分辨率。
+    /// 原来按最高分辨率挑，容易选到 4K@5fps 这类实际跑不动的格式，导致一帧都收不到；
+    /// 而且识别最终只用 448px 的裁剪，4K 纯属浪费带宽和功耗。
+    private func selectPreferredFormat(for device: AVCaptureDevice) {
+        let all = device.formats
+        guard !all.isEmpty else { return }
+
+        func area(_ f: AVCaptureDevice.Format) -> Int {
+            let d = CMVideoFormatDescriptionGetDimensions(f.formatDescription)
+            return Int(d.width) * Int(d.height)
+        }
+        func maxFPS(_ f: AVCaptureDevice.Format) -> Double {
+            f.videoSupportedFrameRateRanges.map(\.maxFrameRate).max() ?? 0
+        }
+
+        let capped = all.filter { area($0) > 0 && max(CMVideoFormatDescriptionGetDimensions($0.formatDescription).width,
+                                                       CMVideoFormatDescriptionGetDimensions($0.formatDescription).height) <= 1280 }
+        let pool = capped.isEmpty ? all : capped
+        let best = pool.max { lhs, rhs in
+            let l30 = maxFPS(lhs) >= 29, r30 = maxFPS(rhs) >= 29
+            if l30 != r30 { return r30 }          // 30fps 可用的优先
+            return area(lhs) < area(rhs)
         }
         guard let best else { return }
+
         do {
             try device.lockForConfiguration()
             device.activeFormat = best
+            // 把帧率钉在 30，避免某些格式默认 60fps 白烧 CPU
+            let ranges = best.videoSupportedFrameRateRanges
+            let target = 30.0
+            if ranges.contains(where: { $0.minFrameRate <= target && target <= $0.maxFrameRate }) {
+                let duration = CMTime(value: 1, timescale: CMTimeScale(target))
+                device.activeVideoMinFrameDuration = duration
+                device.activeVideoMaxFrameDuration = duration
+            }
             device.unlockForConfiguration()
+            let dims = CMVideoFormatDescriptionGetDimensions(best.formatDescription)
+            activeDeviceDescription = "\(device.localizedName) \(dims.width)x\(dims.height)@\(Int(target))fps"
         } catch {
-            errorMessage = "Couldn't select the camera's highest-resolution format: \(error.localizedDescription)"
+            errorMessage = "无法应用摄像头格式：\(error.localizedDescription)"
         }
     }
 
