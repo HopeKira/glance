@@ -86,6 +86,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
         registerManualHotKey()
 
+        GlanceLog.write(
+            "启动：辅助功能=\(KeystrokeInjector.isAccessibilityTrusted()) "
+            + "会话=\(SecureCredentialManager.isSessionUnlocked) "
+            + "屏幕锁定=\(LockMonitor.isScreenActuallyLocked())"
+        )
+
         // `object: nil` deliberately — the Settings window may not exist yet (SwiftUI creates scene content lazily), and this
         // still matches it by identity in the handler below once it does close.
         NotificationCenter.default.addObserver(

@@ -90,20 +90,24 @@ final class POCController {
     /// buffer before returning. When `requireAuthoritativeLock` is true (the
     /// auto-trigger path), refuses to inject unless the CGSession dictionary
     /// confirms the screen is actually locked.
-    func injectStoredPassword(requireAuthoritativeLock: Bool = false) async {
+    @discardableResult
+    func injectStoredPassword(requireAuthoritativeLock: Bool = false) async -> Bool {
         guard KeystrokeInjector.isAccessibilityTrusted() else {
             statusMessage = "未获得“辅助功能”权限——请打开“系统设置”并启用 Glance。"
-            return
+            GlanceLog.write("注入失败：未获得辅助功能权限")
+            return false
         }
         guard SecureCredentialManager.isSessionUnlocked else {
             statusMessage = "会话已锁定——请先用触控 ID 验证。"
-            return
+            GlanceLog.write("注入失败：会话已锁定")
+            return false
         }
 
         if requireAuthoritativeLock {
             guard LockMonitor.isScreenActuallyLocked() else {
                 statusMessage = "已跳过：CGSession 报告屏幕并未真正锁定。"
-                return
+                GlanceLog.write("注入失败：CGSession 报告屏幕未锁定")
+                return false
             }
         }
 
@@ -114,9 +118,13 @@ final class POCController {
                 defer { bytes.resetBytes(in: 0..<bytes.count) }
                 try KeystrokeInjector.typeAndReturn(bytes)
             }.value
-            statusMessage = "Injected stored password + Return at \(Date().formatted(date: .omitted, time: .standard))"
+            statusMessage = "已在 \(Date().formatted(date: .omitted, time: .standard)) 输入密码并回车"
+            GlanceLog.write("注入成功")
+            return true
         } catch {
-            statusMessage = "Injection failed: \(error.localizedDescription)"
+            statusMessage = "输入失败：\(error.localizedDescription)"
+            GlanceLog.write("注入失败：\(error.localizedDescription)")
+            return false
         }
     }
 }

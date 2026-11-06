@@ -248,6 +248,18 @@ final class FaceUnlockCoordinator {
             return
         }
 
+        // 会话密钥没解锁时，人脸无法解密已录入的特征，扫了也白扫——直接说明原因，
+        // 否则用户只会看到「未识别」，以为是识别不准。
+        guard SecureCredentialManager.isSessionUnlocked else {
+            statusMessage = "会话已锁定：请先在菜单栏点『会话已锁定』完成一次验证。"
+            GlanceLog.write("解锁流程：会话未解锁，跳过扫描")
+            camera.stop()
+            if self.showsUI {
+                NotchOverlayController.shared.finish(success: false)
+            }
+            return
+        }
+
         let showsUI = self.showsUI
         if showsUI {
             NotchOverlayController.shared.beginScanning()
@@ -265,10 +277,15 @@ final class FaceUnlockCoordinator {
         camera.stop()
 
         switch outcome {
-        case .matched:
-            // The unlock already happened inside observeScanWindow — this only decides whether anything is shown about it.
+        case .matched(let injected):
+            // 识别本身在 observeScanWindow 里完成，这里只决定给成功还是失败反馈——
+            // 权限/会话/锁屏状态导致密码没输进去时必须显示失败，否则用户会以为解锁成功。
             if showsUI {
-                NotchOverlayController.shared.finish(success: true)
+                NotchOverlayController.shared.finish(success: injected)
+            }
+            if !injected {
+                statusMessage = "识别成功，但密码未输入：\(statusMessage)"
+                GlanceLog.write("解锁流程：识别通过但注入未成功")
             }
         case .consistentlyWrongFace:
             statusMessage = "面容未识别。"
@@ -318,7 +335,8 @@ final class FaceUnlockCoordinator {
     }
 
     private enum ScanOutcome {
-        case matched
+        /// 关联值表示密码是否真的输入成功——识别成功但注入失败时不能给成功动画。
+        case matched(Bool)
         case consistentlyWrongFace
         /// A deny cue (glare, device rectangle) fired — actively rejected as a spoof regardless of match. Same failure path as `.consistentlyWrongFace`.
         case spoofSuspected
@@ -413,8 +431,8 @@ final class FaceUnlockCoordinator {
                     ? (confirmingCue.map { "live via \($0.title)" } ?? "活体通过")
                     : "活体关闭"
                 lastOutcome = "Matched \(readyMatch.identity.name) at \(String(format: "%.3f", readyMatch.centroidSimilarity)), \(livenessNote)."
-                await pocController.injectStoredPassword(requireAuthoritativeLock: true)
-                return .matched
+                let injected = await pocController.injectStoredPassword(requireAuthoritativeLock: true)
+                return .matched(injected)
             }
 
             try? await Task.sleep(nanoseconds: 20_000_000)
@@ -471,7 +489,11 @@ final class FaceUnlockCoordinator {
             return
         }
         statusMessage = "识别成功——正在输入密码…"
-        await pocController.injectStoredPassword(requireAuthoritativeLock: false)
+        let injected = await pocController.injectStoredPassword(requireAuthoritativeLock: false)
+        if !injected {
+            statusMessage = "识别成功，但密码未输入：\(statusMessage)"
+            GlanceLog.write("手动流程：识别通过但注入未成功")
+        }
     }
 
     /// 与 `observeScanWindow` 同样的「识别 + 活体」双闸，只是去掉了锁屏前提，命中即返回。
