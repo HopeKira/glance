@@ -53,7 +53,7 @@ nonisolated final class ArcFaceEmbedder: FaceEmbedder, @unchecked Sendable {
         }
 
         let configuration = MLModelConfiguration()
-        configuration.computeUnits = .all
+        configuration.computeUnits = .cpuAndNeuralEngine
 
         do {
             model = try MLModel(contentsOf: modelURL, configuration: configuration)
