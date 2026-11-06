@@ -19,6 +19,7 @@ struct GeneralSettingsPage: View {
     /// Refreshed when the app regains focus, so granting the permission in
     /// System Settings clears the prompt below without a relaunch.
     @State private var inputMonitoring = SpaceKeyMonitor.inputMonitoringAccess
+    @State private var isRecordingHotKey = false
     @State private var isUnlocking = false
     @State private var sessionError: String?
 
@@ -49,6 +50,15 @@ struct GeneralSettingsPage: View {
                 .accessibilityHidden(!isSessionUnlocked)
         }
         .animation(SettingsMetrics.stateTransitionAnimation, value: isSessionUnlocked)
+        .sheet(isPresented: $isRecordingHotKey) {
+            HotKeyRecorderSheet { keyCode, modifiers in
+                if let keyCode, let modifiers {
+                    settings.manualHotKeyCode = keyCode
+                    settings.manualHotKeyModifiers = modifiers
+                }
+                isRecordingHotKey = false
+            }
+        }
         .onAppear { pocController.refreshCredentialStatus() }
         // The password prompt runs in the notch, outside this view's hierarchy,
         // so refresh the session state when that flow finishes.
@@ -100,9 +110,52 @@ struct GeneralSettingsPage: View {
                     GlanceToggle(isOn: $coordinator.isEnabled)
                 }
                 SettingsGroupDivider()
+                SettingsRowContent(
+                    title: "刷脸输入密码快捷键",
+                    subtitle: "在任意输入框按此组合键，刷脸后自动输入密码"
+                ) {
+                    Button {
+                        isRecordingHotKey = true
+                    } label: {
+                        Text(HotKeyDisplay.string(
+                            keyCode: settings.manualHotKeyCode,
+                            modifiers: settings.manualHotKeyModifiers
+                        ))
+                        .font(.system(size: 12, weight: .medium, design: .rounded))
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                        .background(
+                            RoundedRectangle(cornerRadius: 7, style: .continuous)
+                                .fill(Color.primary.opacity(0.08))
+                        )
+                    }
+                    .buttonStyle(.plain)
+                }
+                SettingsGroupDivider()
                 UnlockTriggerPicker(selection: $settings.unlockTriggers, isEnabled: coordinator.isEnabled)
                 SettingsGroupDivider()
                 displayPicker()
+            }
+
+            SettingsGroup {
+                SettingsRowContent(
+                    title: "离开时自动息屏",
+                    subtitle: "超过设定时间没有任何键鼠操作就关闭显示器；回来时仍由人脸解锁"
+                ) {
+                    GlanceToggle(isOn: $settings.autoSleepOnAway)
+                }
+                if settings.autoSleepOnAway {
+                    SettingsGroupDivider()
+                    SettingsSlider(
+                        title: "空闲时长",
+                        value: Binding(
+                            get: { Float(settings.autoSleepIdleMinutes) },
+                            set: { settings.autoSleepIdleMinutes = Int($0.rounded()) }
+                        ),
+                        range: 1...30,
+                        format: { "\(Int($0)) 分钟" }
+                    )
+                }
             }
             .onReceive(NotificationCenter.default.publisher(for: NSApplication.didChangeScreenParametersNotification)) { _ in
                 screens = NSScreen.screens
@@ -246,5 +299,30 @@ struct GeneralSettingsPage: View {
         // a bare ID or falling back to another display's name.
         guard let name = settings.preferredDisplayName else { return "所选显示器（已断开）" }
         return "\(name) (disconnected)"
+    }
+}
+
+/// 录制快捷键的小弹窗：按任意带修饰键的组合，Esc 取消。
+private struct HotKeyRecorderSheet: View {
+    let onCapture: (Int?, Int?) -> Void
+
+    var body: some View {
+        VStack(spacing: 14) {
+            Text("按下新的快捷键")
+                .font(.system(size: 14, weight: .semibold))
+            Text("需要至少一个修饰键（⌃ ⌥ ⇧ ⌘），Esc 取消")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            HotKeyRecorderView(onCapture: onCapture)
+                .frame(width: 260, height: 76)
+                .background(
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .fill(Color.primary.opacity(0.06))
+                )
+            Button("取消") { onCapture(nil, nil) }
+                .keyboardShortcut(.cancelAction)
+        }
+        .padding(20)
+        .frame(width: 320)
     }
 }

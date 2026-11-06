@@ -125,6 +125,10 @@ final class GlanceSettings {
         static let hasCompletedOnboarding = "GlanceSettings.hasCompletedOnboarding"
         static let onboardingResumeStep = "GlanceSettings.onboardingResumeStep"
         static let hasAcknowledgedSecurityNotice = "GlanceSettings.hasAcknowledgedSecurityNotice"
+        static let manualHotKeyCode = "GlanceSettings.manualHotKeyCode"
+        static let manualHotKeyModifiers = "GlanceSettings.manualHotKeyModifiers"
+        static let autoSleepOnAway = "GlanceSettings.autoSleepOnAway"
+        static let autoSleepIdleMinutes = "GlanceSettings.autoSleepIdleMinutes"
     }
 
     @ObservationIgnored private let defaults = UserDefaults.standard
@@ -164,6 +168,34 @@ final class GlanceSettings {
     }
     var showUnlockAnimation: Bool {
         didSet { defaults.set(showUnlockAnimation, forKey: Key.showUnlockAnimation) }
+    }
+
+    /// 「刷脸输入密码」全局快捷键：Carbon 键码 + 修饰键位掩码。改完即时重注册。
+    var manualHotKeyCode: Int {
+        didSet {
+            defaults.set(manualHotKeyCode, forKey: Key.manualHotKeyCode)
+            NotificationCenter.default.post(name: .glanceHotKeyDidChange, object: nil)
+        }
+    }
+    var manualHotKeyModifiers: Int {
+        didSet {
+            defaults.set(manualHotKeyModifiers, forKey: Key.manualHotKeyModifiers)
+            NotificationCenter.default.post(name: .glanceHotKeyDidChange, object: nil)
+        }
+    }
+    /// 离开（系统输入空闲超过阈值）时自动关闭显示器；回来仍由人脸解锁。
+    var autoSleepOnAway: Bool {
+        didSet { defaults.set(autoSleepOnAway, forKey: Key.autoSleepOnAway) }
+    }
+    var autoSleepIdleMinutes: Int {
+        didSet {
+            let clamped = min(max(autoSleepIdleMinutes, 1), 60)
+            if clamped != autoSleepIdleMinutes {
+                autoSleepIdleMinutes = clamped
+                return
+            }
+            defaults.set(autoSleepIdleMinutes, forKey: Key.autoSleepIdleMinutes)
+        }
     }
 
     /// What the overlay should actually render — the pick, or `.none` when
@@ -286,6 +318,11 @@ final class GlanceSettings {
         // Enabled by default — onboarding already enrolled a face and set a
         // password specifically to use Face Unlock.
         isFaceUnlockEnabled = defaults.object(forKey: Key.isFaceUnlockEnabled) as? Bool ?? true
+        // 默认 ⌃⌥⌘P：controlKey(4096) | optionKey(2048) | cmdKey(256)
+        manualHotKeyCode = defaults.object(forKey: Key.manualHotKeyCode) as? Int ?? 35
+        manualHotKeyModifiers = defaults.object(forKey: Key.manualHotKeyModifiers) as? Int ?? 6400
+        autoSleepOnAway = defaults.object(forKey: Key.autoSleepOnAway) as? Bool ?? false
+        autoSleepIdleMinutes = defaults.object(forKey: Key.autoSleepIdleMinutes) as? Int ?? 10
         // Matches `MatchConfidenceLevel.standard` — see RecognitionSettingsPage.swift.
         matchThreshold = defaults.object(forKey: Key.matchThreshold) as? Float ?? 0.66
         livenessChecksEnabled = defaults.object(forKey: Key.livenessChecksEnabled) as? Bool ?? true
@@ -353,4 +390,9 @@ final class GlanceSettings {
         // would keep its own default until the slider is first touched.
         FaceRecognitionPipeline.minimumProminentFaceWidth = minimumFaceWidth
     }
+}
+
+extension Notification.Name {
+    /// 快捷键设置变化后由 AppDelegate 重新注册 Carbon 热键。
+    static let glanceHotKeyDidChange = Notification.Name("com.imanity.glance.hotKeyDidChange")
 }
