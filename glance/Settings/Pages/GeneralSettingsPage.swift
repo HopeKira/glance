@@ -135,6 +135,13 @@ struct GeneralSettingsPage: View {
                 UnlockTriggerPicker(selection: $settings.unlockTriggers, isEnabled: coordinator.isEnabled)
                 SettingsGroupDivider()
                 displayPicker()
+                SettingsGroupDivider()
+                SettingsRowContent(
+                    title: "自适应匹配阈值",
+                    subtitle: "当你自己的解锁得分长期贴近阈值时，自动小幅放宽（不低于 0.60），减少“认得出却过不去”"
+                ) {
+                    GlanceToggle(isOn: $settings.adaptiveThresholdEnabled)
+                }
             }
 
             SettingsGroup {

@@ -130,6 +130,7 @@ final class GlanceSettings {
         static let autoLockOnAway = "GlanceSettings.autoLockOnAway"
         static let awayCheckSeconds = "GlanceSettings.awayCheckSeconds"
         static let wakeOnApproach = "GlanceSettings.wakeOnApproach"
+        static let adaptiveThresholdEnabled = "GlanceSettings.adaptiveThresholdEnabled"
     }
 
     @ObservationIgnored private let defaults = UserDefaults.standard
@@ -198,6 +199,10 @@ final class GlanceSettings {
             }
             defaults.set(awayCheckSeconds, forKey: Key.awayCheckSeconds)
         }
+    }
+    /// 自适应阈值：你自己历次解锁的得分如果一直贴着阈值，就把有效阈值小幅放宽（不低于 0.60）。
+    var adaptiveThresholdEnabled: Bool {
+        didSet { defaults.set(adaptiveThresholdEnabled, forKey: Key.adaptiveThresholdEnabled) }
     }
     /// 息屏后低频侦测人脸，检测到人靠近就点亮显示器（随后由人脸解锁接手）。
     var wakeOnApproach: Bool {
@@ -330,6 +335,7 @@ final class GlanceSettings {
         autoLockOnAway = defaults.object(forKey: Key.autoLockOnAway) as? Bool ?? false
         awayCheckSeconds = defaults.object(forKey: Key.awayCheckSeconds) as? Int ?? 60
         wakeOnApproach = defaults.object(forKey: Key.wakeOnApproach) as? Bool ?? false
+        adaptiveThresholdEnabled = defaults.object(forKey: Key.adaptiveThresholdEnabled) as? Bool ?? true
         // Matches `MatchConfidenceLevel.standard` — see RecognitionSettingsPage.swift.
         matchThreshold = defaults.object(forKey: Key.matchThreshold) as? Float ?? 0.66
         livenessChecksEnabled = defaults.object(forKey: Key.livenessChecksEnabled) as? Bool ?? true

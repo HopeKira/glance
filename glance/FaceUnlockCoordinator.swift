@@ -32,6 +32,28 @@ final class FaceUnlockCoordinator {
     var matchThreshold: Float {
         didSet { GlanceSettings.shared.matchThreshold = matchThreshold }
     }
+
+    /// 处理帧率上限：Vision 三个请求 + ArcFace 全套推理，30fps 太浪费。
+    /// 15fps 对识别无影响，活体在 2 秒窗口里仍有约 30 个样本。
+    private let maxProcessFPS: Double = 15
+    private var lastProcessedAt = Date.distantPast
+
+    /// 历次成功解锁的得分，供自适应阈值使用。
+    private var recentSuccessScores: [Float] = []
+
+    /// 有效阈值：默认为用户设定值；开了自适应、样本足够、且你的典型得分本来就贴着阈值时，
+    /// 只做**放宽**（下限 0.60），绝不比用户设定更严。
+    private var effectiveThreshold: Float {
+        let base = matchThreshold
+        guard GlanceSettings.shared.adaptiveThresholdEnabled, recentSuccessScores.count >= 5 else { return base }
+        let mean = recentSuccessScores.reduce(0, +) / Float(recentSuccessScores.count)
+        return max(0.60, min(base, mean - 0.10))
+    }
+
+    private func recordSuccess(_ score: Float) {
+        recentSuccessScores.append(score)
+        if recentSuccessScores.count > 20 { recentSuccessScores.removeFirst() }
+    }
     /// Shares its setting with NotchOverlayController's scanning timeout, so the background loop stops in step with the UI collapsing.
     private var scanWindowDuration: TimeInterval {
         TimeInterval(GlanceSettings.shared.faceDetectionSeconds)
@@ -368,12 +390,18 @@ final class FaceUnlockCoordinator {
               !requireOverlayScanning || NotchOverlayController.shared.phase == .scanning {
             guard LockMonitor.isScreenActuallyLocked() else { return .noResolution }
 
+            // 限流：一帧全套推理约 10~20ms，30fps 全跑纯属浪费；15fps 足够。
+            if Date().timeIntervalSince(lastProcessedAt) < 1.0 / maxProcessFPS {
+                try? await Task.sleep(nanoseconds: 10_000_000)
+                continue
+            }
             guard let frame = camera.currentFrame, frame.id != lastProcessedFrameID else {
                 // 20ms keeps the liveness window's sample count high while staying close to the camera's native ~33ms cadence.
                 try? await Task.sleep(nanoseconds: 20_000_000)
                 continue
             }
             lastProcessedFrameID = frame.id
+            lastProcessedAt = Date()
 
             let pipeline = self.pipeline
             let previousBoundingBox = lastFaceBoundingBox
@@ -410,7 +438,7 @@ final class FaceUnlockCoordinator {
 
             // `activeIdentities`, not `identities`: someone switched off on the Your Face page stays enrolled but must not unlock.
             let scored = pipeline.score(result.embedding, against: FaceEnrollmentStore.shared.activeIdentities)
-            let matched = pipeline.bestMatch(in: scored, threshold: matchThreshold)
+            let matched = pipeline.bestMatch(in: scored, threshold: effectiveThreshold)
 
             if let matched {
                 wrongFaceStartedAt = nil
@@ -426,6 +454,7 @@ final class FaceUnlockCoordinator {
             }
 
             if let readyMatch, livenessConfirmed {
+                recordSuccess(readyMatch.centroidSimilarity)
                 statusMessage = "识别成功——正在解锁…"
                 let livenessNote = livenessEnabled
                     ? (confirmingCue.map { "live via \($0.title)" } ?? "活体通过")
@@ -525,11 +554,17 @@ final class FaceUnlockCoordinator {
         GlanceLog.write("扫描：热身完成 rawFrame=\(camera.currentFrame != nil)")
 
         while Date() < deadline, !Task.isCancelled {
+            // 限流：一帧全套推理约 10~20ms，30fps 全跑纯属浪费；15fps 足够。
+            if Date().timeIntervalSince(lastProcessedAt) < 1.0 / maxProcessFPS {
+                try? await Task.sleep(nanoseconds: 10_000_000)
+                continue
+            }
             guard let frame = camera.currentFrame, frame.id != lastProcessedFrameID else {
                 try? await Task.sleep(nanoseconds: 20_000_000)
                 continue
             }
             lastProcessedFrameID = frame.id
+            lastProcessedAt = Date()
             rawFrames += 1
 
             let pipeline = self.pipeline
@@ -565,14 +600,15 @@ final class FaceUnlockCoordinator {
             if let top = scored.max(by: { $0.centroidSimilarity < $1.centroidSimilarity }) {
                 bestScore = max(bestScore, top.centroidSimilarity)
             }
-            if pipeline.bestMatch(in: scored, threshold: matchThreshold) != nil, livenessConfirmed {
-                GlanceLog.write("扫描：命中 原始帧=\(rawFrames) 有脸帧=\(faceCount) 最高分=\(String(format: "%.3f", bestScore)) 阈值=\(String(format: "%.2f", matchThreshold)) 活体=\(livenessConfirmed)")
+            if let readyMatch = pipeline.bestMatch(in: scored, threshold: effectiveThreshold), livenessConfirmed {
+                recordSuccess(readyMatch.centroidSimilarity)
+                GlanceLog.write("扫描：命中 原始帧=\(rawFrames) 有脸帧=\(faceCount) 最高分=\(String(format: "%.3f", bestScore)) 阈值=\(String(format: "%.2f", effectiveThreshold)) 活体=\(livenessConfirmed)")
                 return true
             }
 
             try? await Task.sleep(nanoseconds: 20_000_000)
         }
-        GlanceLog.write("扫描：超时未命中 原始帧=\(rawFrames) 有脸帧=\(faceCount) 最高分=\(String(format: "%.3f", bestScore)) 阈值=\(String(format: "%.2f", matchThreshold))")
+        GlanceLog.write("扫描：超时未命中 原始帧=\(rawFrames) 有脸帧=\(faceCount) 最高分=\(String(format: "%.3f", bestScore)) 阈值=\(String(format: "%.2f", effectiveThreshold))")
         return false
     }
 }
