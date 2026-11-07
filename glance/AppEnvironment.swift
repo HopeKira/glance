@@ -15,7 +15,6 @@ final class AppEnvironment {
     let faceUnlockCoordinator: FaceUnlockCoordinator
     /// Held, not just constructed — owns a repeating timer that would silently stop enforcing auto-lock if deallocated.
     let sessionAutoLocker: SessionAutoLocker
-    let awayAutoSleeper = AwayAutoSleeper()
     let presenceWatcher = PresenceWatcher()
     /// Constructed here (not started) so the About page and `AppDelegate` share one instance; `AppDelegate` calls `updater.start()`.
     let updater = UpdaterController()

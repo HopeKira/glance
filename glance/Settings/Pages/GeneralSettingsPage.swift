@@ -139,21 +139,21 @@ struct GeneralSettingsPage: View {
 
             SettingsGroup {
                 SettingsRowContent(
-                    title: "离开时自动息屏",
-                    subtitle: "超过设定时间没有任何键鼠操作就关闭显示器；回来时仍由人脸解锁"
+                    title: "离开后自动锁屏",
+                    subtitle: "每隔一段时间检测一次画面里有没有人脸，连续两次没有就锁屏；息屏仍由系统设置决定"
                 ) {
-                    GlanceToggle(isOn: $settings.autoSleepOnAway)
+                    GlanceToggle(isOn: $settings.autoLockOnAway)
                 }
-                if settings.autoSleepOnAway {
+                if settings.autoLockOnAway {
                     SettingsGroupDivider()
                     SettingsSlider(
-                        title: "空闲时长",
+                        title: "检测间隔",
                         value: Binding(
-                            get: { Float(settings.autoSleepIdleMinutes) },
-                            set: { settings.autoSleepIdleMinutes = Int($0.rounded()) }
+                            get: { Float(settings.awayCheckSeconds) },
+                            set: { settings.awayCheckSeconds = Int($0.rounded()) }
                         ),
-                        range: 1...30,
-                        format: { "\(Int($0)) 分钟" }
+                        range: 15...180,
+                        format: { "\(Int($0)) 秒" }
                     )
                 }
             }

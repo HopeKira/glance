@@ -127,8 +127,8 @@ final class GlanceSettings {
         static let hasAcknowledgedSecurityNotice = "GlanceSettings.hasAcknowledgedSecurityNotice"
         static let manualHotKeyCode = "GlanceSettings.manualHotKeyCode"
         static let manualHotKeyModifiers = "GlanceSettings.manualHotKeyModifiers"
-        static let autoSleepOnAway = "GlanceSettings.autoSleepOnAway"
-        static let autoSleepIdleMinutes = "GlanceSettings.autoSleepIdleMinutes"
+        static let autoLockOnAway = "GlanceSettings.autoLockOnAway"
+        static let awayCheckSeconds = "GlanceSettings.awayCheckSeconds"
         static let wakeOnApproach = "GlanceSettings.wakeOnApproach"
     }
 
@@ -184,23 +184,24 @@ final class GlanceSettings {
             NotificationCenter.default.post(name: .glanceHotKeyDidChange, object: nil)
         }
     }
-    /// 离开（系统输入空闲超过阈值）时自动关闭显示器；回来仍由人脸解锁。
-    var autoSleepOnAway: Bool {
-        didSet { defaults.set(autoSleepOnAway, forKey: Key.autoSleepOnAway) }
+    /// 离开（周期性人脸检测连续扑空）时自动锁屏；息屏仍交给系统设置。
+    var autoLockOnAway: Bool {
+        didSet { defaults.set(autoLockOnAway, forKey: Key.autoLockOnAway) }
+    }
+    /// 离场检测间隔（秒）。
+    var awayCheckSeconds: Int {
+        didSet {
+            let clamped = min(max(awayCheckSeconds, 15), 300)
+            if clamped != awayCheckSeconds {
+                awayCheckSeconds = clamped
+                return
+            }
+            defaults.set(awayCheckSeconds, forKey: Key.awayCheckSeconds)
+        }
     }
     /// 息屏后低频侦测人脸，检测到人靠近就点亮显示器（随后由人脸解锁接手）。
     var wakeOnApproach: Bool {
         didSet { defaults.set(wakeOnApproach, forKey: Key.wakeOnApproach) }
-    }
-    var autoSleepIdleMinutes: Int {
-        didSet {
-            let clamped = min(max(autoSleepIdleMinutes, 1), 60)
-            if clamped != autoSleepIdleMinutes {
-                autoSleepIdleMinutes = clamped
-                return
-            }
-            defaults.set(autoSleepIdleMinutes, forKey: Key.autoSleepIdleMinutes)
-        }
     }
 
     /// What the overlay should actually render — the pick, or `.none` when
@@ -326,8 +327,8 @@ final class GlanceSettings {
         // 默认 ⌃⌥⌘P：controlKey(4096) | optionKey(2048) | cmdKey(256)
         manualHotKeyCode = defaults.object(forKey: Key.manualHotKeyCode) as? Int ?? 35
         manualHotKeyModifiers = defaults.object(forKey: Key.manualHotKeyModifiers) as? Int ?? 6400
-        autoSleepOnAway = defaults.object(forKey: Key.autoSleepOnAway) as? Bool ?? false
-        autoSleepIdleMinutes = defaults.object(forKey: Key.autoSleepIdleMinutes) as? Int ?? 10
+        autoLockOnAway = defaults.object(forKey: Key.autoLockOnAway) as? Bool ?? false
+        awayCheckSeconds = defaults.object(forKey: Key.awayCheckSeconds) as? Int ?? 60
         wakeOnApproach = defaults.object(forKey: Key.wakeOnApproach) as? Bool ?? false
         // Matches `MatchConfidenceLevel.standard` — see RecognitionSettingsPage.swift.
         matchThreshold = defaults.object(forKey: Key.matchThreshold) as? Float ?? 0.66
