@@ -90,6 +90,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             ManualHotKey.shared.refresh()
         }
         environment.awayAutoSleeper.start()
+        environment.presenceWatcher.startMonitoringScreenState()
 
         GlanceLog.write(
             "启动：辅助功能=\(KeystrokeInjector.isAccessibilityTrusted()) "

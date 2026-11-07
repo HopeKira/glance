@@ -39,7 +39,11 @@ final class CameraManager: NSObject {
     /// Handed to the delegate outside the actor; only ever touched via `Task { @MainActor ... }`.
     private let framePublisher = FramePublisher()
 
-    override init() {
+    /// 待机侦测用低功耗实例：挑最小分辨率、最低帧率，只做人脸检测。
+    private let prefersLowPower: Bool
+
+    init(prefersLowPower: Bool = false) {
+        self.prefersLowPower = prefersLowPower
         super.init()
         framePublisher.owner = self
     }
@@ -158,6 +162,15 @@ final class CameraManager: NSObject {
             f.videoSupportedFrameRateRanges.map(\.maxFrameRate).max() ?? 0
         }
 
+        if prefersLowPower {
+            // 待机侦测：只要够检测到脸，越小越省电；1/4 帧率上限也压到 5fps。
+            let small = all.filter { area($0) >= 320 * 240 && area($0) <= 640 * 480 }
+            let pick = small.min { area($0) < area($1) } ?? all.min { area($0) < area($1) }
+            guard let pick else { return }
+            applyFormat(pick, to: device, targetFPS: 5)
+            return
+        }
+
         let capped = all.filter { area($0) > 0 && max(CMVideoFormatDescriptionGetDimensions($0.formatDescription).width,
                                                        CMVideoFormatDescriptionGetDimensions($0.formatDescription).height) <= 1280 }
         let pool = capped.isEmpty ? all : capped
@@ -167,21 +180,22 @@ final class CameraManager: NSObject {
             return area(lhs) < area(rhs)
         }
         guard let best else { return }
+        applyFormat(best, to: device, targetFPS: 30)
+    }
 
+    private func applyFormat(_ best: AVCaptureDevice.Format, to device: AVCaptureDevice, targetFPS: Double) {
         do {
             try device.lockForConfiguration()
             device.activeFormat = best
-            // 把帧率钉在 30，避免某些格式默认 60fps 白烧 CPU
             let ranges = best.videoSupportedFrameRateRanges
-            let target = 30.0
-            if ranges.contains(where: { $0.minFrameRate <= target && target <= $0.maxFrameRate }) {
-                let duration = CMTime(value: 1, timescale: CMTimeScale(target))
+            if ranges.contains(where: { $0.minFrameRate <= targetFPS && targetFPS <= $0.maxFrameRate }) {
+                let duration = CMTime(value: 1, timescale: CMTimeScale(targetFPS))
                 device.activeVideoMinFrameDuration = duration
                 device.activeVideoMaxFrameDuration = duration
             }
             device.unlockForConfiguration()
             let dims = CMVideoFormatDescriptionGetDimensions(best.formatDescription)
-            activeDeviceDescription = "\(device.localizedName) \(dims.width)x\(dims.height)@\(Int(target))fps"
+            activeDeviceDescription = "\(device.localizedName) \(dims.width)x\(dims.height)@\(Int(targetFPS))fps"
         } catch {
             errorMessage = "无法应用摄像头格式：\(error.localizedDescription)"
         }

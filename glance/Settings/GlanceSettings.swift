@@ -129,6 +129,7 @@ final class GlanceSettings {
         static let manualHotKeyModifiers = "GlanceSettings.manualHotKeyModifiers"
         static let autoSleepOnAway = "GlanceSettings.autoSleepOnAway"
         static let autoSleepIdleMinutes = "GlanceSettings.autoSleepIdleMinutes"
+        static let wakeOnApproach = "GlanceSettings.wakeOnApproach"
     }
 
     @ObservationIgnored private let defaults = UserDefaults.standard
@@ -186,6 +187,10 @@ final class GlanceSettings {
     /// 离开（系统输入空闲超过阈值）时自动关闭显示器；回来仍由人脸解锁。
     var autoSleepOnAway: Bool {
         didSet { defaults.set(autoSleepOnAway, forKey: Key.autoSleepOnAway) }
+    }
+    /// 息屏后低频侦测人脸，检测到人靠近就点亮显示器（随后由人脸解锁接手）。
+    var wakeOnApproach: Bool {
+        didSet { defaults.set(wakeOnApproach, forKey: Key.wakeOnApproach) }
     }
     var autoSleepIdleMinutes: Int {
         didSet {
@@ -323,6 +328,7 @@ final class GlanceSettings {
         manualHotKeyModifiers = defaults.object(forKey: Key.manualHotKeyModifiers) as? Int ?? 6400
         autoSleepOnAway = defaults.object(forKey: Key.autoSleepOnAway) as? Bool ?? false
         autoSleepIdleMinutes = defaults.object(forKey: Key.autoSleepIdleMinutes) as? Int ?? 10
+        wakeOnApproach = defaults.object(forKey: Key.wakeOnApproach) as? Bool ?? false
         // Matches `MatchConfidenceLevel.standard` — see RecognitionSettingsPage.swift.
         matchThreshold = defaults.object(forKey: Key.matchThreshold) as? Float ?? 0.66
         livenessChecksEnabled = defaults.object(forKey: Key.livenessChecksEnabled) as? Bool ?? true

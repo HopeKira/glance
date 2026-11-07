@@ -157,6 +157,15 @@ struct GeneralSettingsPage: View {
                     )
                 }
             }
+
+            SettingsGroup {
+                SettingsRowContent(
+                    title: "走近时自动亮屏",
+                    subtitle: "息屏期间用低分辨率相机检测人脸，走近就点亮屏幕并刷脸解锁（相机若在息屏时断电则不生效）"
+                ) {
+                    GlanceToggle(isOn: $settings.wakeOnApproach)
+                }
+            }
             .onReceive(NotificationCenter.default.publisher(for: NSApplication.didChangeScreenParametersNotification)) { _ in
                 screens = NSScreen.screens
             }
