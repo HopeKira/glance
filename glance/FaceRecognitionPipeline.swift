@@ -90,7 +90,7 @@ final class FaceRecognitionPipeline {
     }
 
     /// Below this fraction of frame width, a face is treated as a bystander, not a candidate — shared with onboarding's "move closer" prompt. `nonisolated(unsafe)` because it's read from a background-task static func that can't touch GlanceSettings' MainActor-isolated storage.
-    nonisolated(unsafe) static var minimumProminentFaceWidth: Float = 0.18
+    nonisolated(unsafe) static var minimumProminentFaceWidth: Float = 0.15
 
     /// Max normalized-coordinate drift between frames still counted as "the same person".
     nonisolated private static let continuityDistanceTolerance: CGFloat = 0.3
