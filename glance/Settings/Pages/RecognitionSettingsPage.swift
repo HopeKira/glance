@@ -177,7 +177,7 @@ private enum DetectionDistanceLevel: Int, CaseIterable {
 
     var title: String {
         switch self {
-        case .close: return "关闭"
+        case .close: return "近"
         case .standard: return "默认"
         case .far: return "远"
         }
