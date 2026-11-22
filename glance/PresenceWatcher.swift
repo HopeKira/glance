@@ -103,6 +103,9 @@ final class PresenceWatcher {
         guard settings.autoLockOnAway, settings.isFaceUnlockEnabled else { return }
         guard !isScreenAsleep, !isScreenLocked else { return }
         guard !isCapturing, !MenuBarNotchController.shared.isScanning else { return }
+        // v2: 每个 2 秒 tick 都轮询手柄（快照对比，极廉价），与键鼠同级别纳入活动判定。
+        // 必须在 60 秒节流之前 poll，否则手柄活动精度会掉到 60 秒。
+        GamepadActivityMonitor.poll()
         guard Date().timeIntervalSince(lastAwayCheck) >= TimeInterval(settings.awayCheckSeconds) else { return }
 
         // v2 修复：用户近期有鼠标/键盘操作就不判离场。以前只看摄像头有没有脸，
@@ -266,7 +269,9 @@ final class PresenceWatcher {
     nonisolated private static func userWasActiveRecently(within seconds: TimeInterval) -> Bool {
         let mouse = CGEventSource.secondsSinceLastEventType(.hidSystemState, eventType: .mouseMoved)
         let key = CGEventSource.secondsSinceLastEventType(.hidSystemState, eventType: .keyDown)
-        return min(mouse, key) <= seconds
+        // 手柄快照已在 tickAwayCheck 每次 tick 时 poll 过，这里只读时间戳。
+        let gamepad = GamepadActivityMonitor.secondsSinceActivity()
+        return min(mouse, key, gamepad) <= seconds
     }
 
     /// ⌃⌘Q —— 系统自带的「锁定屏幕」，比私有 API 稳，也不需要额外权限。

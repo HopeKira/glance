@@ -10,6 +10,14 @@ import SwiftUI
 
 struct OnboardingNotchView: View {
     let controller: OnboardingController
+    /// v2: true when hosted in the standalone window (not the old notch panel).
+    /// Uses window-specific sizing and reports size changes back so the window hugs content.
+    var windowMode: Bool = false
+    var onSizeChange: ((CGSize) -> Void)? = nil
+
+    private var contentSize: CGSize {
+        windowMode ? OnboardingMetrics.windowSize(for: controller.step) : controller.panelSize
+    }
 
     var body: some View {
         ZStack {
@@ -35,8 +43,10 @@ struct OnboardingNotchView: View {
             }
         }
         .id(controller.step)
-        .frame(width: controller.panelSize.width, height: controller.panelSize.height)
-        .frame(maxWidth: .infinity, maxHeight: .infinity) // 在独立窗口里居中
+        .frame(width: contentSize.width, height: contentSize.height)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+        .onAppear { onSizeChange?(contentSize) }
+        .onChange(of: controller.step) { _, _ in onSizeChange?(contentSize) }
         .overlay(alignment: .topTrailing) {
             if controller.step != .complete {
                 Button {
@@ -57,7 +67,7 @@ struct OnboardingNotchView: View {
     }
 
     private var stepTransition: AnyTransition {
-        let travel = controller.panelSize.height
+        let travel = contentSize.height
         let insertionOffset: CGFloat = controller.navDirection == .forward ? travel : -travel
         let removalOffset: CGFloat = controller.navDirection == .forward ? -travel : travel
         return .asymmetric(

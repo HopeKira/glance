@@ -74,6 +74,25 @@ enum OnboardingMetrics {
         return CGSize(width: width, height: panelHeight(for: step, style: style))
     }
 
+    /// v2 独立窗口专用尺寸：贴合内容的紧凑矩形，没有刘海那种贴屏幕边缘的大圆角。
+    /// 宽度统一，高度按 step 给足即可——窗口会随 step 切换精确缩放，不留无效面积。
+    static func windowSize(for step: OnboardingStep) -> CGSize {
+        let width: CGFloat = 400
+        let height: CGFloat
+        switch step {
+        case .intro:          height = 210
+        case .permissions:    height = 275
+        case .securityNotice: height = 290
+        case .preSetup:       height = 250
+        case .selectCamera:   height = 260
+        case .enroll:         height = 400
+        case .name:           height = 260
+        case .password:       height = 290
+        case .complete:       height = 150
+        }
+        return CGSize(width: width, height: height)
+    }
+
     static func panelBottomRadius(for step: OnboardingStep) -> CGFloat {
         switch step {
         case .enroll: return 51.5

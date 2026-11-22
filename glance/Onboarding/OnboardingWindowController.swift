@@ -34,12 +34,18 @@ final class OnboardingWindowController: NSObject {
             self?.dismissOnboarding()
         }
 
-        let host = NSHostingView(rootView: OnboardingNotchView(controller: controller))
-        // Fixed generous size; step views size themselves via OnboardingNotchView
-        // and sit centered. Avoids per-step window resize churn.
-        let windowSize = NSSize(width: 480, height: 620)
+        // v2: window hugs content — size comes from the window-specific table,
+        // and the view reports step changes so the window resizes precisely.
+        let initial = OnboardingMetrics.windowSize(for: controller.step)
+        let host = NSHostingView(rootView: OnboardingNotchView(
+            controller: controller,
+            windowMode: true,
+            onSizeChange: { [weak self] size in
+                Task { @MainActor [weak self] in self?.resize(to: size) }
+            }
+        ))
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: windowSize.width, height: windowSize.height),
+            contentRect: NSRect(x: 0, y: 0, width: initial.width, height: initial.height),
             styleMask: [.titled, .closable, .fullSizeContentView],
             backing: .buffered,
             defer: false
@@ -58,6 +64,19 @@ final class OnboardingWindowController: NSObject {
 
         NSApp.activate(ignoringOtherApps: true)
         window.makeKeyAndOrderFront(nil)
+    }
+
+    /// Resize the window to exactly fit the current step's content, staying centered.
+    private func resize(to size: CGSize) {
+        guard let window else { return }
+        let center = NSPoint(x: window.frame.midX, y: window.frame.midY)
+        let frame = NSRect(
+            x: center.x - size.width / 2,
+            y: center.y - size.height / 2,
+            width: size.width,
+            height: size.height
+        )
+        window.setFrame(frame, display: true, animate: true)
     }
 
     /// Close the onboarding window. Guarded so a late completion can't close a
