@@ -105,6 +105,14 @@ final class PresenceWatcher {
         guard !isCapturing, !MenuBarNotchController.shared.isScanning else { return }
         guard Date().timeIntervalSince(lastAwayCheck) >= TimeInterval(settings.awayCheckSeconds) else { return }
 
+        // v2 修复：用户近期有鼠标/键盘操作就不判离场。以前只看摄像头有没有脸，
+        // 人在用电脑但脸暂时偏离镜头时会累积 missingStreak 被误锁。
+        if Self.userWasActiveRecently(within: TimeInterval(settings.awayCheckSeconds)) {
+            missingStreak = 0
+            lastAwayCheck = Date()
+            return
+        }
+
         lastAwayCheck = Date()
         guard let hasFace = await captureAndDetectFace(timeout: 2.5) else {
             // 这次没拿到画面，不计入"没人"
@@ -135,6 +143,7 @@ final class PresenceWatcher {
         returnTask = Task { [weak self] in
             guard let self else { return }
             var faceHits = 0
+            var quietStreak = 0  // 连续"有帧但没脸"的次数——久无人时用于降频
             self.noFrameStreak = 0
             var loggedPowerLoss = false
             GlanceLog.write("走近侦测：开始")
@@ -143,8 +152,11 @@ final class PresenceWatcher {
                 // v2 修复：USB 摄像头在长时间睡眠/锁屏后会断电断流。旧逻辑连续 7 次
                 // 取不到帧就永久放弃，导致唤醒后走近再也不侦测，必须手动解锁一次才恢复。
                 // 改成退避重试：失败越多间隔越长（省电），但永不放弃——供电恢复后自动接管。
-                let backoff = min(2 + self.noFrameStreak * 2, 15)
-                try? await Task.sleep(nanoseconds: UInt64(backoff) * 1_000_000_000)
+                // 同时久无人（quietStreak）也逐步拉长间隔；一旦检测到脸立刻回到 2 秒。
+                let frameBackoff = min(2 + self.noFrameStreak * 2, 15)
+                let quietBackoff = min(2 + quietStreak, 8)
+                let interval = max(frameBackoff, quietBackoff)
+                try? await Task.sleep(nanoseconds: UInt64(interval) * 1_000_000_000)
                 guard !Task.isCancelled else { return }
                 guard self.isScreenAsleep || self.isScreenLocked else { return }
 
@@ -161,6 +173,11 @@ final class PresenceWatcher {
                     loggedPowerLoss = false
                 }
                 self.noFrameStreak = 0
+                if hasFace {
+                    quietStreak = 0  // 有人立即恢复高频，保证走近响应
+                } else {
+                    quietStreak += 1
+                }
                 faceHits = hasFace ? faceHits + 1 : 0
 
                 if faceHits >= 2 {
@@ -208,15 +225,48 @@ final class PresenceWatcher {
     }
 
     /// 只问「画面里有没有脸」，不认人、不算特征。
+    /// v2 省电优化：先把帧缩到 320px 再检测——纯存在检测不需要高清，
+    /// Vision 在 320px 判"有没有脸"依旧可靠，但推理开销约为 640px 的 1/4。
     nonisolated private static func containsFace(_ image: CGImage) -> Bool {
+        let target: CGFloat = 320
+        let longEdge = CGFloat(max(image.width, image.height))
+        let detectionImage: CGImage
+        if longEdge > target {
+            let scale = target / longEdge
+            let w = Int(CGFloat(image.width) * scale)
+            let h = Int(CGFloat(image.height) * scale)
+            detectionImage = Self.downsample(image, to: CGSize(width: w, height: h)) ?? image
+        } else {
+            detectionImage = image
+        }
         let request = VNDetectFaceRectanglesRequest()
-        let handler = VNImageRequestHandler(cgImage: image, options: [:])
+        let handler = VNImageRequestHandler(cgImage: detectionImage, options: [:])
         do {
             try handler.perform([request])
             return !(request.results?.isEmpty ?? true)
         } catch {
             return false
         }
+    }
+
+    /// Downsamples a CGImage for cheap presence detection.
+    nonisolated private static func downsample(_ image: CGImage, to size: CGSize) -> CGImage? {
+        let w = Int(size.width), h = Int(size.height)
+        guard w > 0, h > 0,
+              let ctx = CGContext(
+                data: nil, width: w, height: h, bitsPerComponent: 8, bytesPerRow: 0,
+                space: CGColorSpaceCreateDeviceGray(), bitmapInfo: CGImageAlphaInfo.none.rawValue
+              ) else { return nil }
+        ctx.interpolationQuality = .low
+        ctx.draw(image, in: CGRect(x: 0, y: 0, width: w, height: h))
+        return ctx.makeImage()
+    }
+
+    /// 近期（within 秒内）是否有鼠标或键盘活动。用于避免"人在用电脑但脸偏离镜头"被误判离场。
+    nonisolated private static func userWasActiveRecently(within seconds: TimeInterval) -> Bool {
+        let mouse = CGEventSource.secondsSinceLastEventType(.hidSystemState, eventType: .mouseMoved)
+        let key = CGEventSource.secondsSinceLastEventType(.hidSystemState, eventType: .keyDown)
+        return min(mouse, key) <= seconds
     }
 
     /// ⌃⌘Q —— 系统自带的「锁定屏幕」，比私有 API 稳，也不需要额外权限。
