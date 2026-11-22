@@ -137,9 +137,13 @@ final class NotchWindowController {
     /// receives none, and a global event monitor doesn't fire for movement over
     /// this app's own windows.
     private func updateCursorPolling() {
-        let shouldPoll = wantsInteractive && (window?.isVisible ?? false)
+        // 锁屏时窗口委托给 SkyLight：updateMousePassthrough() 会直接短路返回
+        // （第 122 行 guard !isSkyLightDelegated），hover-to-retry 由系统事件处理，
+        // 不依赖坐标轮询。此时启动 60Hz 定时器纯属空转耗电 —— 直接不启动。
+        // 非锁屏场景 30Hz 足够鼠标 passthrough 判断流畅（原 60Hz 无必要地翻倍耗电）。
+        let shouldPoll = wantsInteractive && (window?.isVisible ?? false) && !isSkyLightDelegated
         if shouldPoll, cursorPollTimer == nil {
-            let timer = Timer(timeInterval: 1.0 / 60.0, repeats: true) { [weak self] _ in
+            let timer = Timer(timeInterval: 1.0 / 30.0, repeats: true) { [weak self] _ in
                 MainActor.assumeIsolated { self?.updateMousePassthrough() }
             }
             RunLoop.main.add(timer, forMode: .common)

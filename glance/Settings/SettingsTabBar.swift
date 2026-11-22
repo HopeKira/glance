@@ -50,16 +50,8 @@ struct SettingsTabBar: View {
         .coordinateSpace(name: Self.coordinateSpace)
         .padding(.horizontal, SettingsMetrics.tabBarHorizontalPadding)
         .frame(height: SettingsMetrics.tabBarHeight)
-        .background {
-            Capsule()
-                .fill(.regularMaterial)
-            Capsule()
-                .fill(SettingsMetrics.tabBarTint)
-        }
-        .overlay(
-            Capsule()
-                .strokeBorder(SettingsMetrics.tabBarBorder, lineWidth: 1)
-        )
+        // v2 / macOS 26+: 原生液态玻璃标签栏，替代手绘 material+tint+stroke。
+        .glassEffect(.regular, in: Capsule())
         .onPreferenceChange(TabFramePreferenceKey.self) { frames in
             withAnimation(SettingsMetrics.tabSelectionAnimation) {
                 tabFrames = frames

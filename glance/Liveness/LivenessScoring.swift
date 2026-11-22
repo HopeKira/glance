@@ -13,7 +13,7 @@ import CoreGraphics
 /// One frame's worth of liveness-relevant measurements — already normalized, no Vision needed.
 /// Populated by `LivenessFeatureExtractor.extract(from:)` from a real camera frame, or built
 /// directly from synthetic data by `tools/liveness_selftest.swift`.
-struct LivenessFrame {
+struct LivenessFrame: Sendable {
     let timestamp: Date
     /// Every landmark point Vision found this frame, tagged by region — see `LandmarkGeometry.allPoints`.
     let landmarks: [LandmarkPoint]
@@ -37,7 +37,7 @@ struct LivenessFrame {
 
     /// Explicit init so `glare` can default to `nil` — a defaulted `let` property is otherwise
     /// excluded from Swift's synthesized memberwise init rather than becoming optional.
-    init(
+    nonisolated init(
         timestamp: Date,
         landmarks: [LandmarkPoint],
         interocularDistance: CGFloat?,

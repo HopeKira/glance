@@ -36,6 +36,22 @@ struct OnboardingNotchView: View {
         }
         .id(controller.step)
         .frame(width: controller.panelSize.width, height: controller.panelSize.height)
+        .overlay(alignment: .topTrailing) {
+            if controller.step != .complete {
+                Button {
+                    controller.teardown()
+                    NotchOverlayController.shared.dismissOnboarding()
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 18))
+                        .foregroundStyle(.secondary)
+                        .padding(10)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .help("稍后再说（可从菜单栏「设置」继续）")
+            }
+        }
         .transition(stepTransition)
     }
 

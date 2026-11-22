@@ -82,7 +82,9 @@ final class FaceUnlockCoordinator {
     private let headlessRetryDelay: Duration = .seconds(1)
 
     /// When off, no notch/pill presence at all — every overlay call in this file is conditioned on this rather than just skipping the video.
-    private var showsUI: Bool { GlanceSettings.shared.showUnlockAnimation }
+    /// v2 / Mac mini: 静默解锁，永不建立灵动岛/动画浮层。
+    /// 识别、活体、注入照常工作，只是不画 UI —— 外接显示器无刘海，浮层毫无意义且耗资源。
+    private var showsUI: Bool { false }
 
     /// Reads the space key on the lock screen for the "按空格时" trigger; only runs while locked + opted in.
     private let spaceKeyMonitor = SpaceKeyMonitor()
@@ -114,6 +116,7 @@ final class FaceUnlockCoordinator {
     }
 
     private func evaluateTrigger() {
+        guard !pocController.passwordRejected else { return }
         guard LockMonitor.isScreenActuallyLocked() else {
             hasArmedForCurrentLock = false
             hasAutoRetriedForCurrentLock = false
@@ -406,7 +409,7 @@ final class FaceUnlockCoordinator {
             let pipeline = self.pipeline
             let previousBoundingBox = lastFaceBoundingBox
             let outcome = await Task.detached(priority: .userInitiated) { () -> (FaceRecognitionResult, LivenessFrame)? in
-                guard let result = try? pipeline.recognize(in: frame.image, preferNear: previousBoundingBox) else { return nil }
+                guard let result = try? await pipeline.recognize(in: frame.image, preferNear: previousBoundingBox) else { return nil }
                 let faceCrop = CameraManager.renderCrop(from: frame, imageRect: result.face.boundingBox)
                 return (result, LivenessFeatureExtractor.extract(from: result, frame: frame.image, faceCrop: faceCrop))
             }.value
@@ -570,7 +573,7 @@ final class FaceUnlockCoordinator {
             let pipeline = self.pipeline
             let previousBoundingBox = lastFaceBoundingBox
             let outcome = await Task.detached(priority: .userInitiated) { () -> (FaceRecognitionResult, LivenessFrame)? in
-                guard let result = try? pipeline.recognize(in: frame.image, preferNear: previousBoundingBox) else { return nil }
+                guard let result = try? await pipeline.recognize(in: frame.image, preferNear: previousBoundingBox) else { return nil }
                 let faceCrop = CameraManager.renderCrop(from: frame, imageRect: result.face.boundingBox)
                 return (result, LivenessFeatureExtractor.extract(from: result, frame: frame.image, faceCrop: faceCrop))
             }.value

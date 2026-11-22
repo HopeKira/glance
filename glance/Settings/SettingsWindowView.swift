@@ -52,8 +52,11 @@ struct SettingsWindowView: View {
 
     private var settingsContent: some View {
         ZStack {
-            VisualEffectView()
-            SettingsMetrics.windowTintColor
+            // v2 / macOS 26+: 原生窗口材质替代自定义 NSVisualEffectView + CIFilter
+            // 饱和度 hack。系统材质随壁纸/外观自动适配，零手动调色、更低占用。
+            Rectangle()
+                .fill(.regularMaterial)
+                .ignoresSafeArea()
             contentPage
         }
         // No `.clipShape`, manual stroke, or `.shadow` on the outer window —
@@ -250,7 +253,7 @@ private struct SettingsTabSwipeRecognizer: NSViewRepresentable {
 
 private final class SwipeHostingView: NSView {
     var onSwipe: (SettingsTabSwipeDirection) -> Void
-    private var eventMonitor: Any?
+    nonisolated(unsafe) private var eventMonitor: Any?
     private var accumulatedHorizontalScroll: CGFloat = 0
     private var accumulatedVerticalScroll: CGFloat = 0
     private var didNavigateThisGesture = false

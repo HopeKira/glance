@@ -11,7 +11,9 @@ import AppKit
 @MainActor
 final class SessionAutoLocker {
     private let pocController: POCController
-    private var timer: Timer?
+    nonisolated(unsafe) private var timer: Timer?
+    /// 保存 wake 观察者 token，deinit 时移除，避免对象重建时累积孤儿观察者。
+    nonisolated(unsafe) private var wakeObserver: NSObjectProtocol?
 
     /// Coarse on purpose — the shortest selectable limit is a full day, and the decision compares timestamps, not ticks.
     private let checkInterval: TimeInterval = 5 * 60
@@ -26,7 +28,7 @@ final class SessionAutoLocker {
         self.timer = timer
 
         // Also evaluate on wake: no timer fires during sleep, but the elapsed time still counts as idle once compared.
-        NSWorkspace.shared.notificationCenter.addObserver(
+        self.wakeObserver = NSWorkspace.shared.notificationCenter.addObserver(
             forName: NSWorkspace.didWakeNotification,
             object: nil,
             queue: .main
@@ -39,6 +41,9 @@ final class SessionAutoLocker {
 
     deinit {
         timer?.invalidate()
+        if let wakeObserver {
+            NSWorkspace.shared.notificationCenter.removeObserver(wakeObserver)
+        }
     }
 
     /// Routed through `POCController.lockSession()` rather than `SecureCredentialManager` directly, so the Settings UI's

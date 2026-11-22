@@ -6,7 +6,7 @@
 //  Vision-free `LivenessFrame` — keeps the decision logic compilable standalone.
 //
 
-import Vision
+@preconcurrency import Vision
 import CoreGraphics
 
 nonisolated enum LivenessFeatureExtractor {

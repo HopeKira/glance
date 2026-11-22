@@ -7,7 +7,7 @@
 //  spoofing, never positive evidence of liveness.
 //
 
-import Vision
+@preconcurrency import Vision
 import CoreGraphics
 
 struct DeviceBezelObservation {

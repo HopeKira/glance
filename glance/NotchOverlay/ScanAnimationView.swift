@@ -92,7 +92,11 @@ final class ScanAnimationHostView: NSView {
         }
 
         guard let url = Bundle.main.url(forResource: resource, withExtension: "mp4") else {
-            assertionFailure("\(resource).mp4 missing from bundle — check glance/Resources/")
+            // v2 静默版：解锁动画资源已移除。此路径在 showsUI=false 下不会走到，
+            // 若将来误开动画，静默退回静态图而不是崩溃。
+            teardownPlayer()
+            playerLayer.isHidden = true
+            stillImageLayer.isHidden = false
             return
         }
 
@@ -108,7 +112,7 @@ final class ScanAnimationHostView: NSView {
 
         // Waits for `isReadyForDisplay` rather than a fixed delay, which raced the
         // real decode time and produced a black-frame flash.
-        let reveal: () -> Void = { [weak self] in
+        let reveal: @Sendable () -> Void = { [weak self] in
             guard let self else { return }
             // Without disabling implicit actions, toggling `isHidden` cross-fades both
             // layers over CALayer's default duration instead of swapping instantly.

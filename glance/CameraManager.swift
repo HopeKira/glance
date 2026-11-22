@@ -244,7 +244,10 @@ final class CameraManager: NSObject {
     private nonisolated static let cropRenderContext = CIContext()
 
     /// Sample-buffer callbacks arrive on `sessionQueue`, off the main actor; this delegate converts there, then hops back.
-    private final class FramePublisher: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
+    /// Swift 6: 必须显式 nonisolated —— 它运行在 AVFoundation 的摄像头队列而非 main actor，
+    /// 否则外层 @MainActor 会感染此嵌套类，captureOutput 里触发 _checkExpectedExecutor 断言崩溃。
+    /// 其可变状态（ciContext/nextFrameID/owner）只在 sessionQueue 上访问，线程安全。
+    private nonisolated final class FramePublisher: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         weak var owner: CameraManager?
         private let ciContext = CIContext()
         /// Detection only needs a modest resolution; the live preview renders from the capture session directly and

@@ -5,7 +5,7 @@
 //  Converts Vision's normalized (0...1), bottom-left-origin face boxes into pixel-space, top-left-origin `CGRect`s.
 //
 
-import Vision
+@preconcurrency import Vision
 import CoreGraphics
 
 struct DetectedFace {

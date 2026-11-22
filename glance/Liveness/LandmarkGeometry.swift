@@ -6,7 +6,7 @@
 //  moved out of `FaceAligner` so the two call sites can't drift apart.
 //
 
-import Vision
+@preconcurrency import Vision
 import CoreGraphics
 
 /// Every landmark region this app reads from `VNFaceLandmarks2D`. Includes several regions
@@ -21,7 +21,7 @@ enum LandmarkRegion: String, CaseIterable, Hashable {
 
 /// One landmark point, tagged with where it came from. `indexInRegion` lets two frames'
 /// points be paired up for cross-frame comparison.
-struct LandmarkPoint {
+struct LandmarkPoint: Sendable {
     let point: CGPoint
     let region: LandmarkRegion
     let indexInRegion: Int

@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-private struct CheckmarkShape: Shape {
-    func path(in rect: CGRect) -> Path {
+private struct CheckmarkShape: @preconcurrency Shape {
+    nonisolated func path(in rect: CGRect) -> Path {
         var path = Path()
         let w = rect.width
         let h = rect.height

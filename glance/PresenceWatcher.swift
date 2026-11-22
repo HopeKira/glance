@@ -15,7 +15,7 @@
 import AppKit
 import Foundation
 import Observation
-import Vision
+@preconcurrency import Vision
 
 @Observable
 @MainActor
@@ -85,7 +85,13 @@ final class PresenceWatcher {
         awayTask?.cancel()
         awayTask = Task { [weak self] in
             while !Task.isCancelled {
-                try? await Task.sleep(nanoseconds: 2_000_000_000)
+                // 两个功能都关闭时无需高频唤醒：默认配置下 autoLockOnAway=false、
+                // wakeOnApproach=false，原来仍每 2 秒空转判断一次，白白耗电。
+                // 关闭时降到 30 秒巡检一次设置是否已开启；开启后恢复 2 秒。
+                let settings = GlanceSettings.shared
+                let idle = !settings.autoLockOnAway && !settings.wakeOnApproach
+                let nanoseconds: UInt64 = idle ? 30_000_000_000 : 2_000_000_000
+                try? await Task.sleep(nanoseconds: nanoseconds)
                 guard !Task.isCancelled else { return }
                 await self?.tickAwayCheck()
             }

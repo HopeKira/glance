@@ -39,8 +39,8 @@ final class LockMonitor {
     private(set) var lastEvent: LockEventKind?
     private(set) var eventCount: Int = 0
 
-    private var distributedObservers: [NSObjectProtocol] = []
-    private var workspaceObservers: [NSObjectProtocol] = []
+    nonisolated(unsafe) private var distributedObservers: [NSObjectProtocol] = []
+    nonisolated(unsafe) private var workspaceObservers: [NSObjectProtocol] = []
 
     init() {
         startMonitoring()

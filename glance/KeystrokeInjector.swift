@@ -12,6 +12,7 @@ import CoreGraphics
 enum KeystrokeError: LocalizedError {
     case accessibilityNotGranted
     case eventCreationFailed
+    case preconditionFailed
 
     var errorDescription: String? {
         switch self {
@@ -19,11 +20,14 @@ enum KeystrokeError: LocalizedError {
             return "需要“辅助功能”权限。请打开“系统设置”→“隐私与安全性”→“辅助功能”，并启用 Glance。"
         case .eventCreationFailed:
             return "无法为按键创建 CGEvent。"
+        case .preconditionFailed:
+            return "注入前条件已变化（屏幕可能已被解锁），已取消输入以免密码进入其他应用。"
         }
     }
 }
 
 enum KeystrokeInjector {
+    /// 缓存 AppKit 的全局授权提示 key（只读其地址，进程生命周期内不变）。
     /// Returns true if the app has Accessibility permission (no prompt).
     nonisolated static func isAccessibilityTrusted() -> Bool {
         return AXIsProcessTrusted()
@@ -32,16 +36,29 @@ enum KeystrokeInjector {
     /// Triggers the system prompt to grant Accessibility (deep links to System Settings).
     @discardableResult
     nonisolated static func promptForAccessibility() -> Bool {
-        let promptKey = kAXTrustedCheckOptionPrompt.takeUnretainedValue()
-        let options = [promptKey: true] as CFDictionary
+        // kAXTrustedCheckOptionPrompt 是 AppKit 暴露的非 Sendable 全局；此处只读取其地址、
+        // 不修改，锁屏授权提示是单次调用，标注 nonisolated(unsafe) 明确表达该不变式。
+        // kAXTrustedCheckOptionPrompt 的 CFString 值就是 "AXTrustedCheckOptionPrompt"，
+        // 直接用字面量避免引用 AppKit 的非 Sendable 全局 var。
+        let options = ["AXTrustedCheckOptionPrompt" as CFString: true] as CFDictionary
         return AXIsProcessTrustedWithOptions(options)
     }
 
     /// Types the UTF-8 bytes into whatever has keyboard focus, then presses Return. Takes `Data` rather than `String` so the
     /// caller can hold the plaintext as a zero-able buffer; the brief internal `String` decode is scoped to this call. Blocking.
-    nonisolated static func typeAndReturn(_ passwordBytes: Data) throws {
+    /// - Parameter stillValid: 紧贴实际输入前的最后一道复核。返回 false 即中止，避免用户恰好手动解锁时
+    ///   把 Mac 登录密码敲进任意前台应用。自检路径传 nil（无需锁屏）。
+    nonisolated static func typeAndReturn(
+        _ passwordBytes: Data,
+        stillValid: (() -> Bool)? = nil
+    ) throws {
         guard isAccessibilityTrusted() else {
             throw KeystrokeError.accessibilityNotGranted
+        }
+        // 清屏和实际输入之前复核一次：从上层第二次锁屏确认到这里有解密/调度延迟，
+        // 用户可能在此期间已手动解锁。自检路径无此闭包，行为不变。
+        if let stillValid, !stillValid() {
+            throw KeystrokeError.preconditionFailed
         }
         guard let text = String(data: passwordBytes, encoding: .utf8) else {
             throw KeystrokeError.eventCreationFailed

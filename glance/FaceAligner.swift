@@ -6,7 +6,7 @@
 //  Solves the 2D similarity transform mapping 5 detected landmarks onto the standard ArcFace template, then warps.
 //
 
-import Vision
+@preconcurrency import Vision
 import CoreGraphics
 
 struct AlignedFace {

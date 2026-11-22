@@ -17,6 +17,7 @@ enum SecureCredentialError: LocalizedError {
     case encryptionFailed
     case decryptionFailed
     case sessionKeyUnavailable
+    case injectionAborted
 
     var errorDescription: String? {
         switch self {
@@ -28,6 +29,8 @@ enum SecureCredentialError: LocalizedError {
             return "加密失败。"
         case .decryptionFailed:
             return "解密失败。已保存的凭据可能已损坏。"
+        case .injectionAborted:
+            return "屏幕已解锁，已取消输入密码。"
         case .sessionKeyUnavailable:
             return "会话密钥已丢失，但仍有只能由它解密的加密数据。没有删除任何内容。在“密码”标签页删除已保存的密码即可清除两者并重新开始。"
         }
@@ -38,11 +41,13 @@ extension Notification.Name {
     /// Fires whenever the cached session key changes, so anything encrypted under it (e.g. `FaceEnrollmentStore`) can reload
     /// itself instead of relying on each call site to remember to — a past bug had the sidebar's unlock forget this, leaving
     /// face unlock silently running on stale pre-unlock data.
-    static let secureCredentialSessionDidChange = Notification.Name("SecureCredentialManager.sessionDidChange")
+    /// immutable 常量，线程安全；显式 nonisolated 供后台钥匙串函数调用。
+    nonisolated static let secureCredentialSessionDidChange = Notification.Name("SecureCredentialManager.sessionDidChange")
 }
 
 enum SecureCredentialManager {
     nonisolated private static let sessionKeyAccount = "sessionKey"
+    nonisolated private static let sealedMagic = SealedKeyCrypto.magic
     nonisolated private static let passwordBlobAccount = "encryptedPassword"
 
     // MARK: - Session state (thread-safe via NSLock)
@@ -130,8 +135,24 @@ enum SecureCredentialManager {
         if KeychainManager.exists(account: sessionKeyAccount) {
             let context = LAContext()
             context.localizedReason = reason
-            let data = try KeychainManager.read(account: sessionKeyAccount, context: context)
-            setCachedKey(SymmetricKey(data: data))
+            let stored = try KeychainManager.read(account: sessionKeyAccount, context: context)
+            let keyData: Data
+            if stored.starts(with: sealedMagic) {
+                keyData = try SealedKeyCrypto.open(stored, allowInteraction: true)
+            } else {
+                // 旧格式（明文 32 字节）：先读成功、再封存写回；写回失败就原样保留，
+                // 绝不删改旧值，避免已录数据永久解不开。
+                keyData = stored
+                do {
+                    try KeychainManager.save(account: sessionKeyAccount,
+                                             data: try SealedKeyCrypto.seal(stored))
+                    GlanceLog.write("会话密钥：已迁移为 Secure Enclave 封存")
+                } catch {
+                    GlanceLog.write("会话密钥：封存迁移失败，保留原格式（\(error.localizedDescription)）")
+                }
+            }
+            setCachedKey(SymmetricKey(data: keyData))
+            SealedKeyCrypto.warmUp()
             return
         }
 
@@ -142,18 +163,26 @@ enum SecureCredentialManager {
         }
 
         let key = SymmetricKey(size: .bits256)
-        let access = try KeychainManager.makeUserPresenceAccessControl()
-        try KeychainManager.save(
-            account: sessionKeyAccount,
-            data: key.withUnsafeBytes { Data($0) },
-            accessControl: access
-        )
+        let raw = key.withUnsafeBytes { Data($0) }
+        let stored: Data
+        do {
+            stored = try SealedKeyCrypto.seal(raw)
+        } catch {
+            GlanceLog.write("会话密钥：封存不可用，降级为普通项（\(error.localizedDescription)）")
+            stored = raw
+        }
+        let access = try? KeychainManager.makeUserPresenceAccessControl()
+        try KeychainManager.save(account: sessionKeyAccount, data: stored, accessControl: access)
 
         // Read back through the gated path rather than trusting the write — only a real read proves authentication happened.
         let readBackContext = LAContext()
         readBackContext.localizedReason = reason
-        let data = try KeychainManager.read(account: sessionKeyAccount, context: readBackContext)
-        setCachedKey(SymmetricKey(data: data))
+        let readBack = try KeychainManager.read(account: sessionKeyAccount, context: readBackContext)
+        let verified: Data = readBack.starts(with: sealedMagic)
+            ? (try SealedKeyCrypto.open(readBack, allowInteraction: true))
+            : readBack
+        setCachedKey(SymmetricKey(data: verified))
+        SealedKeyCrypto.warmUp()
     }
 
     /// Checked without needing the key itself, so this stays answerable precisely when the key can't be read.

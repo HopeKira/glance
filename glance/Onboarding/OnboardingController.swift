@@ -811,7 +811,7 @@ final class OnboardingController {
                 if Float(face.normalizedBoundingBox.width) < minimumWidth {
                     return EnrollFrameOutcome.tooFar
                 }
-                return EnrollFrameOutcome.ready(try pipeline.recognize(face, in: image))
+                return EnrollFrameOutcome.ready(try await pipeline.recognize(face, in: image))
             } catch {
                 return EnrollFrameOutcome.noFace
             }

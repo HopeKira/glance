@@ -363,7 +363,7 @@ final class GlanceSettings {
         // switching back on has something to restore.
         unlockAnimationStyle = storedStyle == .none ? .original : storedStyle
         showUnlockAnimation = defaults.object(forKey: Key.showUnlockAnimation) as? Bool
-            ?? (storedStyle != .none)
+            ?? false   // Mac mini / 无刘海设备：默认不显示灵动岛浮层（headless）
 
         // On wake/lock by default, not on space — `.onSpace` needs Input
         // Monitoring, which a fresh install shouldn't request unprompted.
@@ -407,5 +407,5 @@ final class GlanceSettings {
 
 extension Notification.Name {
     /// 快捷键设置变化后由 AppDelegate 重新注册 Carbon 热键。
-    static let glanceHotKeyDidChange = Notification.Name("com.imanity.glance.hotKeyDidChange")
+    static let glanceHotKeyDidChange = Notification.Name("com.imanity.glance.v2.hotKeyDidChange")
 }

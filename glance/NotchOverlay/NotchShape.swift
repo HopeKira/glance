@@ -14,7 +14,7 @@
 
 import SwiftUI
 
-struct NotchShape: Shape {
+struct NotchShape: @preconcurrency Shape {
     var topRadius: CGFloat
     var bottomRadius: CGFloat
     var style: NotchPanelStyle = .notch
@@ -27,7 +27,7 @@ struct NotchShape: Shape {
         }
     }
 
-    func path(in rect: CGRect) -> Path {
+    nonisolated func path(in rect: CGRect) -> Path {
         switch style {
         case .notch: return notchPath(in: rect)
         case .pill: return pillPath(in: rect)
@@ -176,30 +176,3 @@ private enum ContinuousCorner {
     }
 }
 
-#Preview("Notch") {
-    NotchShape(topRadius: 16, bottomRadius: 65)
-        .frame(width: 380, height: 260)
-        .padding(20)
-}
-
-#Preview("刘海——收起") {
-    NotchShape(topRadius: 8, bottomRadius: 12)
-        .frame(width: 200, height: 32)
-        .padding(20)
-}
-
-#Preview("胶囊——收起") {
-    NotchShape(topRadius: 16, bottomRadius: 16, style: .pill)
-        .frame(width: NotchGeometry.pillClosedSize.width, height: NotchGeometry.pillClosedSize.height)
-        .padding(20)
-}
-
-#Preview("胶囊——展开") {
-    NotchShape(
-        topRadius: NotchGeometry.pillOpenCornerRadius,
-        bottomRadius: NotchGeometry.pillOpenCornerRadius,
-        style: .pill
-    )
-    .frame(width: 380, height: 220)
-    .padding(20)
-}

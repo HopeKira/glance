@@ -19,7 +19,7 @@ import OSLog
 @MainActor
 final class SpaceKeyMonitor {
     /// Traces the Input Monitoring handshake, otherwise invisible since TCC decisions happen out of process.
-    static let log = Logger(subsystem: "com.jonathan.glance", category: "inputmonitoring")
+    static let log = Logger(subsystem: "com.imanity.glance.v2", category: "inputmonitoring")
 
     /// Fires on key-down only, not release or auto-repeat.
     var onSpaceKeyDown: (() -> Void)?
@@ -106,6 +106,8 @@ final class SpaceKeyMonitor {
         guard result == kIOReturnSuccess else {
             Self.log.error("IOHIDManagerOpen FAILED (0x\(String(result, radix: 16), privacy: .public)) — space key won't be seen")
             IOHIDManagerUnscheduleFromRunLoop(mgr, CFRunLoopGetMain(), CFRunLoopMode.commonModes.rawValue)
+            // IOHIDManager 是 CF 对象，Swift 下自动内存管理（ARC for CF），
+            // mgr 在此函数结束时自动释放，无需也无法手动 CFRelease。
             return
         }
         Self.log.info("正在监听锁屏界面的空格键")

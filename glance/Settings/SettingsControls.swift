@@ -59,12 +59,7 @@ struct SettingsRow<Trailing: View>: View {
 
     var body: some View {
         SettingsRowContent(title: title, subtitle: subtitle, info: info, trailing: trailing)
-            .background(SettingsMetrics.rowColor)
-            .overlay(
-                RoundedRectangle(cornerRadius: SettingsMetrics.rowRadius)
-                    .strokeBorder(SettingsMetrics.rowBorder, lineWidth: SettingsMetrics.rowBorderWidth)
-            )
-            .clipShape(RoundedRectangle(cornerRadius: SettingsMetrics.rowRadius))
+            .glassEffect(.regular, in: RoundedRectangle(cornerRadius: SettingsMetrics.rowRadius))
     }
 }
 
@@ -134,11 +129,7 @@ struct SettingsMenuPickerPill<MenuContent: View>: View {
             .font(.system(size: 13))
             .padding(.horizontal, 12)
             .frame(height: 28)
-            .background(Capsule().fill(SettingsMetrics.pickerPillFill))
-            .overlay {
-                Capsule()
-                    .strokeBorder(SettingsMetrics.rowBorder, lineWidth: SettingsMetrics.rowBorderWidth)
-            }
+            .glassEffect(.regular, in: Capsule())
             .contentShape(Capsule())
         }
         // `.button` + `.plain` renders the label as ordinary SwiftUI
@@ -161,12 +152,9 @@ struct SettingsGroup<Content: View>: View {
         VStack(spacing: 0) {
             content()
         }
-        .background(SettingsMetrics.rowColor)
-        .overlay(
-            RoundedRectangle(cornerRadius: SettingsMetrics.rowRadius)
-                .strokeBorder(SettingsMetrics.rowBorder, lineWidth: SettingsMetrics.rowBorderWidth)
-        )
-        .clipShape(RoundedRectangle(cornerRadius: SettingsMetrics.rowRadius))
+        // v2 / macOS 26+: 用系统液态玻璃材质替代手绘半透明卡片，
+        // 与官方设置 App 一致（玻璃会折射窗口背后的内容、随滚动流动）。
+        .glassEffect(.regular, in: RoundedRectangle(cornerRadius: SettingsMetrics.rowRadius))
     }
 }
 
@@ -235,12 +223,7 @@ struct SettingsSlider: View {
         }
         .padding(.horizontal, SettingsMetrics.rowHorizontalInset)
         .padding(.vertical, 10)
-        .background(SettingsMetrics.rowColor)
-        .overlay(
-            RoundedRectangle(cornerRadius: SettingsMetrics.rowRadius)
-                .strokeBorder(SettingsMetrics.rowBorder, lineWidth: SettingsMetrics.rowBorderWidth)
-        )
-        .clipShape(RoundedRectangle(cornerRadius: SettingsMetrics.rowRadius))
+        .glassEffect(.regular, in: RoundedRectangle(cornerRadius: SettingsMetrics.rowRadius))
     }
 }
 
@@ -289,15 +272,12 @@ private struct SettingsActionButton: View {
         Button(action: action) {
             Text(title)
                 .font(.system(size: 12, weight: .semibold))
-                .foregroundStyle(.white)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 6)
-                .background(isDestructive ? Color.red.opacity(0.85) : GlanceTheme.accent)
-                .clipShape(Capsule())
         }
-        .buttonStyle(.plain)
+        // v2 / macOS 26+: 原生液态玻璃按钮，替代手绘 Capsule 填充。
+        .buttonStyle(.glass)
+        .tint(isDestructive ? .red : GlanceTheme.accent)
+        .controlSize(.small)
         .disabled(!isEnabled)
-        .opacity(isEnabled ? 1 : 0.4)
     }
 }
 
@@ -438,15 +418,12 @@ struct SettingsPrimaryButton: View {
         Button(action: action) {
             Text(title)
                 .font(.system(size: 12, weight: .semibold))
-                .foregroundStyle(.white)
-                .padding(.horizontal, compact ? 14 : 16)
-                .padding(.vertical, compact ? 6 : 7)
-                .background(GlanceTheme.accent)
-                .clipShape(Capsule())
         }
-        .buttonStyle(.plain)
+        // v2 / macOS 26+: 主操作用官方 prominent 玻璃按钮。
+        .buttonStyle(.glassProminent)
+        .tint(GlanceTheme.accent)
+        .controlSize(compact ? .small : .regular)
         .disabled(!isEnabled)
-        .opacity(isEnabled ? 1 : 0.4)
     }
 }
 
@@ -531,14 +508,7 @@ struct SettingsOptionCard<Content: View>: View {
 
     var body: some View {
         SettingsOptionRow(content: content)
-            .background(
-                RoundedRectangle(cornerRadius: SettingsMetrics.rowRadius)
-                    .fill(SettingsMetrics.rowColor)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: SettingsMetrics.rowRadius)
-                    .strokeBorder(SettingsMetrics.rowBorder, lineWidth: SettingsMetrics.rowBorderWidth)
-            )
+            .glassEffect(.regular, in: RoundedRectangle(cornerRadius: SettingsMetrics.rowRadius))
     }
 }
 

@@ -6,7 +6,7 @@
 //  too thin to gate unlock on) and `ArcFaceEmbedder` (real face-discriminative model).
 //
 
-import Vision
+@preconcurrency import Vision
 import CoreGraphics
 
 /// `nonisolated` so implementations can run on a background task despite the project's default main-actor isolation.
@@ -20,7 +20,7 @@ protocol FaceEmbedder: Sendable {
     nonisolated var embeddingDimension: Int { get }
     /// Whether this embedder needs a canonically-aligned input (ArcFace) vs. tolerating a loose crop (Vision feature-print).
     nonisolated var requiresAlignment: Bool { get }
-    nonisolated func embedding(for face: CGImage) throws -> [Float]
+    nonisolated func embedding(for face: CGImage) async throws -> [Float]
 }
 
 enum FaceEmbedderError: LocalizedError {
@@ -44,7 +44,7 @@ struct VisionFeaturePrintEmbedder: FaceEmbedder {
     nonisolated let embeddingDimension = 2048
     nonisolated let requiresAlignment = false
 
-    nonisolated func embedding(for face: CGImage) throws -> [Float] {
+    nonisolated func embedding(for face: CGImage) async throws -> [Float] {
         let request = VNGenerateImageFeaturePrintRequest()
         let handler = VNImageRequestHandler(cgImage: face, options: [:])
         try handler.perform([request])
