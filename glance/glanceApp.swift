@@ -91,6 +91,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
         environment.presenceWatcher.start()
 
+        // v2: 启动时静默解锁会话——当前自签证书下 sessionKey 是无门禁普通项，
+        // 可在不弹密码/Touch ID 的情况下读出并缓存，省去每次重启/更新后手动验证。
+        // 若未来恢复真门禁项，静默读会失败，行为自然退回用户手动解锁。
+        let silentOK = SecureCredentialManager.trySilentUnlock()
+        GlanceLog.write("启动：会话静默解锁=\(silentOK)")
+
         GlanceLog.write(
             "启动：辅助功能=\(KeystrokeInjector.isAccessibilityTrusted()) "
             + "会话=\(SecureCredentialManager.isSessionUnlocked) "

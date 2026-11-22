@@ -208,6 +208,7 @@ final class CameraManager: NSObject {
     }
 
     /// must be called while `device` is locked for configuration.
+    /// 实测（EMEET C60E）：连续自动对焦/曝光支持且生效；白平衡与兴趣点均不支持，故只设前两项。
     private func configureAutoImageControl(_ device: AVCaptureDevice) {
         // 连续自动对焦：扫描时持续合焦，避免"拉风箱"导致抓到糊帧。
         if device.isFocusModeSupported(.continuousAutoFocus) {
@@ -215,22 +216,11 @@ final class CameraManager: NSObject {
         } else if device.isFocusModeSupported(.autoFocus) {
             device.focusMode = .autoFocus
         }
-        // 对焦兴趣点居中：人脸解锁时脸基本在画面中央。
-        if device.isFocusPointOfInterestSupported {
-            device.focusPointOfInterest = CGPoint(x: 0.5, y: 0.5)
-        }
-        // 连续自动曝光 + 中心测光：逆光/暗光下让系统自动把中心人脸照亮。
+        // 连续自动曝光：逆光/暗光下让系统自动调节。
         if device.isExposureModeSupported(.continuousAutoExposure) {
             device.exposureMode = .continuousAutoExposure
         } else if device.isExposureModeSupported(.autoExpose) {
             device.exposureMode = .autoExpose
-        }
-        if device.isExposurePointOfInterestSupported {
-            device.exposurePointOfInterest = CGPoint(x: 0.5, y: 0.5)
-        }
-        // 连续自动白平衡：避免暖光/冷光下肤色偏移影响特征匹配。
-        if device.isWhiteBalanceModeSupported(.continuousAutoWhiteBalance) {
-            device.whiteBalanceMode = .continuousAutoWhiteBalance
         }
     }
 

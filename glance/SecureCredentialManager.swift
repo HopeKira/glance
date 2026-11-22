@@ -185,6 +185,29 @@ enum SecureCredentialManager {
         SealedKeyCrypto.warmUp()
     }
 
+    /// v2: 静默解锁——不带 LAContext、不弹任何密码/Touch ID。
+    /// 当前自签证书下 sessionKey 是"无门禁普通项"（-34018 降级），可被静默读出；
+    /// 本机 Secure Enclave 解封也是纯本地运算，无需交互。
+    /// 返回是否成功；若钥匙串项未来恢复真门禁（Apple 签名 + entitlement），静默读会失败，
+    /// 届时行为退回用户手动解锁，不影响安全。
+    @discardableResult
+    nonisolated static func trySilentUnlock() -> Bool {
+        guard cachedKey() == nil,
+              KeychainManager.exists(account: sessionKeyAccount) else {
+            return cachedKey() != nil
+        }
+        do {
+            // 不带 context：普通项直接返回；真门禁项会返回 errSecInteractionNotAllowed 而非弹窗。
+            let stored = try KeychainManager.read(account: sessionKeyAccount)
+            let keyData = try SealedKeyCrypto.open(stored, allowInteraction: false)
+            setCachedKey(SymmetricKey(data: keyData))
+            SealedKeyCrypto.warmUp()
+            return true
+        } catch {
+            return false
+        }
+    }
+
     /// Checked without needing the key itself, so this stays answerable precisely when the key can't be read.
     nonisolated static var hasSessionEncryptedData: Bool {
         KeychainManager.exists(account: passwordBlobAccount) || SecureFaceStore.exists
