@@ -44,8 +44,8 @@ struct CameraSettingsPage: View {
         .onDisappear { hidePreview() }
         // Password/name/enrollment flows run in the notch, outside this
         // window, so nothing else prompts a re-check once one closes.
-        .onChange(of: NotchOverlayController.shared.phase) { _, newPhase in
-            guard newPhase == .closed else { return }
+        .onChange(of: OnboardingWindowController.shared.isOnboarding) { isOn in
+            guard !isOn else { return }
             pocController.refreshCredentialStatus()
         }
     }

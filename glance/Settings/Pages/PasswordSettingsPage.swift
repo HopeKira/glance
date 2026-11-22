@@ -53,8 +53,8 @@ struct PasswordSettingsPage: View {
         .onAppear { pocController.refreshCredentialStatus() }
         // The onboarding password step runs in the notch, outside this
         // view's hierarchy, so nothing else prompts a re-check once it closes.
-        .onChange(of: NotchOverlayController.shared.phase) { _, newPhase in
-            guard newPhase == .closed else { return }
+        .onChange(of: OnboardingWindowController.shared.isOnboarding) { isOn in
+            guard !isOn else { return }
             pocController.refreshCredentialStatus()
             FaceEnrollmentStore.shared.reloadIfUnlocked()
         }

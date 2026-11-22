@@ -82,9 +82,8 @@ final class FaceUnlockCoordinator {
     private let headlessRetryDelay: Duration = .seconds(1)
 
     /// When off, no notch/pill presence at all — every overlay call in this file is conditioned on this rather than just skipping the video.
-    /// v2 / Mac mini: 静默解锁，永不建立灵动岛/动画浮层。
-    /// 识别、活体、注入照常工作，只是不画 UI —— 外接显示器无刘海，浮层毫无意义且耗资源。
-    private var showsUI: Bool { false }
+    /// v2 / Mac mini: 动画开关来自设置。开启时用菜单栏胶囊反馈（非刘海灵动岛）。
+    private var showsUI: Bool { GlanceSettings.shared.showUnlockAnimation }
 
     /// Reads the space key on the lock screen for the "按空格时" trigger; only runs while locked + opted in.
     private let spaceKeyMonitor = SpaceKeyMonitor()
@@ -187,7 +186,7 @@ final class FaceUnlockCoordinator {
         autoRetryTask?.cancel()
         autoRetryTask = nil
         camera.stop()
-        NotchOverlayController.shared.disarm()
+        MenuBarNotchController.shared.disarm()
         // Covers isEnabled being switched off directly, keeping "disarmed" and "not listening for space" in lockstep.
         spaceKeyMonitor.stop()
     }
@@ -216,14 +215,14 @@ final class FaceUnlockCoordinator {
         else { return }
 
         // Already looking — swallows auto-repeat/double-presses and lets "唤醒时"/"锁屏时" override "按空格时" with no special-casing.
-        guard NotchOverlayController.shared.phase != .scanning else { return }
+        guard MenuBarNotchController.shared.phase != .scanning else { return }
 
         guard showsUI else {
             // Headless: no overlay, just scan.
             startScanCycle()
             return
         }
-        if NotchOverlayController.shared.isArmed {
+        if MenuBarNotchController.shared.isArmed {
             // Closed pill/notch already up — expand and scan, like a hover retry.
             startScanCycle()
         } else {
@@ -239,7 +238,7 @@ final class FaceUnlockCoordinator {
             startScanCycle()
             return
         }
-        NotchOverlayController.shared.arm { [weak self] in
+        MenuBarNotchController.shared.arm { [weak self] in
             self?.startScanCycle()
         }
         if autoScan {
@@ -280,14 +279,14 @@ final class FaceUnlockCoordinator {
             GlanceLog.write("解锁流程：会话未解锁，跳过扫描")
             camera.stop()
             if self.showsUI {
-                NotchOverlayController.shared.finish(success: false)
+                MenuBarNotchController.shared.finish(success: false)
             }
             return
         }
 
         let showsUI = self.showsUI
         if showsUI {
-            NotchOverlayController.shared.beginScanning()
+            MenuBarNotchController.shared.beginScanning()
         }
         statusMessage = "正在寻找你的面容…"
 
@@ -306,7 +305,7 @@ final class FaceUnlockCoordinator {
             // 识别本身在 observeScanWindow 里完成，这里只决定给成功还是失败反馈——
             // 权限/会话/锁屏状态导致密码没输进去时必须显示失败，否则用户会以为解锁成功。
             if showsUI {
-                NotchOverlayController.shared.finish(success: injected)
+                MenuBarNotchController.shared.finish(success: injected)
             }
             if !injected {
                 statusMessage = "识别成功，但密码未输入：\(statusMessage)"
@@ -315,18 +314,18 @@ final class FaceUnlockCoordinator {
         case .consistentlyWrongFace:
             statusMessage = "面容未识别。"
             if showsUI {
-                NotchOverlayController.shared.finish(success: false)
+                MenuBarNotchController.shared.finish(success: false)
                 statusMessage = "面容未识别——悬停刘海可再试一次。"
-                scheduleAutoRetryIfEnabled(after: NotchOverlayController.shared.failureHoldDuration)
+                scheduleAutoRetryIfEnabled(after: MenuBarNotchController.shared.failureHoldDuration)
             } else {
                 scheduleAutoRetryIfEnabled(after: headlessRetryDelay)
             }
         case .spoofSuspected:
             statusMessage = "无法确认是真人。"
             if showsUI {
-                NotchOverlayController.shared.finish(success: false)
+                MenuBarNotchController.shared.finish(success: false)
                 statusMessage = "无法确认是真人——悬停刘海可再试一次。"
-                scheduleAutoRetryIfEnabled(after: NotchOverlayController.shared.failureHoldDuration)
+                scheduleAutoRetryIfEnabled(after: MenuBarNotchController.shared.failureHoldDuration)
             } else {
                 scheduleAutoRetryIfEnabled(after: headlessRetryDelay)
             }
@@ -335,7 +334,7 @@ final class FaceUnlockCoordinator {
             if showsUI {
                 // No explicit collapse call: NotchOverlayController's own scanning timeout fires on the same mark and collapses itself.
                 statusMessage = "未检测到人脸——悬停刘海可再试一次。"
-                scheduleAutoRetryIfEnabled(after: NotchOverlayController.shared.collapseAnimationDuration)
+                scheduleAutoRetryIfEnabled(after: MenuBarNotchController.shared.collapseAnimationDuration)
             } else {
                 scheduleAutoRetryIfEnabled(after: headlessRetryDelay)
             }
@@ -353,7 +352,7 @@ final class FaceUnlockCoordinator {
             // Re-check rather than trust the delay: the user may have unlocked by password or retried manually while this waited.
             guard LockMonitor.isScreenActuallyLocked(), self.isEnabled else { return }
             if self.showsUI {
-                guard NotchOverlayController.shared.phase == .closed else { return }
+                guard MenuBarNotchController.shared.phase == .closed else { return }
             }
             self.startScanCycle()
         }
@@ -390,7 +389,7 @@ final class FaceUnlockCoordinator {
         var lastProcessedFrameID: UInt64?
 
         while Date() < deadline, !Task.isCancelled,
-              !requireOverlayScanning || NotchOverlayController.shared.phase == .scanning {
+              !requireOverlayScanning || MenuBarNotchController.shared.phase == .scanning {
             guard LockMonitor.isScreenActuallyLocked() else { return .noResolution }
 
             // 限流：一帧全套推理约 10~20ms，30fps 全跑纯属浪费；15fps 足够。
@@ -513,14 +512,14 @@ final class FaceUnlockCoordinator {
             camera.stop()
             return
         }
-        if showsUI { NotchOverlayController.shared.beginScanning() }
+        if showsUI { MenuBarNotchController.shared.beginScanning() }
         statusMessage = "正在寻找你的面容…"
 
         GlanceLog.write("手动流程：摄像头=\(camera.activeDeviceDescription)，开始扫描")
         let matched = await manualScanWindow(deadline: Date().addingTimeInterval(scanWindowDuration))
         GlanceLog.write("手动流程：扫描结束 matched=\(matched)")
         camera.stop()
-        if showsUI { NotchOverlayController.shared.finish(success: matched) }
+        if showsUI { MenuBarNotchController.shared.finish(success: matched) }
 
         guard matched else {
             statusMessage = "面容未识别。"

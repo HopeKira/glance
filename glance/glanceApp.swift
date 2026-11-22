@@ -213,7 +213,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             window.close()
         }
         NSApp.setActivationPolicy(.accessory)
-        guard NotchOverlayController.shared.phase != .onboarding else { return }
+        guard !OnboardingWindowController.shared.isOnboarding else { return }
         OnboardingController.startPostUpdateNotice { [weak self] in
             self?.startUpdaterIfNeeded()
         }
@@ -298,7 +298,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         guard GlanceSettings.shared.hasCompletedOnboarding else {
             // Re-present rather than restart: a fresh startFlow() would throw away the in-session step already navigated to,
             // since it only knows the last step written to disk.
-            if NotchOverlayController.shared.phase != .onboarding {
+            if !OnboardingWindowController.shared.isOnboarding {
                 presentOnboardingGate()
             }
             NSApp.activate(ignoringOtherApps: true)

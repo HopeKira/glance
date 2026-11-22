@@ -36,11 +36,12 @@ struct OnboardingNotchView: View {
         }
         .id(controller.step)
         .frame(width: controller.panelSize.width, height: controller.panelSize.height)
+        .frame(maxWidth: .infinity, maxHeight: .infinity) // 在独立窗口里居中
         .overlay(alignment: .topTrailing) {
             if controller.step != .complete {
                 Button {
                     controller.teardown()
-                    NotchOverlayController.shared.dismissOnboarding()
+                    OnboardingWindowController.shared.dismissOnboarding()
                 } label: {
                     Image(systemName: "xmark.circle.fill")
                         .font(.system(size: 18))

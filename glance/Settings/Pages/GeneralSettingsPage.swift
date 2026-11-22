@@ -62,8 +62,8 @@ struct GeneralSettingsPage: View {
         .onAppear { pocController.refreshCredentialStatus() }
         // The password prompt runs in the notch, outside this view's hierarchy,
         // so refresh the session state when that flow finishes.
-        .onChange(of: NotchOverlayController.shared.phase) { _, newPhase in
-            guard newPhase == .closed else { return }
+        .onChange(of: OnboardingWindowController.shared.isOnboarding) { isOn in
+            guard !isOn else { return }
             pocController.refreshCredentialStatus()
         }
     }
@@ -230,14 +230,12 @@ struct GeneralSettingsPage: View {
             VStack(alignment: .leading, spacing: 8) {
                 SettingsSectionTitle(text: "动画")
                 SettingsGroup {
-                    SettingsRowContent(title: "显示动画") {
+                    SettingsRowContent(
+                        title: "显示动画",
+                        subtitle: "解锁时在菜单栏下方显示一个胶囊反馈"
+                    ) {
                         GlanceToggle(isOn: $settings.showUnlockAnimation)
                     }
-                    SettingsGroupDivider()
-                    UnlockAnimationPicker(
-                        selection: $settings.unlockAnimationStyle,
-                        isEnabled: settings.showUnlockAnimation
-                    )
                 }
             }
         }

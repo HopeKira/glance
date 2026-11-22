@@ -102,7 +102,7 @@ final class PresenceWatcher {
         let settings = GlanceSettings.shared
         guard settings.autoLockOnAway, settings.isFaceUnlockEnabled else { return }
         guard !isScreenAsleep, !isScreenLocked else { return }
-        guard !isCapturing, NotchOverlayController.shared.phase == .closed else { return }
+        guard !isCapturing, !MenuBarNotchController.shared.isScanning else { return }
         guard Date().timeIntervalSince(lastAwayCheck) >= TimeInterval(settings.awayCheckSeconds) else { return }
 
         lastAwayCheck = Date()

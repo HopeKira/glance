@@ -48,8 +48,8 @@ struct SessionLockButton: View {
         // than through this pocController, so this doesn't update
         // reactively on its own — refresh after the notch closes, same as
         // every gated page.
-        .onChange(of: NotchOverlayController.shared.phase) { _, newPhase in
-            guard newPhase == .closed else { return }
+        .onChange(of: OnboardingWindowController.shared.isOnboarding) { isOn in
+            guard !isOn else { return }
             pocController.refreshCredentialStatus()
         }
     }

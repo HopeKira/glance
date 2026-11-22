@@ -240,7 +240,7 @@ final class OnboardingController {
                 controller.startPermissionsPolling()
             }
         }
-        NotchOverlayController.shared.presentOnboarding(controller)
+        OnboardingWindowController.shared.presentOnboarding(controller)
     }
 
     /// Entry point used by Settings' "设置面容解锁" / "Redo Face Enrollment" — presents
@@ -298,7 +298,7 @@ final class OnboardingController {
     private static func present(target: EnrollmentTarget, prefillName: String) {
         let controller = OnboardingController(isEnrollmentOnly: true, enrollmentTarget: target)
         controller.pendingName = prefillName
-        NotchOverlayController.shared.presentOnboarding(controller)
+        OnboardingWindowController.shared.presentOnboarding(controller)
     }
 
     /// Entry point used by Settings' "更改密码" — presents only the password step,
@@ -309,7 +309,7 @@ final class OnboardingController {
     static func startPasswordOnly() {
         Task { @MainActor in
             let controller = OnboardingController(isPasswordOnly: true)
-            NotchOverlayController.shared.presentOnboarding(controller)
+            OnboardingWindowController.shared.presentOnboarding(controller)
         }
     }
 
@@ -320,7 +320,7 @@ final class OnboardingController {
     static func startPostUpdateNotice(onComplete: (() -> Void)? = nil) {
         let controller = OnboardingController(isPostUpdateNotice: true)
         controller.onFirstRunComplete = onComplete
-        NotchOverlayController.shared.presentOnboarding(controller)
+        OnboardingWindowController.shared.presentOnboarding(controller)
     }
 
     // MARK: - Panel sizing (read by NotchOverlayView)
@@ -588,14 +588,14 @@ final class OnboardingController {
         // No earlier step to return to in the password-only flow — Back is a plain cancel.
         if isPasswordOnly {
             teardown()
-            NotchOverlayController.shared.dismissOnboarding()
+            OnboardingWindowController.shared.dismissOnboarding()
             return
         }
         switch step {
         case .enroll where isEnrollmentOnly:
             // Nothing precedes enrollment in add/recapture flows — Close is a cancel.
             teardown()
-            NotchOverlayController.shared.dismissOnboarding()
+            OnboardingWindowController.shared.dismissOnboarding()
         case .enroll:
             // Camera has to stop here; `.enroll` is the only step that owns it.
             resetEnrollmentState()
@@ -610,7 +610,7 @@ final class OnboardingController {
         case .name where isEnrollmentOnly:
             // Nothing precedes naming in add/recapture flows — Back is a cancel.
             teardown()
-            NotchOverlayController.shared.dismissOnboarding()
+            OnboardingWindowController.shared.dismissOnboarding()
         case .name:
             // `.enroll` can't be resumed halfway, so backing past it discards the capture.
             resetEnrollmentState()
@@ -1119,7 +1119,7 @@ final class OnboardingController {
             let shouldFireCompletion = self.isFirstRunFlow || self.isPostUpdateNotice
             let onComplete = self.onFirstRunComplete
             self.teardown()
-            NotchOverlayController.shared.dismissOnboarding()
+            OnboardingWindowController.shared.dismissOnboarding()
             if shouldFireCompletion {
                 onComplete?()
             }

@@ -22,22 +22,22 @@ struct FaceLabView: View {
                         .font(.headline)
                     Spacer()
                     Button("预览 ✓") {
-                        NotchOverlayController.shared.present()
+                        MenuBarNotchController.shared.present()
                         Task {
                             try? await Task.sleep(for: .seconds(1.5))
-                            NotchOverlayController.shared.finish(success: true)
+                            MenuBarNotchController.shared.finish(success: true)
                         }
                     }
                     Button("预览 ✗") {
-                        NotchOverlayController.shared.present(onRetry: {
+                        MenuBarNotchController.shared.present(onRetry: {
                             Task {
                                 try? await Task.sleep(for: .seconds(1.5))
-                                NotchOverlayController.shared.finish(success: false)
+                                MenuBarNotchController.shared.finish(success: false)
                             }
                         })
                         Task {
                             try? await Task.sleep(for: .seconds(1.5))
-                            NotchOverlayController.shared.finish(success: false)
+                            MenuBarNotchController.shared.finish(success: false)
                         }
                     }
                     Button("开始引导") {
@@ -64,15 +64,15 @@ struct FaceLabView: View {
         }
         // Guided enrollment runs in the notch, outside this view hierarchy, so nothing else prompts a re-read once
         // it closes. Same trick YourFaceSettingsPage uses.
-        .onChange(of: NotchOverlayController.shared.phase) { _, newPhase in
-            guard newPhase == .closed else { return }
+        .onChange(of: OnboardingWindowController.shared.isOnboarding) { isOn in
+            guard !isOn else { return }
             controller.store.reloadIfUnlocked()
         }
     }
 
     /// True while the notch (a single shared panel) is already hosting an onboarding flow.
     private var enrollmentFlowIsRunning: Bool {
-        NotchOverlayController.shared.phase == .onboarding
+        OnboardingWindowController.shared.isOnboarding
     }
 
     // MARK: - Which embedder is active
