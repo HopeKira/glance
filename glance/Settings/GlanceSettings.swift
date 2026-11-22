@@ -408,4 +408,7 @@ final class GlanceSettings {
 extension Notification.Name {
     /// 快捷键设置变化后由 AppDelegate 重新注册 Carbon 热键。
     static let glanceHotKeyDidChange = Notification.Name("com.imanity.glance.v2.hotKeyDidChange")
+    /// 刷脸失败后由 FaceUnlockCoordinator 发出，PresenceWatcher 据此恢复走近侦测，
+    /// 以低频"等人脸再次出现"的方式等待下一次机会，而非高频反复扫描。
+    static let glanceFaceUnlockFailed = Notification.Name("com.imanity.glance.v2.faceUnlockFailed")
 }

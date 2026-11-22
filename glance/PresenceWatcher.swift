@@ -76,6 +76,18 @@ final class PresenceWatcher {
             }
         })
 
+        // v2: 刷脸失败后恢复走近侦测——用低频"等人脸再次出现"代替高频反复扫描。
+        // 走近侦测自带静止降频（久无人拉长到 8 秒）与人脸出现立即响应，正合此场景。
+        observers.append(NotificationCenter.default.addObserver(
+            forName: .glanceFaceUnlockFailed, object: nil, queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in
+                guard let self, self.isScreenAsleep || self.isScreenLocked else { return }
+                GlanceLog.write("走近侦测：刷脸失败，恢复低频等待人脸出现")
+                self.startReturnWatchIfNeeded()
+            }
+        })
+
         startAwayLoop()
     }
 

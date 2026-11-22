@@ -67,8 +67,6 @@ final class FaceUnlockCoordinator {
     private(set) var lastOutcome: String?
 
     private var hasArmedForCurrentLock = false
-    /// One-shot per lock session — an auto-retry that could itself auto-retry would loop the camera for the whole lock session.
-    private var hasAutoRetriedForCurrentLock = false
     private var scanTask: Task<Void, Never>?
     /// Bumped by every `startScanCycle()`; a cycle bails once superseded (see `runScanCycle(generation:)`).
     private var scanGeneration = 0
@@ -118,7 +116,6 @@ final class FaceUnlockCoordinator {
         guard !pocController.passwordRejected else { return }
         guard LockMonitor.isScreenActuallyLocked() else {
             hasArmedForCurrentLock = false
-            hasAutoRetriedForCurrentLock = false
             disarmOverlay()
             return
         }
@@ -312,54 +309,31 @@ final class FaceUnlockCoordinator {
                 GlanceLog.write("解锁流程：识别通过但注入未成功")
             }
         case .consistentlyWrongFace:
-            statusMessage = "面容未识别。"
-            if showsUI {
-                MenuBarNotchController.shared.finish(success: false)
-                statusMessage = "面容未识别——正在自动重试…"
-                scheduleAutoRetryIfEnabled(after: MenuBarNotchController.shared.failureHoldDuration)
-            } else {
-                scheduleAutoRetryIfEnabled(after: headlessRetryDelay)
-            }
+            statusMessage = "面容未识别——请再看向摄像头。"
+            if showsUI { MenuBarNotchController.shared.finish(success: false) }
+            handBackToPresenceWatch()
         case .spoofSuspected:
-            statusMessage = "无法确认是真人。"
-            if showsUI {
-                MenuBarNotchController.shared.finish(success: false)
-                statusMessage = "无法确认是真人——正在自动重试…"
-                scheduleAutoRetryIfEnabled(after: MenuBarNotchController.shared.failureHoldDuration)
-            } else {
-                scheduleAutoRetryIfEnabled(after: headlessRetryDelay)
-            }
+            statusMessage = "无法确认是真人——请正对摄像头。"
+            if showsUI { MenuBarNotchController.shared.finish(success: false) }
+            handBackToPresenceWatch()
         case .noResolution:
-            statusMessage = "未检测到人脸。"
+            statusMessage = "未检测到人脸——请看向摄像头。"
             if showsUI {
-                // No explicit collapse call: the menu bar capsule's own scanning timeout fires on the same mark and collapses itself.
-                statusMessage = "未检测到人脸——正在自动重试…"
-                scheduleAutoRetryIfEnabled(after: MenuBarNotchController.shared.collapseAnimationDuration)
-            } else {
-                scheduleAutoRetryIfEnabled(after: headlessRetryDelay)
+                // 胶囊自己的扫描超时会收起；这里不重复 collapse。
             }
+            handBackToPresenceWatch()
         }
     }
 
     /// `delay` waits out whatever the overlay is still showing so the retry doesn't start underneath the previous outcome.
-    private func scheduleAutoRetryIfEnabled(after delay: Duration) {
-        // v2: 从"只重试一次"升级为"持续重试"——锁屏时识别失败后反复扫描，
-        // 直到成功或用户手动解锁。锁屏界面不接受第三方点击/悬停，持续自动重试
-        // 是唯一可靠的无人值守恢复手段。hasAutoRetriedForCurrentLock 仍用于
-        // 防止并发重复调度；每次锁屏在 evaluateTrigger 里重置。
+    /// v2: 刷脸失败后不再高频重扫（旧逻辑有 phase 竞态，常被吞成"只重试一次"），
+    /// 而是把控制权交还 PresenceWatcher：它低频"等人脸再次出现"，一旦检测到脸
+    /// 立即唤醒并重新触发解锁。更符合直觉、也更省电。
+    private func handBackToPresenceWatch() {
         guard GlanceSettings.shared.autoRetryOnce else { return }
         autoRetryTask?.cancel()
-        autoRetryTask = Task { [weak self] in
-            try? await Task.sleep(for: delay)
-            guard !Task.isCancelled, let self else { return }
-            // Re-check rather than trust the delay: the user may have unlocked by password or retried manually while this waited.
-            guard LockMonitor.isScreenActuallyLocked(), self.isEnabled else { return }
-            if self.showsUI {
-                guard MenuBarNotchController.shared.phase == .closed else { return }
-            }
-            self.hasAutoRetriedForCurrentLock = false
-            self.startScanCycle()
-        }
+        autoRetryTask = nil
+        NotificationCenter.default.post(name: .glanceFaceUnlockFailed, object: nil)
     }
 
     private enum ScanOutcome {
