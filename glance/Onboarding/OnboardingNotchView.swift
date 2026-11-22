@@ -43,10 +43,10 @@ struct OnboardingNotchView: View {
             }
         }
         .id(controller.step)
+        // v2 窗口模式：只给固定 frame，绝不加 .frame(maxWidth:.infinity)——
+        // 它和 NSHostingView 的 Auto Layout 冲突，会在 step 切换时触发
+        // NSWindow _postWindowNeedsUpdateConstraints 崩溃。
         .frame(width: contentSize.width, height: contentSize.height)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-        .onAppear { onSizeChange?(contentSize) }
-        .onChange(of: controller.step) { _, _ in onSizeChange?(contentSize) }
         .overlay(alignment: .topTrailing) {
             if controller.step != .complete {
                 Button {
