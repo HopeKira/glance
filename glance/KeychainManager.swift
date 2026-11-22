@@ -121,19 +121,15 @@ enum KeychainManager {
         } else {
             addQuery[kSecAttrAccessible as String] = kSecAttrAccessibleWhenUnlockedThisDeviceOnly
         }
-        // 把「只有本 app 可读」预先写进 file-keychain ACL，钥匙串确认框就不会出现在
-        // 无法应答的锁屏界面。kSecAttrAccess 与 kSecAttrAccessible 互斥，不能同时给。
-        if useSelfAccessOnly, let access = selfAccess() {
-            addQuery.removeValue(forKey: kSecAttrAccessible as String)
-            addQuery[kSecAttrAccess as String] = access
-        }
+        // v2 修复：不再用 SecTrustedApplicationCreateFromPath 手写 cdhash ACL。
+        // 那套 deprecated API 把"可信应用"绑在二进制 cdhash 上，每次重新编译 cdhash
+        // 变化就导致钥匙串重新弹"始终允许"。app 已用稳定自签证书签名（DR =
+        // identifier + certificate leaf），系统按 DR 判定身份，默认 ACL 天然只放行
+        // 本 app、锁屏也不会弹框——不需要、也不该再手动绑 cdhash。
+        // useSelfAccessOnly 参数保留仅为兼容调用点，已无行为差异。
+        _ = useSelfAccessOnly
 
         var status = SecItemAdd(addQuery as CFDictionary, nil)
-        if status == errSecParam, addQuery[kSecAttrAccess as String] != nil {
-            addQuery.removeValue(forKey: kSecAttrAccess as String)
-            addQuery[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
-            status = SecItemAdd(addQuery as CFDictionary, nil)
-        }
         if status == errSecSuccess { return }
         // 自签证书没有 Team ID 时，创建带 SecAccessControl(.userPresence) 的项可能
         // 因缺少 entitlement 返回 -34018。降级为普通 Keychain 项：仍受签名身份 ACL
@@ -173,18 +169,6 @@ enum KeychainManager {
         guard status == errSecSuccess || status == errSecItemNotFound else {
             throw KeychainError.osStatus(status)
         }
-    }
-
-    /// 预置「只有本 app 可读」的 file-keychain ACL。这两个 API 已标 deprecated，
-    /// 但沙箱外没有替代实现；去掉它锁屏时就会弹出无法应答的钥匙串确认框。
-    nonisolated private static func selfAccess() -> SecAccess? {
-        var app: SecTrustedApplication?
-        guard SecTrustedApplicationCreateFromPath(nil, &app) == errSecSuccess,
-              let app else { return nil }
-        var access: SecAccess?
-        guard SecAccessCreate("Glance" as CFString, [app] as CFArray, &access)
-                == errSecSuccess else { return nil }
-        return access
     }
 
     /// `.userPresence` requires Touch ID or device password, with no separate no-hardware handling needed.
