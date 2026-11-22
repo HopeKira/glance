@@ -193,11 +193,44 @@ final class CameraManager: NSObject {
                 device.activeVideoMinFrameDuration = duration
                 device.activeVideoMaxFrameDuration = duration
             }
+            // v2: 自动图像控制——扫描前确保对焦/曝光/白平衡都处于连续自动模式，
+            // 并把测光/对焦兴趣点放在画面中心（解锁时人脸通常居中）。
+            // 全用公开 AVFoundation API，无需逆向厂商私有 UVC 控制，也无需用户手动调。
+            if !prefersLowPower {
+                configureAutoImageControl(device)
+            }
             device.unlockForConfiguration()
             let dims = CMVideoFormatDescriptionGetDimensions(best.formatDescription)
             activeDeviceDescription = "\(device.localizedName) \(dims.width)x\(dims.height)@\(Int(targetFPS))fps"
         } catch {
             errorMessage = "无法应用摄像头格式：\(error.localizedDescription)"
+        }
+    }
+
+    /// must be called while `device` is locked for configuration.
+    private func configureAutoImageControl(_ device: AVCaptureDevice) {
+        // 连续自动对焦：扫描时持续合焦，避免"拉风箱"导致抓到糊帧。
+        if device.isFocusModeSupported(.continuousAutoFocus) {
+            device.focusMode = .continuousAutoFocus
+        } else if device.isFocusModeSupported(.autoFocus) {
+            device.focusMode = .autoFocus
+        }
+        // 对焦兴趣点居中：人脸解锁时脸基本在画面中央。
+        if device.isFocusPointOfInterestSupported {
+            device.focusPointOfInterest = CGPoint(x: 0.5, y: 0.5)
+        }
+        // 连续自动曝光 + 中心测光：逆光/暗光下让系统自动把中心人脸照亮。
+        if device.isExposureModeSupported(.continuousAutoExposure) {
+            device.exposureMode = .continuousAutoExposure
+        } else if device.isExposureModeSupported(.autoExpose) {
+            device.exposureMode = .autoExpose
+        }
+        if device.isExposurePointOfInterestSupported {
+            device.exposurePointOfInterest = CGPoint(x: 0.5, y: 0.5)
+        }
+        // 连续自动白平衡：避免暖光/冷光下肤色偏移影响特征匹配。
+        if device.isWhiteBalanceModeSupported(.continuousAutoWhiteBalance) {
+            device.whiteBalanceMode = .continuousAutoWhiteBalance
         }
     }
 
