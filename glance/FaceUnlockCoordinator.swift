@@ -315,7 +315,7 @@ final class FaceUnlockCoordinator {
             statusMessage = "面容未识别。"
             if showsUI {
                 MenuBarNotchController.shared.finish(success: false)
-                statusMessage = "面容未识别——悬停刘海可再试一次。"
+                statusMessage = "面容未识别——正在自动重试…"
                 scheduleAutoRetryIfEnabled(after: MenuBarNotchController.shared.failureHoldDuration)
             } else {
                 scheduleAutoRetryIfEnabled(after: headlessRetryDelay)
@@ -324,7 +324,7 @@ final class FaceUnlockCoordinator {
             statusMessage = "无法确认是真人。"
             if showsUI {
                 MenuBarNotchController.shared.finish(success: false)
-                statusMessage = "无法确认是真人——悬停刘海可再试一次。"
+                statusMessage = "无法确认是真人——正在自动重试…"
                 scheduleAutoRetryIfEnabled(after: MenuBarNotchController.shared.failureHoldDuration)
             } else {
                 scheduleAutoRetryIfEnabled(after: headlessRetryDelay)
@@ -332,8 +332,8 @@ final class FaceUnlockCoordinator {
         case .noResolution:
             statusMessage = "未检测到人脸。"
             if showsUI {
-                // No explicit collapse call: NotchOverlayController's own scanning timeout fires on the same mark and collapses itself.
-                statusMessage = "未检测到人脸——悬停刘海可再试一次。"
+                // No explicit collapse call: the menu bar capsule's own scanning timeout fires on the same mark and collapses itself.
+                statusMessage = "未检测到人脸——正在自动重试…"
                 scheduleAutoRetryIfEnabled(after: MenuBarNotchController.shared.collapseAnimationDuration)
             } else {
                 scheduleAutoRetryIfEnabled(after: headlessRetryDelay)
@@ -343,8 +343,11 @@ final class FaceUnlockCoordinator {
 
     /// `delay` waits out whatever the overlay is still showing so the retry doesn't start underneath the previous outcome.
     private func scheduleAutoRetryIfEnabled(after delay: Duration) {
-        guard GlanceSettings.shared.autoRetryOnce, !hasAutoRetriedForCurrentLock else { return }
-        hasAutoRetriedForCurrentLock = true
+        // v2: 从"只重试一次"升级为"持续重试"——锁屏时识别失败后反复扫描，
+        // 直到成功或用户手动解锁。锁屏界面不接受第三方点击/悬停，持续自动重试
+        // 是唯一可靠的无人值守恢复手段。hasAutoRetriedForCurrentLock 仍用于
+        // 防止并发重复调度；每次锁屏在 evaluateTrigger 里重置。
+        guard GlanceSettings.shared.autoRetryOnce else { return }
         autoRetryTask?.cancel()
         autoRetryTask = Task { [weak self] in
             try? await Task.sleep(for: delay)
@@ -354,6 +357,7 @@ final class FaceUnlockCoordinator {
             if self.showsUI {
                 guard MenuBarNotchController.shared.phase == .closed else { return }
             }
+            self.hasAutoRetriedForCurrentLock = false
             self.startScanCycle()
         }
     }

@@ -136,21 +136,29 @@ final class PresenceWatcher {
             guard let self else { return }
             var faceHits = 0
             self.noFrameStreak = 0
+            var loggedPowerLoss = false
             GlanceLog.write("走近侦测：开始")
 
             while !Task.isCancelled {
-                try? await Task.sleep(nanoseconds: 2_000_000_000)
+                // v2 修复：USB 摄像头在长时间睡眠/锁屏后会断电断流。旧逻辑连续 7 次
+                // 取不到帧就永久放弃，导致唤醒后走近再也不侦测，必须手动解锁一次才恢复。
+                // 改成退避重试：失败越多间隔越长（省电），但永不放弃——供电恢复后自动接管。
+                let backoff = min(2 + self.noFrameStreak * 2, 15)
+                try? await Task.sleep(nanoseconds: UInt64(backoff) * 1_000_000_000)
                 guard !Task.isCancelled else { return }
                 guard self.isScreenAsleep || self.isScreenLocked else { return }
 
                 guard let hasFace = await self.captureAndDetectFace(timeout: 2.0) else {
                     self.noFrameStreak += 1
-                    if self.noFrameStreak >= 7 {
-                        GlanceLog.write("走近侦测：息屏期间取不到画面，放弃（相机可能已断电）")
-                        self.stopReturnWatch(reason: "相机无画面")
-                        return
+                    if self.noFrameStreak == 4 && !loggedPowerLoss {
+                        GlanceLog.write("走近侦测：相机暂不可读（可能断电），退避重试中")
+                        loggedPowerLoss = true
                     }
                     continue
+                }
+                if loggedPowerLoss {
+                    GlanceLog.write("走近侦测：相机已恢复")
+                    loggedPowerLoss = false
                 }
                 self.noFrameStreak = 0
                 faceHits = hasFace ? faceHits + 1 : 0

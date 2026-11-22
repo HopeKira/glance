@@ -203,11 +203,10 @@ struct GeneralSettingsPage: View {
             VStack(alignment: .leading, spacing: 8) {
                 SettingsSectionTitle(text: "行为")
                 SettingsGroup {
-                    SettingsRowContent(title: "悬停刘海时重试") {
-                        GlanceToggle(isOn: $settings.retryOnHover)
-                    }
-                    SettingsGroupDivider()
-                    SettingsRowContent(title: "失败后自动重试一次") {
+                    SettingsRowContent(
+                        title: "失败后持续重试",
+                        subtitle: "识别失败时自动反复扫描，直到解锁"
+                    ) {
                         GlanceToggle(isOn: $settings.autoRetryOnce)
                     }
                     SettingsGroupDivider()
