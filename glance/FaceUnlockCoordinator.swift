@@ -189,9 +189,10 @@ final class FaceUnlockCoordinator {
     }
 
     /// Idempotent and safe to call on every lock/wake event. Deliberately does not prompt for Input Monitoring — a missing grant just means "don't listen."
+    /// v2: 空格键现在也是通用的"锁屏立即重试"键——不再依赖 unlockTriggers 是否含 .onSpace，
+    /// 只要启用且锁屏就监听，识别失败后用户按空格即可立即重扫，不必等走近侦测。
     private func updateSpaceMonitor() {
         let shouldListen = isEnabled
-            && GlanceSettings.shared.unlockTriggers.contains(.onSpace)
             && LockMonitor.isScreenActuallyLocked()
             && SpaceKeyMonitor.hasInputMonitoringAccess()
         if shouldListen {
@@ -203,16 +204,19 @@ final class FaceUnlockCoordinator {
 
     /// Runs the same gate chain as `evaluateTrigger`, then starts a scan. Independent of `LockMonitor` events, so doesn't touch `hasArmedForCurrentLock`.
     private func handleSpaceKeyPress() {
+        // v2: 空格 = 锁屏下的通用"立即重试"键，不再要求开启"按空格时"触发方式。
         guard isEnabled,
-              GlanceSettings.shared.unlockTriggers.contains(.onSpace),
               LockMonitor.isScreenActuallyLocked(),
               NotchGeometry.preferredScreen() != nil,
               SecureCredentialManager.isSessionUnlocked,
               SecureCredentialManager.hasStoredPassword()
         else { return }
 
-        // Already looking — swallows auto-repeat/double-presses and lets "唤醒时"/"锁屏时" override "按空格时" with no special-casing.
+        // Already looking — swallows auto-repeat/double-presses.
         guard MenuBarNotchController.shared.phase != .scanning else { return }
+        GlanceLog.write("锁屏空格：立即重试扫描")
+        // 暂停走近侦测，避免它和本次重试各自开一个 CameraManager 抢同一 USB 摄像头。
+        NotificationCenter.default.post(name: .glanceManualRetry, object: nil)
 
         guard showsUI else {
             // Headless: no overlay, just scan.

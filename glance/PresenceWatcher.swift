@@ -88,6 +88,18 @@ final class PresenceWatcher {
             }
         })
 
+        // 用户按空格立即重试：暂停走近侦测，避免两个 CameraManager 抢同一 USB 摄像头。
+        observers.append(NotificationCenter.default.addObserver(
+            forName: .glanceManualRetry, object: nil, queue: .main
+        ) { [weak self] _ in
+            // queue:.main 保证在主线程，同步停掉走近相机——必须在 FaceUnlock 开相机前完成，
+            // 否则两个 AVCaptureSession 抢同一 USB 摄像头会打架。
+            guard let self else { return }
+            MainActor.assumeIsolated {
+                self.stopReturnWatch(reason: "空格手动重试")
+            }
+        })
+
         startAwayLoop()
     }
 
