@@ -35,6 +35,10 @@ final class CameraManager: NSObject {
     let session = AVCaptureSession()
     private let videoOutput = AVCaptureVideoDataOutput()
     private let sessionQueue = DispatchQueue(label: "com.jonathan.glance.camera.session")
+    /// v2 修复：独立的串行队列专管 startRunning/stopRunning。与 sample-buffer 回调队列分离，
+    /// 避免启停 block 和帧回调互相排队；start/stop 在此队列上同步执行，返回时状态已落实，
+    /// 消除"标志说在跑、实际已停"以及 stop block 晚于 start 执行的竞态（多次唤醒后摄像头不亮）。
+    private let lifecycleQueue = DispatchQueue(label: "com.jonathan.glance.camera.lifecycle")
 
     /// Handed to the delegate outside the actor; only ever touched via `Task { @MainActor ... }`.
     private let framePublisher = FramePublisher()
@@ -72,7 +76,10 @@ final class CameraManager: NSObject {
         configureSessionIfNeeded()
         reconcileDeviceIfNeeded()
 
-        sessionQueue.async { [session] in
+        // v2: 在 lifecycle 队列上同步启停，返回时状态已确定。startRunning 是同步调用，
+        // 且此队列不用于帧回调，不会死锁。逐次 sync 保证 start/stop 严格按调用顺序执行，
+        // 不再出现残留 stop block 晚于 start 把刚开的摄像头关掉。
+        lifecycleQueue.sync { [session] in
             if !session.isRunning {
                 session.startRunning()
             }
@@ -81,13 +88,35 @@ final class CameraManager: NSObject {
     }
 
     func stop() {
-        sessionQueue.async { [session] in
+        lifecycleQueue.sync { [session] in
             if session.isRunning {
                 session.stopRunning()
             }
         }
         isRunning = false
         currentFrame = nil
+    }
+
+    /// v2: 等待真实出帧。锁屏多次唤醒时，USB 摄像头偶尔被走近侦测的 session 抢占，
+    /// startRunning 成功但拿不到设备、帧永远不来（动画在转、灯却不亮）。等一小段时间，
+    /// 没帧就 stop + 重启一次 session 自愈——避免整个扫描窗口空转到超时。
+    /// 返回是否拿到第一帧。
+    func waitForFirstFrame(timeout: TimeInterval) async -> Bool {
+        let deadline = Date().addingTimeInterval(timeout)
+        while currentFrame == nil, Date() < deadline {
+            try? await Task.sleep(nanoseconds: 50_000_000)
+        }
+        if currentFrame != nil { return true }
+
+        GlanceLog.write("摄像头首个视频帧超时，重启 session 自愈")
+        stop()
+        try? await Task.sleep(nanoseconds: 300_000_000) // 给 USB 设备释放时间
+        await start()
+        let retryDeadline = Date().addingTimeInterval(2.0)
+        while currentFrame == nil, Date() < retryDeadline {
+            try? await Task.sleep(nanoseconds: 50_000_000)
+        }
+        return currentFrame != nil
     }
 
     private func describe(_ status: AVAuthorizationStatus) -> String {

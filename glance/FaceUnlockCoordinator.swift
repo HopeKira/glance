@@ -286,6 +286,19 @@ final class FaceUnlockCoordinator {
         }
 
         let showsUI = self.showsUI
+        // v2: 先确认摄像头真的出帧再转动画——多次唤醒时 USB 摄像头偶尔拿不到设备，
+        // 旧逻辑动画照转但没帧、空转到超时，表现为"动画在转、指示灯不亮"。
+        // waitForFirstFrame 内部会在无帧时重启 session 自愈。
+        let hasFrame = await camera.waitForFirstFrame(timeout: 2.0)
+        guard generation == scanGeneration else { return }
+        if !hasFrame {
+            GlanceLog.write("解锁流程：摄像头无帧，跳过本次扫描")
+            camera.stop()
+            if showsUI { MenuBarNotchController.shared.finish(success: false) }
+            handBackToPresenceWatch()
+            return
+        }
+
         if showsUI {
             MenuBarNotchController.shared.beginScanning()
         }

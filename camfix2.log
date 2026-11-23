@@ -1,0 +1,829 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project glance.xcodeproj -scheme glance -configuration Release -derivedDataPath /tmp/glance-v2/build-camfix2 CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO build
+
+Build settings from command line:
+    CODE_SIGNING_ALLOWED = NO
+    CODE_SIGNING_REQUIRED = NO
+
+Resolve Package Graph
+
+Fetching from https://github.com/sparkle-project/Sparkle (cached)
+
+Creating working copy of package ‘Sparkle’
+
+Checking out 2.9.6 of package ‘Sparkle’
+
+
+Resolved source packages:
+  Sparkle: https://github.com/sparkle-project/Sparkle @ 2.9.6
+
+2026-11-23 19:20:31.754 xcodebuild[72780:4656061] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:macOS, arch:arm64, id:00008152-000370860A000036, name:My Mac }
+{ platform:macOS, name:Any Mac }
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (2 targets)
+    Target 'glance' in project 'glance'
+        ➜ Explicit dependency on target 'Sparkle-product' in project 'Sparkle'
+    Target 'Sparkle-product' in project 'Sparkle' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.2.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --version --output-format xml1
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+Build description signature: d7db7ff454bf796afa32a2bdf4614d3c
+Build description path: /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/XCBuildData/d7db7ff454bf796afa32a2bdf4614d3c.xcbuilddata
+CreateBuildDirectory /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules
+    cd /tmp/glance-v2/glance.xcodeproj
+    builtin-create-build-directory /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules
+
+CreateBuildDirectory /tmp/glance-v2/build-camfix2/ModuleCache.noindex
+    cd /tmp/glance-v2/glance.xcodeproj
+    builtin-create-build-directory /tmp/glance-v2/build-camfix2/ModuleCache.noindex
+
+CreateBuildDirectory /tmp/glance-v2/build-camfix2/CompilationCache.noindex
+    cd /tmp/glance-v2/glance.xcodeproj
+    builtin-create-build-directory /tmp/glance-v2/build-camfix2/CompilationCache.noindex
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.2.sdk /tmp/glance-v2/build-camfix2/SDKStatCaches.noindex/macosx27.2-26B118-9aa026f88bf9ed31cff8761912ac5bd1a7ff82d74745d5ef33555b35c4238456.sdkstatcache
+    cd /tmp/glance-v2/glance.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.2.sdk -o /tmp/glance-v2/build-camfix2/SDKStatCaches.noindex/macosx27.2-26B118-9aa026f88bf9ed31cff8761912ac5bd1a7ff82d74745d5ef33555b35c4238456.sdkstatcache
+
+CreateBuildDirectory /tmp/glance-v2/build-camfix2/Build/Products
+    cd /tmp/glance-v2/glance.xcodeproj
+    builtin-create-build-directory /tmp/glance-v2/build-camfix2/Build/Products
+
+CreateBuildDirectory /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex
+    cd /tmp/glance-v2/glance.xcodeproj
+    builtin-create-build-directory /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex
+
+CreateBuildDirectory /tmp/glance-v2/build-camfix2/Build/Products/Release
+    cd /tmp/glance-v2/glance.xcodeproj
+    builtin-create-build-directory /tmp/glance-v2/build-camfix2/Build/Products/Release
+
+CreateBuildDirectory /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+    cd /tmp/glance-v2/glance.xcodeproj
+    builtin-create-build-directory /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+CreateBuildDirectory /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/PrecompiledHeaders
+    cd /tmp/glance-v2/glance.xcodeproj
+    builtin-create-build-directory /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/PrecompiledHeaders
+
+CreateBuildDirectory /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/ExplicitPrecompiledModules
+    cd /tmp/glance-v2/glance.xcodeproj
+    builtin-create-build-directory /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+CreateBuildDirectory /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/EagerLinkingTBDs/Release
+    cd /tmp/glance-v2/glance.xcodeproj
+    builtin-create-build-directory /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/EagerLinkingTBDs/Release
+
+WriteAuxiliaryFile /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance-ee9f2a60bc1a56ede9ec82cf8b51f40a-VFS/all-product-headers.yaml
+    cd /tmp/glance-v2/glance.xcodeproj
+    write-file /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance-ee9f2a60bc1a56ede9ec82cf8b51f40a-VFS/all-product-headers.yaml
+
+CreateBuildDirectory /tmp/glance-v2/build-camfix2/Build/Products/Release/PackageFrameworks
+    cd /tmp/glance-v2/glance.xcodeproj
+    builtin-create-build-directory /tmp/glance-v2/build-camfix2/Build/Products/Release/PackageFrameworks
+
+ProcessXCFramework /tmp/glance-v2/build-camfix2/SourcePackages/artifacts/sparkle/Sparkle/Sparkle.xcframework /tmp/glance-v2/build-camfix2/Build/Products/Release/Sparkle.framework macos
+    cd /tmp/glance-v2/glance.xcodeproj
+    builtin-process-xcframework --xcframework /tmp/glance-v2/build-camfix2/SourcePackages/artifacts/sparkle/Sparkle/Sparkle.xcframework --platform macos --library-identifier macos-arm64_x86_64 --target-path /tmp/glance-v2/build-camfix2/Build/Products/Release
+
+WriteAuxiliaryFile /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/glance-project-headers.hmap (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    write-file /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/glance-project-headers.hmap
+
+WriteAuxiliaryFile /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/glance.hmap (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    write-file /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/glance.hmap
+
+WriteAuxiliaryFile /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/glance-generated-files.hmap (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    write-file /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/glance-generated-files.hmap
+
+WriteAuxiliaryFile /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/glance-own-target-headers.hmap (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    write-file /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/glance-own-target-headers.hmap
+
+WriteAuxiliaryFile /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/glance-all-target-headers.hmap (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    write-file /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/glance-all-target-headers.hmap
+
+WriteAuxiliaryFile /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/glance-all-non-framework-target-headers.hmap (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    write-file /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/glance-all-non-framework-target-headers.hmap
+
+WriteAuxiliaryFile /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/glance.DependencyStaticMetadataFileList (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    write-file /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/glance.DependencyStaticMetadataFileList
+
+WriteAuxiliaryFile /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance.LinkFileList (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    write-file /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance.LinkFileList
+
+WriteAuxiliaryFile /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance-OutputFileMap.json (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    write-file /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance-OutputFileMap.json
+
+WriteAuxiliaryFile /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance_const_extract_protocols.json (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    write-file /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance_const_extract_protocols.json
+
+WriteAuxiliaryFile /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/glance.DependencyMetadataFileList (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    write-file /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/glance.DependencyMetadataFileList
+
+WriteAuxiliaryFile /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance.SwiftFileList (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    write-file /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance.SwiftFileList
+
+WriteAuxiliaryFile /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance.SwiftConstValuesFileList (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    write-file /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance.SwiftConstValuesFileList
+
+MkDir /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    /bin/mkdir -p /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents
+
+MkDir /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/MacOS (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    /bin/mkdir -p /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/MacOS
+
+MkDir /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/Frameworks (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    /bin/mkdir -p /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/Frameworks
+
+MkDir /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/Resources (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    /bin/mkdir -p /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/Resources
+
+MkDir /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    /bin/mkdir -p /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app
+
+MkDir /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/assetcatalog_output/thinned (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    /bin/mkdir -p /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/assetcatalog_output/thinned
+
+MkDir /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/assetcatalog_output/unthinned (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    /bin/mkdir -p /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/assetcatalog_output/unthinned
+
+CpResource /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/Resources/logoanimation.mp4 /tmp/glance-v2/glance/Resources/logoanimation.mp4 (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /tmp/glance-v2/glance/Resources/logoanimation.mp4 /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/Resources
+
+GenerateAssetSymbols /tmp/glance-v2/glance/Assets.xcassets /tmp/glance-v2/glance/glanceicon.icon (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    /Applications/Xcode.app/Contents/Developer/usr/bin/actool /tmp/glance-v2/glance/Assets.xcassets /tmp/glance-v2/glance/glanceicon.icon --compile /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/Resources --output-format human-readable-text --notices --warnings --export-dependency-info /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/assetcatalog_dependencies --output-partial-info-plist /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/assetcatalog_generated_info.plist --app-icon GlanceIcon --accent-color AccentColor --enable-on-demand-resources NO --development-region en --target-device mac --minimum-deployment-target 27.0 --platform macosx --bundle-identifier com.imanity.glance.v2 --generate-swift-asset-symbols /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/DerivedSources/GeneratedAssetSymbols.swift --generate-objc-asset-symbols /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/DerivedSources/GeneratedAssetSymbols.h --generate-asset-symbol-index /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/DerivedSources/GeneratedAssetSymbols-Index.plist
+/* com.apple.actool.compilation-results */
+/tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/DerivedSources/GeneratedAssetSymbols-Index.plist
+/tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/DerivedSources/GeneratedAssetSymbols.h
+/tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/DerivedSources/GeneratedAssetSymbols.swift
+
+
+CpResource /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/Resources/idleanimation.mp4 /tmp/glance-v2/glance/Resources/idleanimation.mp4 (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /tmp/glance-v2/glance/Resources/idleanimation.mp4 /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/Resources
+
+CpResource /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/Resources/glance-logo.svg /tmp/glance-v2/glance/Resources/glance-logo.svg (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /tmp/glance-v2/glance/Resources/glance-logo.svg /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/Resources
+
+CopyPNGFile /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/Resources/unlockstatic.png /tmp/glance-v2/glance/Resources/unlockstatic.png (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    /Applications/Xcode.app/Contents/Developer/usr/bin/copypng /tmp/glance-v2/glance/Resources/unlockstatic.png /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/Resources/unlockstatic.png
+
+CpResource /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/Resources/GlanceIcon.icns /tmp/glance-v2/glance/Resources/GlanceIcon.icns (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /tmp/glance-v2/glance/Resources/GlanceIcon.icns /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/Resources
+
+AIModelCompile /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/Resources/ /tmp/glance-v2/glance/Models/EdgeFaceXXS.aimodel (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    /Applications/Xcode.app/Contents/Developer/usr/bin/aimodelc package /tmp/glance-v2/glance/Models/EdgeFaceXXS.aimodel --platform macOS --min-deployment-version 27.0 --output /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/Resources/EdgeFaceXXS.aimodel --toolchain-dir /var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v27.2.47.0.uUtZv9/Metal.xctoolchain --toolchain-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain
+
+
+Copy /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/Frameworks/Sparkle.framework /tmp/glance-v2/build-camfix2/SourcePackages/artifacts/sparkle/Sparkle/Sparkle.xcframework/macos-arm64_x86_64/Sparkle.framework (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks -remove-static-executable /tmp/glance-v2/build-camfix2/SourcePackages/artifacts/sparkle/Sparkle/Sparkle.xcframework/macos-arm64_x86_64/Sparkle.framework /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/Frameworks
+
+CompileAssetCatalogVariant thinned /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/Resources /tmp/glance-v2/glance/Assets.xcassets /tmp/glance-v2/glance/glanceicon.icon (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    /Applications/Xcode.app/Contents/Developer/usr/bin/actool /tmp/glance-v2/glance/Assets.xcassets /tmp/glance-v2/glance/glanceicon.icon --compile /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/assetcatalog_output/thinned --output-format human-readable-text --notices --warnings --export-dependency-info /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/assetcatalog_dependencies_thinned --output-partial-info-plist /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/assetcatalog_generated_info.plist_thinned --app-icon GlanceIcon --accent-color AccentColor --enable-on-demand-resources NO --development-region en --target-device mac --minimum-deployment-target 27.0 --platform macosx
+/* com.apple.actool.compilation-results */
+/tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/assetcatalog_generated_info.plist_thinned
+/tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/assetcatalog_output/thinned/Assets.car
+
+
+LinkAssetCatalog /tmp/glance-v2/glance/Assets.xcassets /tmp/glance-v2/glance/glanceicon.icon (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    builtin-linkAssetCatalog --thinned /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/assetcatalog_output/thinned --thinned-dependencies /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/assetcatalog_dependencies_thinned --thinned-info-plist-content /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/assetcatalog_generated_info.plist_thinned --unthinned /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/assetcatalog_output/unthinned --unthinned-dependencies /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/assetcatalog_dependencies_unthinned --unthinned-info-plist-content /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/assetcatalog_generated_info.plist_unthinned --output /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/Resources --plist-output /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/assetcatalog_generated_info.plist
+note: Emplaced /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/Resources/Assets.car (in target 'glance' from project 'glance')
+
+ProcessInfoPlistFile /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/Info.plist /tmp/glance-v2/glance/Info.plist (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    builtin-infoPlistUtility /tmp/glance-v2/glance/Info.plist -producttype com.apple.product-type.application -genpkginfo /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/PkgInfo -expandbuildsettings -platform macosx -additionalcontentfile /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/assetcatalog_generated_info.plist -scanforprivacyfile /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/Frameworks/Sparkle.framework -o /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/Info.plist
+
+SwiftDriver glance normal arm64 com.apple.xcode.tools.swift.compiler (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name glance -O -whole-module-optimization @/tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance.SwiftFileList -default-isolation\=MainActor -enable-upcoming-feature MemberImportVisibility -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.2.sdk -target arm64-apple-macos27.0 -g -module-cache-path /tmp/glance-v2/build-camfix2/ModuleCache.noindex -Xfrontend -serialize-debugging-options -swift-version 6 -I /tmp/glance-v2/build-camfix2/Build/Products/Release -F /tmp/glance-v2/build-camfix2/Build/Products/Release -emit-localized-strings -emit-localized-strings-path /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64 -c -num-threads 12 -Xcc -ivfsstatcache -Xcc /tmp/glance-v2/build-camfix2/SDKStatCaches.noindex/macosx27.2-26B118-9aa026f88bf9ed31cff8761912ac5bd1a7ff82d74745d5ef33555b35c4238456.sdkstatcache -output-file-map /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/glance-v2/build-camfix2/ModuleCache.noindex -sdk-module-cache-path /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /tmp/glance-v2/build-camfix2/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/glance-generated-files.hmap -Xcc -I/tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/glance-own-target-headers.hmap -Xcc -I/tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/glance-all-target-headers.hmap -Xcc -iquote -Xcc /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/glance-project-headers.hmap -Xcc -I/tmp/glance-v2/build-camfix2/Build/Products/Release/include -Xcc -I/tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/DerivedSources-normal/arm64 -Xcc -I/tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/DerivedSources/arm64 -Xcc -I/tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/DerivedSources -emit-objc-header -emit-objc-header-path /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance-Swift.h -working-directory /tmp/glance-v2 -no-emit-module-separately-wmo
+
+SwiftDriver\ Compilation glance normal arm64 com.apple.xcode.tools.swift.compiler (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name glance -O -whole-module-optimization @/tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance.SwiftFileList -default-isolation\=MainActor -enable-upcoming-feature MemberImportVisibility -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.2.sdk -target arm64-apple-macos27.0 -g -module-cache-path /tmp/glance-v2/build-camfix2/ModuleCache.noindex -Xfrontend -serialize-debugging-options -swift-version 6 -I /tmp/glance-v2/build-camfix2/Build/Products/Release -F /tmp/glance-v2/build-camfix2/Build/Products/Release -emit-localized-strings -emit-localized-strings-path /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64 -c -num-threads 12 -Xcc -ivfsstatcache -Xcc /tmp/glance-v2/build-camfix2/SDKStatCaches.noindex/macosx27.2-26B118-9aa026f88bf9ed31cff8761912ac5bd1a7ff82d74745d5ef33555b35c4238456.sdkstatcache -output-file-map /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/glance-v2/build-camfix2/ModuleCache.noindex -sdk-module-cache-path /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /tmp/glance-v2/build-camfix2/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/glance-generated-files.hmap -Xcc -I/tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/glance-own-target-headers.hmap -Xcc -I/tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/glance-all-target-headers.hmap -Xcc -iquote -Xcc /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/glance-project-headers.hmap -Xcc -I/tmp/glance-v2/build-camfix2/Build/Products/Release/include -Xcc -I/tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/DerivedSources-normal/arm64 -Xcc -I/tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/DerivedSources/arm64 -Xcc -I/tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/DerivedSources -emit-objc-header -emit-objc-header-path /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance-Swift.h -working-directory /tmp/glance-v2 -no-emit-module-separately-wmo
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/ptrcheck-7PZADOXNVJ11INT4XS4PU500I.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/_Builtin_stddef-23OU7AQULPVADZ5KF2D2BLXFO.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/_Builtin_float-BDINR2TD5H6BFO7B7UIGORGES.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/_Builtin_stdbool-CIXQYIPZ91U2F0Y6RDDZMSH8M.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/_Builtin_stdarg-8TB788P5Q6E2H53U5M1M6Z85B.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/DeveloperToolsSupport-7L1HDJ7LHUIYOOIOQEHEEYELK.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/ptrauth-2XYV38E39BTOKV37ZT4M9Q017.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/_AvailabilityInternal-CY0XEQH4N49BZFZ1LVZY4CGLF.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/SwiftShims-9QSBQGV3EE6WYDYFDN6ZGOSJD.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/_SwiftConcurrencyShims-ABRSE9ZPLMWU784QUXTVD35LQ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/_DarwinFoundation1-BG9VLDDB83BVMOI2ZYSZSN3FH.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/_DarwinFoundation2-EVF5HLTV4D0Z8RBQWFOQTF73H.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/_Builtin_limits-DR1M64USZYMEPPNUEOAT4RTPQ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/_Builtin_stdint-DIYJVP7WR6XLN15F51UT46UF3.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/sys_types-21YKK4BJDGI7SKEALCK8DOL9J.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/string_h-CVM3F5U01HTBJU0PAPFP3RT16.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/_Builtin_tgmath-5MGUD56BO2URW4RMIFK4Y2PP2.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/libDER-EUOL8PPJC23D1MXWX9TO955UY.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/_Builtin_intrinsics-3PR56O7JADZTOJKECO580ZGD0.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/_Builtin_stdatomic-46UJ6SOXALNEV17S0ZQMMEJ0W.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/_DarwinFoundation3-A2IV5PPD6EMCSFDTJDFGYH9EB.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/_Builtin_inttypes-9S0256EWPCH4X04S9IJO366QT.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/Darwin-3UGZAIWCAJ38144L00NRQ210A.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/simd-EX7EMZU4U6N4FJPLZW6I9GX3X.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/libkern-AQ684YIX69TFSK69UWGCV9KJQ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/Compression-1J2788K32RYSOBTKK2ET2IXC1.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/MachO-CW6ACE1OD4C6VYL993BQLDD0G.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CUPS-5RSFV403H7IQYOYYY1LGMMS2Q.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/launch-7TCC5SHTUJ412ULPG4F0PB62R.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/Spatial-EGTB9EY8ZCXH0TOD0B09KSS6P.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/ObjectiveC-9FA0AJPP2VM48HZC5XRVVA132.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/os_object-3HN50UOB1QB61PXY8W2UK5OLD.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/os_workgroup-1PDO647MFU2GJU84QUFVDBNJ9.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/Dispatch-D5OEVRU7WZ4OXVQ42Y6U19O44.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/XPC-H7QDXVYWO89TWT76ADMSW7BT.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreFoundation-BPFZMNH7GT27RT6NGVWVAKGUG.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/os-A344VP2OR16YD2ZYM2KK0VPRK.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CFNetwork-23TV6R3FVQUKOD7DH1F3Q07DD.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/Security-8Q431S4C74FW5Z6XIIC2G86FO.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreAudioTypes-4WEJ1R9W16CBDSHAQXDK315L.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/IOKit-BU3PKHDFX5NMIYD1UN76Q40IZ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/ColorSync-5C7Y1ZZ2BQ3I3HDWBHK01X3BE.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/DiskArbitration-73THIYQ4ZESW2KYKIWIEDS9LG.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreGraphics-9JXVAEA3CBVCPKQ9II8IW3UE3.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreServices-622UMGVOPWMYV1GME6Q3ZK4UU.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreText-4AOZEQVQ0MTKURKNG9DDXZCFH.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/ImageIO-2U2I5CREGSHWQI3GJFSSZAGP1.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/Foundation-7R8V617I1PNSURB6UCQN01EN2.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/DataDetection-3B9Q5JC1PX859TKD9J2HWBKO7.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/ServiceManagement-3JTUMEUX7S57FIK8Q7H9LQJUB.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/UniformTypeIdentifiers-AXX0SG2734F6D1LRZ7J5CQAN2.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreMIDI-7OJ8Z5YB7QRJYZLS067SBLIT9.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/OSLog-DGHGFMGMLP1LNTT9II8AWLRYB.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/LocalAuthentication-ABCATW2FLP7HLJWTSTMJV096K.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreAudio-6O9Q0SK4F58OZCUF3MH4CGTLD.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/ApplicationServices-EO5OY4G4PAWE4MHUNEV4WXCFT.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/Symbols-C24J1ER42OVPGKZFQSXBTDJXX.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/Accessibility-CKATX7EWHAJ6PA2LHJEDTA1LW.pcm
+
+SwiftExplicitDependencyCompileModuleFromInterface arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreAIAsset-15KA92RKRWZ71.swiftmodule
+
+SwiftExplicitDependencyCompileModuleFromInterface arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreAICommon-3OWI9KJU4HI62.swiftmodule
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreTransferable-9M3FDV4V1W55DPWU8R8M5J3TD.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreData-5LYTX4BS3IFVC6JDL3QGTP5OG.pcm
+
+SwiftExplicitDependencyCompileModuleFromInterface arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreAICompiler-9K3DEQSVNTRS.swiftmodule
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/IOSurface-6IHWLLRZSY3FHNP072P282UB6.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules/Sparkle-472QRASWNOHXHHQTYJGC0HP4N.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/Carbon-AGJ0KQ3PB5MJKISH9T6OT3XB3.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/OpenGL-66RLYV17N2HT34UG1TGCXBM7J.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/Metal-1EN1NG1K1Z1CPMMWDUAR2HKGH.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/AudioToolbox-BTHN10LTKINRBUG222KN4ORPX.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreVideo-DTN2U92MLGBS0B1W4XJIKPQDJ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/Accelerate-CE4EFY14LSQNO1JSF8HQRVK4F.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/QuartzCore-E21RVTE9R9AV2UV63AKNVHFVS.pcm
+
+SwiftExplicitDependencyCompileModuleFromInterface arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreAIRuntime-7DCVMSQL8RUL.swiftmodule
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreMedia-C1OK66TLW15MRVBZDFLC5RKO6.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreImage-BC75TR2YP49BXM05E0PK9B6C7.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreML-853GA7L91WQ1UQS7JBN6IS00C.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/SwiftUICore-DYBANSLAY7DPVMHD1AU6PTX8W.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/AVFAudio-2THBDHKQXI1F6G4MJ117KY0UU.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/VideoToolbox-1UPKJD8LEBEI3N9D9VY7OPYVL.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/MediaToolbox-140CYQ4YACIA3CSBN9Y9V0FAR.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/Vision-82MZ1BTWW641PIAIAV3QNEXFR.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/AppKit-286F68IH05RMJP5L9WV36JXGF.pcm
+
+SwiftExplicitDependencyCompileModuleFromInterface arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreAIDelegates-2QXC3433UFP7L.swiftmodule
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/AVFoundation-8BLBEHTHSG2O6FWQX62CM0VZZ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/GameController-CYZEBG33EXFD4L0242YRA542T.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/SwiftUI-43SO8WWDVO73OW6V8QUA6O0S5.pcm
+
+SwiftCompile normal arm64 Compiling\ DeviceBezelDetector.swift,\ GeometryLiveness.swift,\ GlareCue.swift,\ GlareCueExtractor.swift,\ LandmarkGeometry.swift,\ LivenessAnalyzer.swift,\ LivenessCues.swift,\ LivenessFeatures.swift,\ LivenessScoring.swift,\ MenuBarNotchController.swift,\ NotchGeometry.swift,\ NotchPanelStyle.swift,\ NotchSkyLight.swift,\ AnimatedCheckmark.swift,\ EnrollmentDirectionSweep.swift,\ EnrollmentRingView.swift,\ EnrollmentSweepWindowController.swift,\ GlanceTheme.swift,\ LoopingVideoView.swift,\ OnboardingController.swift,\ OnboardingControls.swift,\ OnboardingMetrics.swift,\ OnboardingNotchView.swift,\ OnboardingStepViews.swift,\ OnboardingWindowController.swift,\ AboutSettingsPage.swift,\ CameraSettingsPage.swift,\ GeneralSettingsPage.swift,\ PasswordSettingsPage.swift,\ RecognitionSettingsPage.swift,\ YourFaceSettingsPage.swift,\ GlanceSettings.swift,\ HotKeyRecorderView.swift,\ ProgressiveHeaderBlur.swift,\ SessionLockButton.swift,\ SettingsControls.swift,\ SettingsMetrics.swift,\ SettingsTab.swift,\ SettingsTabBar.swift,\ SettingsWindowView.swift,\ UpdaterController.swift,\ AppEnvironment.swift,\ ArcFaceEmbedder.swift,\ CameraDeviceCatalog.swift,\ CameraManager.swift,\ CameraPreviewView.swift,\ CoreAIEmbedder.swift,\ FaceAligner.swift,\ FaceDetector.swift,\ FaceEmbedder.swift,\ FaceEnrollmentStore.swift,\ FaceLabController.swift,\ FaceLabView.swift,\ FaceRecognitionPipeline.swift,\ FaceUnlockCoordinator.swift,\ GamepadActivityMonitor.swift,\ glanceApp.swift,\ GlanceLog.swift,\ KeychainManager.swift,\ KeystrokeInjector.swift,\ LaunchAtLogin.swift,\ LockMonitor.swift,\ ManualHotKey.swift,\ POCController.swift,\ PresenceWatcher.swift,\ SecureCredentialManager.swift,\ SecureFaceStore.swift,\ SessionAutoLocker.swift,\ SpaceKeyMonitor.swift,\ GeneratedAssetSymbols.swift /tmp/glance-v2/glance/Liveness/DeviceBezelDetector.swift /tmp/glance-v2/glance/Liveness/GeometryLiveness.swift /tmp/glance-v2/glance/Liveness/GlareCue.swift /tmp/glance-v2/glance/Liveness/GlareCueExtractor.swift /tmp/glance-v2/glance/Liveness/LandmarkGeometry.swift /tmp/glance-v2/glance/Liveness/LivenessAnalyzer.swift /tmp/glance-v2/glance/Liveness/LivenessCues.swift /tmp/glance-v2/glance/Liveness/LivenessFeatures.swift /tmp/glance-v2/glance/Liveness/LivenessScoring.swift /tmp/glance-v2/glance/NotchOverlay/MenuBarNotchController.swift /tmp/glance-v2/glance/NotchOverlay/NotchGeometry.swift /tmp/glance-v2/glance/NotchOverlay/NotchPanelStyle.swift /tmp/glance-v2/glance/NotchOverlay/NotchSkyLight.swift /tmp/glance-v2/glance/Onboarding/AnimatedCheckmark.swift /tmp/glance-v2/glance/Onboarding/EnrollmentDirectionSweep.swift /tmp/glance-v2/glance/Onboarding/EnrollmentRingView.swift /tmp/glance-v2/glance/Onboarding/EnrollmentSweepWindowController.swift /tmp/glance-v2/glance/Onboarding/GlanceTheme.swift /tmp/glance-v2/glance/Onboarding/LoopingVideoView.swift /tmp/glance-v2/glance/Onboarding/OnboardingController.swift /tmp/glance-v2/glance/Onboarding/OnboardingControls.swift /tmp/glance-v2/glance/Onboarding/OnboardingMetrics.swift /tmp/glance-v2/glance/Onboarding/OnboardingNotchView.swift /tmp/glance-v2/glance/Onboarding/OnboardingStepViews.swift /tmp/glance-v2/glance/Onboarding/OnboardingWindowController.swift /tmp/glance-v2/glance/Settings/Pages/AboutSettingsPage.swift /tmp/glance-v2/glance/Settings/Pages/CameraSettingsPage.swift /tmp/glance-v2/glance/Settings/Pages/GeneralSettingsPage.swift /tmp/glance-v2/glance/Settings/Pages/PasswordSettingsPage.swift /tmp/glance-v2/glance/Settings/Pages/RecognitionSettingsPage.swift /tmp/glance-v2/glance/Settings/Pages/YourFaceSettingsPage.swift /tmp/glance-v2/glance/Settings/GlanceSettings.swift /tmp/glance-v2/glance/Settings/HotKeyRecorderView.swift /tmp/glance-v2/glance/Settings/ProgressiveHeaderBlur.swift /tmp/glance-v2/glance/Settings/SessionLockButton.swift /tmp/glance-v2/glance/Settings/SettingsControls.swift /tmp/glance-v2/glance/Settings/SettingsMetrics.swift /tmp/glance-v2/glance/Settings/SettingsTab.swift /tmp/glance-v2/glance/Settings/SettingsTabBar.swift /tmp/glance-v2/glance/Settings/SettingsWindowView.swift /tmp/glance-v2/glance/Updater/UpdaterController.swift /tmp/glance-v2/glance/AppEnvironment.swift /tmp/glance-v2/glance/ArcFaceEmbedder.swift /tmp/glance-v2/glance/CameraDeviceCatalog.swift /tmp/glance-v2/glance/CameraManager.swift /tmp/glance-v2/glance/CameraPreviewView.swift /tmp/glance-v2/glance/CoreAIEmbedder.swift /tmp/glance-v2/glance/FaceAligner.swift /tmp/glance-v2/glance/FaceDetector.swift /tmp/glance-v2/glance/FaceEmbedder.swift /tmp/glance-v2/glance/FaceEnrollmentStore.swift /tmp/glance-v2/glance/FaceLabController.swift /tmp/glance-v2/glance/FaceLabView.swift /tmp/glance-v2/glance/FaceRecognitionPipeline.swift /tmp/glance-v2/glance/FaceUnlockCoordinator.swift /tmp/glance-v2/glance/GamepadActivityMonitor.swift /tmp/glance-v2/glance/glanceApp.swift /tmp/glance-v2/glance/GlanceLog.swift /tmp/glance-v2/glance/KeychainManager.swift /tmp/glance-v2/glance/KeystrokeInjector.swift /tmp/glance-v2/glance/LaunchAtLogin.swift /tmp/glance-v2/glance/LockMonitor.swift /tmp/glance-v2/glance/ManualHotKey.swift /tmp/glance-v2/glance/POCController.swift /tmp/glance-v2/glance/PresenceWatcher.swift /tmp/glance-v2/glance/SecureCredentialManager.swift /tmp/glance-v2/glance/SecureFaceStore.swift /tmp/glance-v2/glance/SessionAutoLocker.swift /tmp/glance-v2/glance/SpaceKeyMonitor.swift /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/DerivedSources/GeneratedAssetSymbols.swift /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/_DarwinFoundation1.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/os.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/simd.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/Observation.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/CoreVideo.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/DataDetection.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/Darwin.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/Foundation.swiftmodule/arm64e-apple-macos.swiftmodule /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreAICommon-3OWI9KJU4HI62.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/QuartzCore.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/UniformTypeIdentifiers.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/Dispatch.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/Spatial.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/CoreGraphics.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/IOKit.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/Synchronization.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/_DarwinFoundation3.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/AudioToolbox.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/Accelerate.swiftmodule/arm64e-apple-macos.swiftmodule /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreAIRuntime-7DCVMSQL8RUL.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/AVFoundation.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/ColorSync.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/_StringProcessing.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/CryptoKit.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/CoreTransferable.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/Compression.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/Vision.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/LocalAuthentication.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/CoreAudio.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/SwiftUI.swiftmodule/arm64e-apple-macos.swiftmodule /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreAIDelegates-2QXC3433UFP7L.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/OSLog.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/Accessibility.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/_Builtin_float.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/AppKit.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/Charts.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/Metal.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/CoreText.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/VideoToolbox.swiftmodule/arm64e-apple-macos.swiftmodule /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreAIAsset-15KA92RKRWZ71.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/CoreData.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/XPC.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/CoreMedia.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/CoreMIDI.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/Symbols.swiftmodule/arm64e-apple-macos.swiftmodule /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreAICompiler-9K3DEQSVNTRS.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/AVFAudio.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/DeveloperToolsSupport.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/GameController.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/Combine.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/_Concurrency.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/CoreFoundation.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/ImageIO.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/CoreML.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/CoreAI.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/MediaToolbox.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/Swift.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/ObjectiveC.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/_DarwinFoundation2.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/System.swiftmodule/arm64e-apple-macos.swiftmodule /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/27.2/CoreImage.swiftmodule/arm64e-apple-macos.swiftmodule /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/QuartzCore-E21RVTE9R9AV2UV63AKNVHFVS.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreMIDI-7OJ8Z5YB7QRJYZLS067SBLIT9.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreVideo-DTN2U92MLGBS0B1W4XJIKPQDJ.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreMedia-C1OK66TLW15MRVBZDFLC5RKO6.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/os-A344VP2OR16YD2ZYM2KK0VPRK.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CFNetwork-23TV6R3FVQUKOD7DH1F3Q07DD.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/_Builtin_intrinsics-3PR56O7JADZTOJKECO580ZGD0.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/SwiftShims-9QSBQGV3EE6WYDYFDN6ZGOSJD.pcm /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules/Sparkle-472QRASWNOHXHHQTYJGC0HP4N.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreData-5LYTX4BS3IFVC6JDL3QGTP5OG.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/IOKit-BU3PKHDFX5NMIYD1UN76Q40IZ.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/os_workgroup-1PDO647MFU2GJU84QUFVDBNJ9.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/AudioToolbox-BTHN10LTKINRBUG222KN4ORPX.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/launch-7TCC5SHTUJ412ULPG4F0PB62R.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/_Builtin_stdbool-CIXQYIPZ91U2F0Y6RDDZMSH8M.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/_DarwinFoundation3-A2IV5PPD6EMCSFDTJDFGYH9EB.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/GameController-CYZEBG33EXFD4L0242YRA542T.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/OSLog-DGHGFMGMLP1LNTT9II8AWLRYB.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/_AvailabilityInternal-CY0XEQH4N49BZFZ1LVZY4CGLF.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreImage-BC75TR2YP49BXM05E0PK9B6C7.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/XPC-H7QDXVYWO89TWT76ADMSW7BT.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/DiskArbitration-73THIYQ4ZESW2KYKIWIEDS9LG.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/Accelerate-CE4EFY14LSQNO1JSF8HQRVK4F.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/SwiftUI-43SO8WWDVO73OW6V8QUA6O0S5.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/_DarwinFoundation1-BG9VLDDB83BVMOI2ZYSZSN3FH.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/_Builtin_stdatomic-46UJ6SOXALNEV17S0ZQMMEJ0W.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/sys_types-21YKK4BJDGI7SKEALCK8DOL9J.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/ServiceManagement-3JTUMEUX7S57FIK8Q7H9LQJUB.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/os_object-3HN50UOB1QB61PXY8W2UK5OLD.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/_Builtin_stdint-DIYJVP7WR6XLN15F51UT46UF3.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/AVFAudio-2THBDHKQXI1F6G4MJ117KY0UU.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreAudio-6O9Q0SK4F58OZCUF3MH4CGTLD.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/ptrcheck-7PZADOXNVJ11INT4XS4PU500I.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/_SwiftConcurrencyShims-ABRSE9ZPLMWU784QUXTVD35LQ.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreAudioTypes-4WEJ1R9W16CBDSHAQXDK315L.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/OpenGL-66RLYV17N2HT34UG1TGCXBM7J.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreFoundation-BPFZMNH7GT27RT6NGVWVAKGUG.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/_Builtin_inttypes-9S0256EWPCH4X04S9IJO366QT.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/Carbon-AGJ0KQ3PB5MJKISH9T6OT3XB3.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/Symbols-C24J1ER42OVPGKZFQSXBTDJXX.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/ptrauth-2XYV38E39BTOKV37ZT4M9Q017.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/Security-8Q431S4C74FW5Z6XIIC2G86FO.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/Vision-82MZ1BTWW641PIAIAV3QNEXFR.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/_Builtin_float-BDINR2TD5H6BFO7B7UIGORGES.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/ColorSync-5C7Y1ZZ2BQ3I3HDWBHK01X3BE.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreServices-622UMGVOPWMYV1GME6Q3ZK4UU.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/UniformTypeIdentifiers-AXX0SG2734F6D1LRZ7J5CQAN2.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/Dispatch-D5OEVRU7WZ4OXVQ42Y6U19O44.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/ApplicationServices-EO5OY4G4PAWE4MHUNEV4WXCFT.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/SwiftUICore-DYBANSLAY7DPVMHD1AU6PTX8W.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/LocalAuthentication-ABCATW2FLP7HLJWTSTMJV096K.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/_Builtin_limits-DR1M64USZYMEPPNUEOAT4RTPQ.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreGraphics-9JXVAEA3CBVCPKQ9II8IW3UE3.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/libkern-AQ684YIX69TFSK69UWGCV9KJQ.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/_Builtin_stdarg-8TB788P5Q6E2H53U5M1M6Z85B.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/_Builtin_stddef-23OU7AQULPVADZ5KF2D2BLXFO.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/simd-EX7EMZU4U6N4FJPLZW6I9GX3X.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/AVFoundation-8BLBEHTHSG2O6FWQX62CM0VZZ.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CUPS-5RSFV403H7IQYOYYY1LGMMS2Q.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreText-4AOZEQVQ0MTKURKNG9DDXZCFH.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/Accessibility-CKATX7EWHAJ6PA2LHJEDTA1LW.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/IOSurface-6IHWLLRZSY3FHNP072P282UB6.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/Metal-1EN1NG1K1Z1CPMMWDUAR2HKGH.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/AppKit-286F68IH05RMJP5L9WV36JXGF.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/_DarwinFoundation2-EVF5HLTV4D0Z8RBQWFOQTF73H.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/Foundation-7R8V617I1PNSURB6UCQN01EN2.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/ImageIO-2U2I5CREGSHWQI3GJFSSZAGP1.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/ObjectiveC-9FA0AJPP2VM48HZC5XRVVA132.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/libDER-EUOL8PPJC23D1MXWX9TO955UY.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/MachO-CW6ACE1OD4C6VYL993BQLDD0G.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/VideoToolbox-1UPKJD8LEBEI3N9D9VY7OPYVL.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/DeveloperToolsSupport-7L1HDJ7LHUIYOOIOQEHEEYELK.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreML-853GA7L91WQ1UQS7JBN6IS00C.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/Spatial-EGTB9EY8ZCXH0TOD0B09KSS6P.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/string_h-CVM3F5U01HTBJU0PAPFP3RT16.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/DataDetection-3B9Q5JC1PX859TKD9J2HWBKO7.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/Darwin-3UGZAIWCAJ38144L00NRQ210A.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/MediaToolbox-140CYQ4YACIA3CSBN9Y9V0FAR.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/Compression-1J2788K32RYSOBTKK2ET2IXC1.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/CoreTransferable-9M3FDV4V1W55DPWU8R8M5J3TD.pcm /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules/_Builtin_tgmath-5MGUD56BO2URW4RMIFK4Y2PP2.pcm /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance-dependencies-1.json (in target 'glance' from project 'glance')
+/tmp/glance-v2/glance/NotchOverlay/MenuBarNotchController.swift:157:13: warning: no 'async' operations occur within 'await' expression [#UnnecessaryEffectMarker]
+155 |             try? await Task.sleep(for: hold)
+156 |             guard !Task.isCancelled else { return }
+157 |             await self.collapse()
+    |             `- warning: no 'async' operations occur within 'await' expression [#UnnecessaryEffectMarker]
+158 |         }
+159 |     }
+
+/tmp/glance-v2/glance/Onboarding/AnimatedCheckmark.swift:10:16: warning: '@preconcurrency' on conformance to 'Shape' has no effect
+ 8 | import SwiftUI
+ 9 | 
+10 | private struct CheckmarkShape: @preconcurrency Shape {
+   |                `- warning: '@preconcurrency' on conformance to 'Shape' has no effect
+11 |     nonisolated func path(in rect: CGRect) -> Path {
+12 |         var path = Path()
+
+/tmp/glance-v2/glance/Onboarding/LoopingVideoView.swift:76:23: warning: 'AVPlayerItemDidPlayToEndTime' was deprecated in macOS 27.0: Use AVPlayerItem.didPlayToEndTimeNotification instead. [#DeprecatedDeclaration]
+ 74 | 
+ 75 |         endObserver = NotificationCenter.default.addObserver(
+ 76 |             forName: .AVPlayerItemDidPlayToEndTime,
+    |                       `- warning: 'AVPlayerItemDidPlayToEndTime' was deprecated in macOS 27.0: Use AVPlayerItem.didPlayToEndTimeNotification instead. [#DeprecatedDeclaration]
+ 77 |             object: item,
+ 78 |             queue: .main
+
+/tmp/glance-v2/glance/Onboarding/LoopingVideoView.swift:80:19: warning: call to main actor-isolated instance method 'scheduleRestart()' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 78 |             queue: .main
+ 79 |         ) { [weak self] _ in
+ 80 |             self?.scheduleRestart()
+    |                   `- warning: call to main actor-isolated instance method 'scheduleRestart()' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 81 |         }
+ 82 | 
+    :
+ 85 |     }
+ 86 | 
+ 87 |     private func scheduleRestart() {
+    |                  |- note: calls to instance method 'scheduleRestart()' from outside of its actor context are implicitly asynchronous
+    |                  `- note: main actor isolation inferred from inheritance from class 'NSView'
+ 88 |         pendingRestart?.cancel()
+ 89 |         let work = DispatchWorkItem { [weak self] in
+
+/tmp/glance-v2/glance/Settings/Pages/CameraSettingsPage.swift:47:10: warning: 'onChange(of:perform:)' was deprecated in macOS 14.0: Use `onChange` with a two or zero parameter action closure instead. [#DeprecatedDeclaration]
+ 45 |         // Password/name/enrollment flows run in the notch, outside this
+ 46 |         // window, so nothing else prompts a re-check once one closes.
+ 47 |         .onChange(of: OnboardingWindowController.shared.isOnboarding) { isOn in
+    |          `- warning: 'onChange(of:perform:)' was deprecated in macOS 14.0: Use `onChange` with a two or zero parameter action closure instead. [#DeprecatedDeclaration]
+ 48 |             guard !isOn else { return }
+ 49 |             pocController.refreshCredentialStatus()
+
+/tmp/glance-v2/glance/Settings/Pages/GeneralSettingsPage.swift:65:10: warning: 'onChange(of:perform:)' was deprecated in macOS 14.0: Use `onChange` with a two or zero parameter action closure instead. [#DeprecatedDeclaration]
+ 63 |         // The password prompt runs in the notch, outside this view's hierarchy,
+ 64 |         // so refresh the session state when that flow finishes.
+ 65 |         .onChange(of: OnboardingWindowController.shared.isOnboarding) { isOn in
+    |          `- warning: 'onChange(of:perform:)' was deprecated in macOS 14.0: Use `onChange` with a two or zero parameter action closure instead. [#DeprecatedDeclaration]
+ 66 |             guard !isOn else { return }
+ 67 |             pocController.refreshCredentialStatus()
+
+/tmp/glance-v2/glance/Settings/Pages/PasswordSettingsPage.swift:56:10: warning: 'onChange(of:perform:)' was deprecated in macOS 14.0: Use `onChange` with a two or zero parameter action closure instead. [#DeprecatedDeclaration]
+ 54 |         // The onboarding password step runs in the notch, outside this
+ 55 |         // view's hierarchy, so nothing else prompts a re-check once it closes.
+ 56 |         .onChange(of: OnboardingWindowController.shared.isOnboarding) { isOn in
+    |          `- warning: 'onChange(of:perform:)' was deprecated in macOS 14.0: Use `onChange` with a two or zero parameter action closure instead. [#DeprecatedDeclaration]
+ 57 |             guard !isOn else { return }
+ 58 |             pocController.refreshCredentialStatus()
+
+/tmp/glance-v2/glance/Settings/Pages/RecognitionSettingsPage.swift:36:10: warning: 'onChange(of:perform:)' was deprecated in macOS 14.0: Use `onChange` with a two or zero parameter action closure instead. [#DeprecatedDeclaration]
+ 34 |         // Password/name/enrollment flows run in the notch, outside this
+ 35 |         // window, so nothing else prompts a re-check once one closes.
+ 36 |         .onChange(of: OnboardingWindowController.shared.isOnboarding) { isOn in
+    |          `- warning: 'onChange(of:perform:)' was deprecated in macOS 14.0: Use `onChange` with a two or zero parameter action closure instead. [#DeprecatedDeclaration]
+ 37 |             guard !isOn else { return }
+ 38 |             pocController.refreshCredentialStatus()
+
+/tmp/glance-v2/glance/Settings/Pages/YourFaceSettingsPage.swift:74:10: warning: 'onChange(of:perform:)' was deprecated in macOS 14.0: Use `onChange` with a two or zero parameter action closure instead. [#DeprecatedDeclaration]
+ 72 |         // The enrollment flow runs in the notch, outside this view's
+ 73 |         // hierarchy, so nothing else prompts a re-check once it closes.
+ 74 |         .onChange(of: OnboardingWindowController.shared.isOnboarding) { isOn in
+    |          `- warning: 'onChange(of:perform:)' was deprecated in macOS 14.0: Use `onChange` with a two or zero parameter action closure instead. [#DeprecatedDeclaration]
+ 75 |             guard !isOn else { return }
+ 76 |             store.reloadIfUnlocked()
+
+/tmp/glance-v2/glance/Settings/SessionLockButton.swift:51:10: warning: 'onChange(of:perform:)' was deprecated in macOS 14.0: Use `onChange` with a two or zero parameter action closure instead. [#DeprecatedDeclaration]
+49 |         // reactively on its own — refresh after the notch closes, same as
+50 |         // every gated page.
+51 |         .onChange(of: OnboardingWindowController.shared.isOnboarding) { isOn in
+   |          `- warning: 'onChange(of:perform:)' was deprecated in macOS 14.0: Use `onChange` with a two or zero parameter action closure instead. [#DeprecatedDeclaration]
+52 |             guard !isOn else { return }
+53 |             pocController.refreshCredentialStatus()
+
+/tmp/glance-v2/glance/Updater/UpdaterController.swift:50:37: warning: 'weak' ownership of capture 'self' differs from implicitly-captured strong reference in outer scope [#ImplicitStrongCapture]
+45 |         canCheckForUpdatesObservation = controller.updater.observe(
+46 |             \.canCheckForUpdates, options: [.initial, .new]
+47 |         ) { updater, _ in
+   |           |- note: 'self' implicitly strongly captured here
+   |           `- note: add 'self' as a capture list item to silence
+48 |             // `[weak self]` captured on the Task's closure, not the outer KVO one — Swift 6 flags the latter as unsafe.
+49 |             let value = updater.canCheckForUpdates
+50 |             Task { @MainActor [weak self] in
+   |                                     |- warning: 'weak' ownership of capture 'self' differs from implicitly-captured strong reference in outer scope [#ImplicitStrongCapture]
+   |                                     `- note: explicitly assign the capture list item to silence
+51 |                 self?.canCheckForUpdates = value
+52 |             }
+
+/tmp/glance-v2/glance/Updater/UpdaterController.swift:49:33: warning: main actor-isolated property 'canCheckForUpdates' can not be referenced from a Sendable closure
+47 |         ) { updater, _ in
+48 |             // `[weak self]` captured on the Task's closure, not the outer KVO one — Swift 6 flags the latter as unsafe.
+49 |             let value = updater.canCheckForUpdates
+   |                                 `- warning: main actor-isolated property 'canCheckForUpdates' can not be referenced from a Sendable closure
+50 |             Task { @MainActor [weak self] in
+51 |                 self?.canCheckForUpdates = value
+
+/tmp/glance-v2/build-camfix2/Build/Products/Release/Sparkle.framework/Headers/SPUUpdater.h:171:38: note: property declared here
+169 |  Note this property does not reflect whether or not an update session is in progress. Please see `sessionInProgress` property instead.
+170 |  */
+171 | @property (nonatomic, readonly) BOOL canCheckForUpdates;
+    |                                      `- note: property declared here
+172 | 
+173 | /**
+
+/tmp/glance-v2/glance/CoreAIEmbedder.swift:76:19: warning: variable 'emb' was never mutated; consider changing to 'let' constant [#VariableNeverMutated]
+ 74 |         let input = NDArray(scalars: pixels, shape: [1, 3, Self.inputSize, Self.inputSize])
+ 75 |         var outputs = try await function.run(inputs: ["input_image": input])
+ 76 |         guard var emb = outputs.remove("embedding")?.ndArray else {
+    |                   `- warning: variable 'emb' was never mutated; consider changing to 'let' constant [#VariableNeverMutated]
+ 77 |             throw CoreAIEmbedderError.unexpectedOutput
+ 78 |         }
+
+/tmp/glance-v2/glance/FaceLabView.swift:67:10: warning: 'onChange(of:perform:)' was deprecated in macOS 14.0: Use `onChange` with a two or zero parameter action closure instead. [#DeprecatedDeclaration]
+ 65 |         // Guided enrollment runs in the notch, outside this view hierarchy, so nothing else prompts a re-read once
+ 66 |         // it closes. Same trick YourFaceSettingsPage uses.
+ 67 |         .onChange(of: OnboardingWindowController.shared.isOnboarding) { isOn in
+    |          `- warning: 'onChange(of:perform:)' was deprecated in macOS 14.0: Use `onChange` with a two or zero parameter action closure instead. [#DeprecatedDeclaration]
+ 68 |             guard !isOn else { return }
+ 69 |             controller.store.reloadIfUnlocked()
+
+/tmp/glance-v2/glance/GamepadActivityMonitor.swift:50:44: warning: 'gamepad' was deprecated in macOS 10.12 [#DeprecatedDeclaration]
+48 |                     }
+49 |                 }
+50 |             } else if let pad = controller.gamepad {
+   |                                            `- warning: 'gamepad' was deprecated in macOS 10.12 [#DeprecatedDeclaration]
+51 |                 let values: [String: Float] = [
+52 |                     "a": pad.buttonA.value, "b": pad.buttonB.value,
+
+/tmp/glance-v2/glance/glanceApp.swift:90:33: warning: call to main actor-isolated instance method 'refresh()' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 88 |             forName: .glanceHotKeyDidChange, object: nil, queue: .main
+ 89 |         ) { _ in
+ 90 |             ManualHotKey.shared.refresh()
+    |                                 `- warning: call to main actor-isolated instance method 'refresh()' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 91 |         }
+ 92 |         environment.presenceWatcher.start()
+
+/tmp/glance-v2/glance/ManualHotKey.swift:31:10: note: calls to instance method 'refresh()' from outside of its actor context are implicitly asynchronous
+ 29 | 
+ 30 |     /// 设置改变后重新注册（先注销旧的，避免重复绑定失败）。
+ 31 |     func refresh() {
+    |          `- note: calls to instance method 'refresh()' from outside of its actor context are implicitly asynchronous
+ 32 |         unregister()
+ 33 |         let code = GlanceSettings.shared.manualHotKeyCode
+
+/tmp/glance-v2/glance/glanceApp.swift:90:26: warning: main actor-isolated static property 'shared' can not be referenced from a Sendable closure
+ 88 |             forName: .glanceHotKeyDidChange, object: nil, queue: .main
+ 89 |         ) { _ in
+ 90 |             ManualHotKey.shared.refresh()
+    |                          `- warning: main actor-isolated static property 'shared' can not be referenced from a Sendable closure
+ 91 |         }
+ 92 |         environment.presenceWatcher.start()
+
+/tmp/glance-v2/glance/ManualHotKey.swift:14:16: note: static property declared here
+ 12 | 
+ 13 | final class ManualHotKey {
+ 14 |     static let shared = ManualHotKey()
+    |                `- note: static property declared here
+ 15 | 
+ 16 |     private var hotKeyRef: EventHotKeyRef?
+
+/tmp/glance-v2/glance/LockMonitor.swift:42:5: warning: 'nonisolated(unsafe)' has no effect on property 'distributedObservers', consider using 'nonisolated'
+ 40 |     private(set) var eventCount: Int = 0
+ 41 | 
+ 42 |     nonisolated(unsafe) private var distributedObservers: [NSObjectProtocol] = []
+    |     `- warning: 'nonisolated(unsafe)' has no effect on property 'distributedObservers', consider using 'nonisolated'
+ 43 |     nonisolated(unsafe) private var workspaceObservers: [NSObjectProtocol] = []
+ 44 | 
+
+/tmp/glance-v2/glance/LockMonitor.swift:43:5: warning: 'nonisolated(unsafe)' has no effect on property 'workspaceObservers', consider using 'nonisolated'
+ 41 | 
+ 42 |     nonisolated(unsafe) private var distributedObservers: [NSObjectProtocol] = []
+ 43 |     nonisolated(unsafe) private var workspaceObservers: [NSObjectProtocol] = []
+    |     `- warning: 'nonisolated(unsafe)' has no effect on property 'workspaceObservers', consider using 'nonisolated'
+ 44 | 
+ 45 |     init() {
+
+/tmp/glance-v2/glance/LockMonitor.swift:67:19: warning: main actor-isolated property 'isScreenLocked' can not be mutated from a Sendable closure
+ 25 |     /// NOT trustworthy alone: any same-user process can post these distributed notifications, and this process can be
+ 26 |     /// suspended before one is delivered (e.g. lid-close sleep racing a lock). UI/trigger signal only, never a security gate.
+ 27 |     private(set) var isScreenLocked: Bool = false
+    |                      `- note: mutation of this property is only permitted within the actor
+ 28 | 
+ 29 |     /// Catches the case above: lock may have already happened while suspended, so wake is the first chance to notice — callers
+    :
+ 65 |             queue: .main
+ 66 |         ) { [weak self] _ in
+ 67 |             self?.isScreenLocked = true
+    |                   `- warning: main actor-isolated property 'isScreenLocked' can not be mutated from a Sendable closure
+ 68 |             self?.record(.screenLocked)
+ 69 |         })
+
+/tmp/glance-v2/glance/LockMonitor.swift:68:19: warning: call to main actor-isolated instance method 'record' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 66 |         ) { [weak self] _ in
+ 67 |             self?.isScreenLocked = true
+ 68 |             self?.record(.screenLocked)
+    |                   `- warning: call to main actor-isolated instance method 'record' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 69 |         })
+ 70 |         distributedObservers.append(distributed.addObserver(
+    :
+118 |     }
+119 | 
+120 |     private func record(_ kind: LockEventKind) {
+    |                  `- note: calls to instance method 'record' from outside of its actor context are implicitly asynchronous
+121 |         lastEvent = kind
+122 |         eventCount += 1
+
+/tmp/glance-v2/glance/LockMonitor.swift:75:19: warning: main actor-isolated property 'isScreenLocked' can not be mutated from a Sendable closure
+ 25 |     /// NOT trustworthy alone: any same-user process can post these distributed notifications, and this process can be
+ 26 |     /// suspended before one is delivered (e.g. lid-close sleep racing a lock). UI/trigger signal only, never a security gate.
+ 27 |     private(set) var isScreenLocked: Bool = false
+    |                      `- note: mutation of this property is only permitted within the actor
+ 28 | 
+ 29 |     /// Catches the case above: lock may have already happened while suspended, so wake is the first chance to notice — callers
+    :
+ 73 |             queue: .main
+ 74 |         ) { [weak self] _ in
+ 75 |             self?.isScreenLocked = false
+    |                   `- warning: main actor-isolated property 'isScreenLocked' can not be mutated from a Sendable closure
+ 76 |             self?.record(.screenUnlocked)
+ 77 |         })
+
+/tmp/glance-v2/glance/LockMonitor.swift:76:19: warning: call to main actor-isolated instance method 'record' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 74 |         ) { [weak self] _ in
+ 75 |             self?.isScreenLocked = false
+ 76 |             self?.record(.screenUnlocked)
+    |                   `- warning: call to main actor-isolated instance method 'record' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 77 |         })
+ 78 |         // Observing the key press that dismissed the screensaver isn't possible — Secure Event Input suppresses keyboard taps
+    :
+118 |     }
+119 | 
+120 |     private func record(_ kind: LockEventKind) {
+    |                  `- note: calls to instance method 'record' from outside of its actor context are implicitly asynchronous
+121 |         lastEvent = kind
+122 |         eventCount += 1
+
+/tmp/glance-v2/glance/LockMonitor.swift:85:19: warning: call to main actor-isolated instance method 'record' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 83 |             queue: .main
+ 84 |         ) { [weak self] _ in
+ 85 |             self?.record(.wake)
+    |                   `- warning: call to main actor-isolated instance method 'record' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 86 |         })
+ 87 | 
+    :
+118 |     }
+119 | 
+120 |     private func record(_ kind: LockEventKind) {
+    |                  `- note: calls to instance method 'record' from outside of its actor context are implicitly asynchronous
+121 |         lastEvent = kind
+122 |         eventCount += 1
+
+/tmp/glance-v2/glance/LockMonitor.swift:94:19: warning: main actor-isolated property 'isSleeping' can not be mutated from a Sendable closure
+ 34 |     /// suspending (measured via pmset/os_log correlation), so callers should skip acting on a lock while this is true and wait
+ 35 |     /// for the wake trigger instead.
+ 36 |     private(set) var isSleeping: Bool = false
+    |                      `- note: mutation of this property is only permitted within the actor
+ 37 | 
+ 38 |     /// Observers track `eventCount` (changes on every event, even repeats of the same kind) then read `lastEvent`.
+    :
+ 92 |             queue: .main
+ 93 |         ) { [weak self] _ in
+ 94 |             self?.isSleeping = true
+    |                   `- warning: main actor-isolated property 'isSleeping' can not be mutated from a Sendable closure
+ 95 |             self?.record(.willSleep)
+ 96 |         })
+
+/tmp/glance-v2/glance/LockMonitor.swift:95:19: warning: call to main actor-isolated instance method 'record' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 93 |         ) { [weak self] _ in
+ 94 |             self?.isSleeping = true
+ 95 |             self?.record(.willSleep)
+    |                   `- warning: call to main actor-isolated instance method 'record' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 96 |         })
+ 97 |         // Display- and system-level wake are treated as equivalent triggers — they land within ~100ms of each other in either order.
+    :
+118 |     }
+119 | 
+120 |     private func record(_ kind: LockEventKind) {
+    |                  `- note: calls to instance method 'record' from outside of its actor context are implicitly asynchronous
+121 |         lastEvent = kind
+122 |         eventCount += 1
+
+
+SwiftCompile normal arm64 (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    
+
+/tmp/glance-v2/glance/LockMonitor.swift:103:19: warning: call to main actor-isolated instance method 'recordWake()' in a synchronous nonisolated context [#ActorIsolatedCall]
+101 |             queue: .main
+102 |         ) { [weak self] _ in
+103 |             self?.recordWake()
+    |                   `- warning: call to main actor-isolated instance method 'recordWake()' in a synchronous nonisolated context [#ActorIsolatedCall]
+104 |         })
+105 |         workspaceObservers.append(workspace.addObserver(
+    :
+112 |     }
+113 | 
+114 |     private func recordWake() {
+    |                  `- note: calls to instance method 'recordWake()' from outside of its actor context are implicitly asynchronous
+115 |         isSleeping = false
+116 |         wakeEventCount += 1
+
+/tmp/glance-v2/glance/LockMonitor.swift:110:19: warning: call to main actor-isolated instance method 'recordWake()' in a synchronous nonisolated context [#ActorIsolatedCall]
+108 |             queue: .main
+109 |         ) { [weak self] _ in
+110 |             self?.recordWake()
+    |                   `- warning: call to main actor-isolated instance method 'recordWake()' in a synchronous nonisolated context [#ActorIsolatedCall]
+111 |         })
+112 |     }
+113 | 
+114 |     private func recordWake() {
+    |                  `- note: calls to instance method 'recordWake()' from outside of its actor context are implicitly asynchronous
+115 |         isSleeping = false
+116 |         wakeEventCount += 1
+
+[#ActorIsolatedCall]: <https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call>
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+[#ImplicitStrongCapture]: <https://docs.swift.org/compiler/documentation/diagnostics/implicit-strong-capture>
+[#UnnecessaryEffectMarker]: <https://docs.swift.org/compiler/documentation/diagnostics/unnecessary-effect-marker>
+[#VariableNeverMutated]: <https://docs.swift.org/compiler/documentation/diagnostics/variable-never-mutated>
+SwiftDriverJobDiscovery normal arm64 Compiling DeviceBezelDetector.swift, GeometryLiveness.swift, GlareCue.swift, GlareCueExtractor.swift, LandmarkGeometry.swift, LivenessAnalyzer.swift, LivenessCues.swift, LivenessFeatures.swift, LivenessScoring.swift, MenuBarNotchController.swift, NotchGeometry.swift, NotchPanelStyle.swift, NotchSkyLight.swift, AnimatedCheckmark.swift, EnrollmentDirectionSweep.swift, EnrollmentRingView.swift, EnrollmentSweepWindowController.swift, GlanceTheme.swift, LoopingVideoView.swift, OnboardingController.swift, OnboardingControls.swift, OnboardingMetrics.swift, OnboardingNotchView.swift, OnboardingStepViews.swift, OnboardingWindowController.swift, AboutSettingsPage.swift, CameraSettingsPage.swift, GeneralSettingsPage.swift, PasswordSettingsPage.swift, RecognitionSettingsPage.swift, YourFaceSettingsPage.swift, GlanceSettings.swift, HotKeyRecorderView.swift, ProgressiveHeaderBlur.swift, SessionLockButton.swift, SettingsControls.swift, SettingsMetrics.swift, SettingsTab.swift, SettingsTabBar.swift, SettingsWindowView.swift, UpdaterController.swift, AppEnvironment.swift, ArcFaceEmbedder.swift, CameraDeviceCatalog.swift, CameraManager.swift, CameraPreviewView.swift, CoreAIEmbedder.swift, FaceAligner.swift, FaceDetector.swift, FaceEmbedder.swift, FaceEnrollmentStore.swift, FaceLabController.swift, FaceLabView.swift, FaceRecognitionPipeline.swift, FaceUnlockCoordinator.swift, GamepadActivityMonitor.swift, glanceApp.swift, GlanceLog.swift, KeychainManager.swift, KeystrokeInjector.swift, LaunchAtLogin.swift, LockMonitor.swift, ManualHotKey.swift, POCController.swift, PresenceWatcher.swift, SecureCredentialManager.swift, SecureFaceStore.swift, SessionAutoLocker.swift, SpaceKeyMonitor.swift, GeneratedAssetSymbols.swift (in target 'glance' from project 'glance')
+
+SwiftDriver\ Compilation\ Requirements glance normal arm64 com.apple.xcode.tools.swift.compiler (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name glance -O -whole-module-optimization @/tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance.SwiftFileList -default-isolation\=MainActor -enable-upcoming-feature MemberImportVisibility -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.2.sdk -target arm64-apple-macos27.0 -g -module-cache-path /tmp/glance-v2/build-camfix2/ModuleCache.noindex -Xfrontend -serialize-debugging-options -swift-version 6 -I /tmp/glance-v2/build-camfix2/Build/Products/Release -F /tmp/glance-v2/build-camfix2/Build/Products/Release -emit-localized-strings -emit-localized-strings-path /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64 -c -num-threads 12 -Xcc -ivfsstatcache -Xcc /tmp/glance-v2/build-camfix2/SDKStatCaches.noindex/macosx27.2-26B118-9aa026f88bf9ed31cff8761912ac5bd1a7ff82d74745d5ef33555b35c4238456.sdkstatcache -output-file-map /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/glance-v2/build-camfix2/ModuleCache.noindex -sdk-module-cache-path /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /tmp/glance-v2/build-camfix2/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/glance-generated-files.hmap -Xcc -I/tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/glance-own-target-headers.hmap -Xcc -I/tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/glance-all-target-headers.hmap -Xcc -iquote -Xcc /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/glance-project-headers.hmap -Xcc -I/tmp/glance-v2/build-camfix2/Build/Products/Release/include -Xcc -I/tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/DerivedSources-normal/arm64 -Xcc -I/tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/DerivedSources/arm64 -Xcc -I/tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/DerivedSources -emit-objc-header -emit-objc-header-path /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance-Swift.h -working-directory /tmp/glance-v2 -no-emit-module-separately-wmo
+
+SwiftMergeGeneratedHeaders /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/DerivedSources/glance-Swift.h /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance-Swift.h (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    builtin-swiftHeaderTool -arch arm64 /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance-Swift.h -o /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/DerivedSources/glance-Swift.h
+
+Copy /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.swiftmodule/arm64-apple-macos.abi.json /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance.abi.json (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance.abi.json /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.swiftmodule/arm64-apple-macos.abi.json
+
+Copy /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.swiftmodule/arm64-apple-macos.swiftdoc /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance.swiftdoc (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance.swiftdoc /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.swiftmodule/arm64-apple-macos.swiftdoc
+
+Copy /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance.swiftsourceinfo (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance.swiftsourceinfo /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo
+
+Copy /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.swiftmodule/arm64-apple-macos.swiftmodule /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance.swiftmodule (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance.swiftmodule /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.swiftmodule/arm64-apple-macos.swiftmodule
+
+Ld /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/MacOS/glance normal (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-macos27.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.2.sdk -Os -Xlinker -no_warn_duplicate_libraries -L/tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/EagerLinkingTBDs/Release -L/tmp/glance-v2/build-camfix2/Build/Products/Release -F/tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/EagerLinkingTBDs/Release -F/tmp/glance-v2/build-camfix2/Build/Products/Release -filelist /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance.LinkFileList -Xlinker -rpath -Xlinker @executable_path/../Frameworks -Xlinker -object_path_lto -Xlinker /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance_lto.o -Xlinker -dependency_info -Xlinker /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance.swiftmodule -framework Sparkle -o /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/MacOS/glance
+
+CopySwiftLibs /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    builtin-swiftStdLibTool --copy --verbose --scan-executable /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/MacOS/glance --scan-folder /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/Frameworks --scan-folder /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/PlugIns --scan-folder /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/Library/SystemExtensions --scan-folder /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/Extensions --platform macosx --toolchain /var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v27.2.47.0.uUtZv9/Metal.xctoolchain --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+Ignoring --strip-bitcode because --sign was not passed
+
+ExtractAppIntentsMetadata (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v27.2.47.0.uUtZv9/Metal.xctoolchain --module-name glance --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.2.sdk --xcode-version 27B52 --platform-family macOS --deployment-target 27.0 --bundle-identifier com.imanity.glance.v2 --output /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/Resources --target-triple arm64-apple-macos27.0 --binary-file /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/MacOS/glance --dependency-file /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance_dependency_info.dat --stringsdata-file /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance.SwiftFileList --metadata-file-list /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/glance.DependencyMetadataFileList --static-metadata-file-list /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/glance.DependencyStaticMetadataFileList --swift-const-vals-list /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/glance.build/Release/glance.build/Objects-normal/arm64/glance.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --no-app-shortcuts-localization
+2026-11-23 19:20:42.791 appintentsmetadataprocessor[72993:4656809] Starting App Intents metadata extraction
+2026-11-23 19:20:42.793 appintentsmetadataprocessor[72993:4656809] warning: Metadata extraction skipped, no AppIntents.framework dependency found
+
+GenerateDSYMFile /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app.dSYM /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/MacOS/glance (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    export PATH\=/Applications/Xcode.app/Contents/SharedFrameworks/SwiftBuild.framework/Versions/A/PlugIns/SWBBuildService.bundle/Contents/PlugIns/SWBUniversalPlatformPlugin.bundle/Contents/Frameworks/SWBUniversalPlatform.framework/Resources:/var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v27.2.47.0.uUtZv9/Metal.xctoolchain/usr/bin:/var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v27.2.47.0.uUtZv9/Metal.xctoolchain/usr/local/bin:/var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v27.2.47.0.uUtZv9/Metal.xctoolchain/usr/libexec:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/local/bin:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/libexec:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/usr/bin:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/usr/local/bin:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/local/bin:/Applications/Xcode.app/Contents/Developer/usr/bin:/Applications/Xcode.app/Contents/Developer/usr/local/bin:/Applications/WorkBuddy.app/Contents/Resources/app.asar.unpacked/cli/vendor/sandbox-center-runtime-kit/shim/safe-bin:/Users/imanity/.workbuddy/binaries/node/versions/22.22.2-6/bin:/Users/imanity/.workbuddy/binaries/node/versions/.locks/bin:/Users/imanity/.workbuddy/binaries/python/versions/3.13.12/bin:/Users/imanity/.workbuddy/binaries/python/versions/.locks/bin:/Users/imanity/.workbuddy/binaries/node/cli-connector-packages/bin:/Users/imanity/.workbuddy/binaries/python/envs/default/bin:/Users/imanity/.workbuddy/external-packages/pdf-cli:/Users/imanity/.nvm/versions/node/v26.12.1/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/dsymutil /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app/Contents/MacOS/glance -o /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app.dSYM
+
+RegisterExecutionPolicyException /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    builtin-RegisterExecutionPolicyException /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app
+
+Validate /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    builtin-validationUtility /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app -no-validate-extension -infoplist-subpath Contents/Info.plist
+
+Touch /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    /usr/bin/touch -c /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app
+
+RegisterWithLaunchServices /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app (in target 'glance' from project 'glance')
+    cd /tmp/glance-v2
+    builtin-lsregisterurl --record-path /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/XCBuildData/registered-launchservices.txt -- /System/Library/Frameworks/CoreServices.framework/Versions/Current/Frameworks/LaunchServices.framework/Versions/Current/Support/lsregister -f -R -trusted /tmp/glance-v2/build-camfix2/Build/Products/Release/glance.app
+
+PruneExplicitPrecompiledModules /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /tmp/glance-v2/build-camfix2/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /tmp/glance-v2/build-camfix2/SDKExplicitPrecompiledModules
+
+** BUILD SUCCEEDED **
+
