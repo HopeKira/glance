@@ -211,6 +211,10 @@ final class PresenceWatcher {
                     GlanceLog.write("走近侦测：检测到人脸，唤醒显示器")
                     Self.wakeDisplay()
                     self.stopReturnWatch(reason: "已唤醒")
+                    // v2 关键修复：屏幕"亮着但锁定"时 caffeinate 不产生 screensDidWake，
+                    // FaceUnlock 等系统 wake 事件就永远不开主摄像头（灯不亮、只空转）。
+                    // 直接发通知触发扫描，不依赖系统事件。
+                    NotificationCenter.default.post(name: .glanceApproachDetected, object: nil)
                     return
                 }
             }

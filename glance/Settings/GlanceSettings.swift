@@ -413,4 +413,7 @@ extension Notification.Name {
     static let glanceFaceUnlockFailed = Notification.Name("com.imanity.glance.v2.faceUnlockFailed")
     /// 用户按空格立即重试时发出，PresenceWatcher 借此暂停走近侦测，避免两个 CameraManager 抢同一摄像头。
     static let glanceManualRetry = Notification.Name("com.imanity.glance.v2.manualRetry")
+    /// 走近侦测确认人脸出现时发出。屏幕"亮着但锁定"时 caffeinate 不产生系统 wake 事件，
+    /// FaceUnlock 收不到 wake 就不会开主摄像头——用此通知直接触发扫描，不必等系统事件。
+    static let glanceApproachDetected = Notification.Name("com.imanity.glance.v2.approachDetected")
 }

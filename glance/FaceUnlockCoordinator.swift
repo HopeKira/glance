@@ -91,6 +91,17 @@ final class FaceUnlockCoordinator {
         self.isEnabled = GlanceSettings.shared.isFaceUnlockEnabled
         self.matchThreshold = GlanceSettings.shared.matchThreshold
         spaceKeyMonitor.onSpaceKeyDown = { [weak self] in self?.handleSpaceKeyPress() }
+        // v2: 走近侦测到人脸直接触发扫描——屏幕"亮着但锁定"时没有系统 wake 事件，
+        // 只靠 LockMonitor 的 wake 触发会漏掉这种场景（主摄像头不启动、灯不亮）。
+        NotificationCenter.default.addObserver(
+            forName: .glanceApproachDetected, object: nil, queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor [weak self] in
+                guard let self, self.isEnabled else { return }
+                GlanceLog.write("走近触发：直接启动解锁扫描")
+                self.handleSpaceKeyPress()
+            }
+        }
         observeLockAndWakeEvents()
     }
 
