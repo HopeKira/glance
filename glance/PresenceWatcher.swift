@@ -14,6 +14,7 @@
 
 import AppKit
 import Foundation
+import IOKit
 import Observation
 @preconcurrency import Vision
 
@@ -299,13 +300,29 @@ final class PresenceWatcher {
     nonisolated private static func userWasActiveRecently(within seconds: TimeInterval) -> Bool {
         let mouse = CGEventSource.secondsSinceLastEventType(.hidSystemState, eventType: .mouseMoved)
         let key = CGEventSource.secondsSinceLastEventType(.hidSystemState, eventType: .keyDown)
-        // 手柄快照已在 tickAwayCheck 每次 tick 时 poll 过，这里只读时间戳。
         let gamepad = GamepadActivityMonitor.secondsSinceActivity()
-        let active = min(mouse, key, gamepad) <= seconds
-        if active && gamepad <= seconds {
-            GlanceLog.write("离场检测：手柄活动(\(String(format: "%.0f", gamepad))秒前)，跳过锁屏")
+        // v2: 系统级空闲时间（IOHIDSystem.HIDIdleTime）是最权威的信号——手柄被游戏/模拟器
+        // 独占时我们自己的 IOHID 回调收不到事件，但系统仍在计时。任何输入（手柄/键鼠/触控）
+        // 都会重置它，完美覆盖游戏场景。实测玩塞尔达时此值持续 <1s。
+        let systemIdle = systemIdleSeconds()
+        let active = min(mouse, key, gamepad, systemIdle) <= seconds
+        if active {
+            GlanceLog.write("离场检测：用户活动(系统空闲\(String(format: "%.0f", systemIdle))秒/手柄\(String(format: "%.0f", gamepad))秒前)，跳过锁屏")
         }
         return active
+    }
+
+    /// 系统级"距上次任意输入"的秒数（IOHIDSystem.HIDIdleTime，纳秒）。
+    /// 权威且不受单个 app 的事件独占影响；读不到时返回一个很大值（视为不活跃）。
+    nonisolated private static func systemIdleSeconds() -> TimeInterval {
+        let port = IOServiceGetMatchingService(
+            kIOMasterPortDefault, IOServiceMatching("IOHIDSystem"))
+        guard port != 0 else { return .greatestFiniteMagnitude }
+        defer { IOObjectRelease(port) }
+        guard let prop = IORegistryEntryCreateCFProperty(
+            port, "HIDIdleTime" as CFString, kCFAllocatorDefault, 0
+        )?.takeRetainedValue() as? NSNumber else { return .greatestFiniteMagnitude }
+        return prop.doubleValue / 1_000_000_000
     }
 
     /// ⌃⌘Q —— 系统自带的「锁定屏幕」，比私有 API 稳，也不需要额外权限。
