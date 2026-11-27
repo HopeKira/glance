@@ -337,23 +337,32 @@ final class FaceUnlockCoordinator {
                 GlanceLog.write("解锁流程：识别通过但注入未成功")
             }
         case .consistentlyWrongFace:
-            statusMessage = "面容未识别——请再看向摄像头。"
-            if showsUI { MenuBarNotchController.shared.finish(success: false) }
-            handBackToPresenceWatch()
+            statusMessage = "面容未识别——悬停胶囊重试。"
+            showFailureAndArm()
         case .spoofSuspected:
-            statusMessage = "无法确认是真人——请正对摄像头。"
-            if showsUI { MenuBarNotchController.shared.finish(success: false) }
-            handBackToPresenceWatch()
+            statusMessage = "无法确认是真人——悬停胶囊重试。"
+            showFailureAndArm()
         case .noResolution:
-            statusMessage = "未检测到人脸——请看向摄像头。"
-            if showsUI {
-                // 胶囊自己的扫描超时会收起；这里不重复 collapse。
-            }
-            handBackToPresenceWatch()
+            statusMessage = "未检测到人脸——悬停胶囊重试。"
+            showFailureAndArm()
         }
     }
 
     /// `delay` waits out whatever the overlay is still showing so the retry doesn't start underneath the previous outcome.
+    /// v2: 失败反馈——胶囊保持可见并挂上 hover 重试回调（原版 glance 的 hover-to-retry）。
+    /// 同时把自动权交还走近侦测：不再无限自重试，只有走近再次检测到脸或用户主动悬停才重试。
+    private func showFailureAndArm() {
+        if showsUI {
+            MenuBarNotchController.shared.arm { [weak self] in
+                guard let self else { return }
+                GlanceLog.write("悬停胶囊：触发重试")
+                self.handleSpaceKeyPress()
+            }
+            MenuBarNotchController.shared.finish(success: false)
+        }
+        handBackToPresenceWatch()
+    }
+
     /// v2: 刷脸失败后不再高频重扫（旧逻辑有 phase 竞态，常被吞成"只重试一次"），
     /// 而是把控制权交还 PresenceWatcher：它低频"等人脸再次出现"，一旦检测到脸
     /// 立即唤醒并重新触发解锁。更符合直觉、也更省电。
