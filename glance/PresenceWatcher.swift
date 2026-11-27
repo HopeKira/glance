@@ -38,6 +38,8 @@ final class PresenceWatcher {
 
     func start() {
         guard observers.isEmpty else { return }
+        // v2: 启动 IOKit 手柄活动监听（第三方手柄 GameController 看不到，必须走 HID）。
+        GamepadActivityMonitor.start()
         let workspace = NSWorkspace.shared.notificationCenter
         observers.append(workspace.addObserver(
             forName: NSWorkspace.screensDidSleepNotification, object: nil, queue: .main
@@ -299,7 +301,11 @@ final class PresenceWatcher {
         let key = CGEventSource.secondsSinceLastEventType(.hidSystemState, eventType: .keyDown)
         // 手柄快照已在 tickAwayCheck 每次 tick 时 poll 过，这里只读时间戳。
         let gamepad = GamepadActivityMonitor.secondsSinceActivity()
-        return min(mouse, key, gamepad) <= seconds
+        let active = min(mouse, key, gamepad) <= seconds
+        if active && gamepad <= seconds {
+            GlanceLog.write("离场检测：手柄活动(\(String(format: "%.0f", gamepad))秒前)，跳过锁屏")
+        }
+        return active
     }
 
     /// ⌃⌘Q —— 系统自带的「锁定屏幕」，比私有 API 稳，也不需要额外权限。

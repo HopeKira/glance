@@ -2,74 +2,65 @@
 //  GamepadActivityMonitor.swift
 //  glance v2
 //
-//  Lightweight gamepad activity tracking so controller play counts as "user is
-//  active" for away-lock, on par with mouse/keyboard. Uses only the public
-//  GameController framework — no HID permission needed for reading button state
-//  of already-paired controllers.
+//  v2 重写：GameController.framework 只能看到 MFi / 系统认证手柄 —— 实测用户的
+//  第三方手柄（GamePad-1 / Pro Controller 等）GCController.controllers() 为 0，
+//  旧实现完全空转，打游戏时照样被判离场锁屏。
+//
+//  改用 IOKit HID 事件回调（与 SpaceKeyMonitor 同一套、靠 Accessibility 权限即可）：
+//  监听所有 HID 设备的按钮/轴 value 变化，实时记录最后活动时间戳。任何手柄按键、
+//  扳机、摇杆、十字键一动就刷新——不依赖 GameController、不轮询、不漏状态相同的键。
 //
 
 import Foundation
-import GameController
+import IOKit.hid
+import OSLog
 
-/// Polls connected controllers' button/axis state and records the last time
-/// any input was active. Cheap: GCController state is an in-memory snapshot.
 enum GamepadActivityMonitor {
-    nonisolated(unsafe) private static var lastActiveAt: Date = .distantPast
-    nonisolated(unsafe) private static var previousSnapshot: [String: Float] = [:]
 
-    /// Call from the same loop that checks mouse/keyboard activity. Refreshes
-    /// the timestamp if any controller button/axis changed since last poll.
-    nonisolated static func poll() {
-        let controllers = GCController.controllers()
-        guard !controllers.isEmpty else {
-            previousSnapshot.removeAll()
+    nonisolated(unsafe) private static var manager: IOHIDManager?
+    nonisolated(unsafe) private static var lastActiveAt: Date = .distantPast
+    nonisolated(unsafe) private static var started = false
+
+    /// Start listening once. Idempotent. Fails closed if HID access isn't granted.
+    static func start() {
+        guard !started else { return }
+        started = true
+
+        let mgr = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
+        guard IOHIDCheckAccess(kIOHIDRequestTypeListenEvent) == kIOHIDAccessTypeGranted else {
+            GlanceLog.write("手柄监控：HID 权限未授予")
             return
         }
-        var current: [String: Float] = [:]
-        var changed = false
-        for (index, controller) in controllers.enumerated() {
-            let prefix = "\(index)"
-            if let pad = controller.extendedGamepad {
-                let values: [String: Float] = [
-                    "a": pad.buttonA.value, "b": pad.buttonB.value,
-                    "x": pad.buttonX.value, "y": pad.buttonY.value,
-                    "l1": pad.leftShoulder.value, "r1": pad.rightShoulder.value,
-                    "l2": pad.leftTrigger.value, "r2": pad.rightTrigger.value,
-                    "dpadUp": pad.dpad.up.value, "dpadDown": pad.dpad.down.value,
-                    "dpadLeft": pad.dpad.left.value, "dpadRight": pad.dpad.right.value,
-                    "lsX": pad.leftThumbstick.xAxis.value, "lsY": pad.leftThumbstick.yAxis.value,
-                    "rsX": pad.rightThumbstick.xAxis.value, "rsY": pad.rightThumbstick.yAxis.value,
-                    "menu": pad.buttonMenu.value, "options": pad.buttonOptions?.value ?? 0,
-                ]
-                for (key, value) in values {
-                    current[prefix + key] = value
-                    if abs(value - (previousSnapshot[prefix + key] ?? 0)) > 0.08 {
-                        changed = true
-                    }
-                }
-            } else if let pad = controller.gamepad {
-                let values: [String: Float] = [
-                    "a": pad.buttonA.value, "b": pad.buttonB.value,
-                    "x": pad.buttonX.value, "y": pad.buttonY.value,
-                    "l1": pad.leftShoulder.value, "r1": pad.rightShoulder.value,
-                    "dpadUp": pad.dpad.up.value, "dpadDown": pad.dpad.down.value,
-                    "dpadLeft": pad.dpad.left.value, "dpadRight": pad.dpad.right.value,
-                ]
-                for (key, value) in values {
-                    current[prefix + key] = value
-                    if abs(value - (previousSnapshot[prefix + key] ?? 0)) > 0.08 {
-                        changed = true
-                    }
-                }
-            }
+
+        // Match every HID device — we only care about value changes on buttons/axes.
+        IOHIDManagerSetDeviceMatching(mgr, nil)
+        IOHIDManagerRegisterInputValueCallback(mgr, { _, _, _, value in
+            let element = IOHIDValueGetElement(value)
+            let page = IOHIDElementGetUsagePage(element)
+            // GenericDesktop (axes/hat switch), Button (face/shoulder buttons).
+            guard page == UInt32(kHIDPage_GenericDesktop) || page == UInt32(kHIDPage_Button) else { return }
+            GamepadActivityMonitor.recordActivity()
+        }, nil)
+        IOHIDManagerScheduleWithRunLoop(mgr, CFRunLoopGetMain(), CFRunLoopMode.commonModes.rawValue)
+
+        let result = IOHIDManagerOpen(mgr, IOOptionBits(kIOHIDOptionsTypeNone))
+        guard result == kIOReturnSuccess else {
+            GlanceLog.write("手柄监控：IOHIDManagerOpen 失败 0x\(String(result, radix: 16))")
+            IOHIDManagerUnscheduleFromRunLoop(mgr, CFRunLoopGetMain(), CFRunLoopMode.commonModes.rawValue)
+            return
         }
-        previousSnapshot = current
-        if changed {
-            lastActiveAt = Date()
-        }
+        manager = mgr
+        GlanceLog.write("手柄监控：已启动 HID 活动监听")
     }
 
-    /// Seconds since the last detected gamepad input, or .greatestFiniteMagnitude if never.
+    nonisolated private static func recordActivity() {
+        lastActiveAt = Date()
+    }
+
+    /// Kept for call-site compatibility — no-op now (event-driven, not polled).
+    nonisolated static func poll() {}
+
+    /// Seconds since the last detected HID (gamepad) input.
     nonisolated static func secondsSinceActivity() -> TimeInterval {
         lastActiveAt == .distantPast
             ? .greatestFiniteMagnitude
